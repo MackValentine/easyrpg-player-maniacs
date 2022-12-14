@@ -1,0 +1,14 @@
+x86-windows-static/
+x86-windows-static/debug/
+x86-windows-static/debug/lib/
+x86-windows-static/debug/lib/opusfile.lib
+x86-windows-static/include/
+x86-windows-static/include/opus/
+x86-windows-static/include/opus/opusfile.h
+x86-windows-static/lib/
+x86-windows-static/lib/opusfile.lib
+x86-windows-static/share/
+x86-windows-static/share/opusfile/
+x86-windows-static/share/opusfile/copyright
+x86-windows-static/share/opusfile/vcpkg.spdx.json
+x86-windows-static/share/opusfile/vcpkg_abi_info.txt

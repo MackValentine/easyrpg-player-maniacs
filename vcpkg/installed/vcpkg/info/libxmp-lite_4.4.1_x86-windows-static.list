@@ -1,0 +1,13 @@
+x86-windows-static/
+x86-windows-static/debug/
+x86-windows-static/debug/lib/
+x86-windows-static/debug/lib/libxmp-lite.lib
+x86-windows-static/include/
+x86-windows-static/include/xmp.h
+x86-windows-static/lib/
+x86-windows-static/lib/libxmp-lite.lib
+x86-windows-static/share/
+x86-windows-static/share/libxmp-lite/
+x86-windows-static/share/libxmp-lite/copyright
+x86-windows-static/share/libxmp-lite/vcpkg.spdx.json
+x86-windows-static/share/libxmp-lite/vcpkg_abi_info.txt

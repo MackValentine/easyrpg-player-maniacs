@@ -1,0 +1,11 @@
+prefix=C:/Jenkins/workspace/toolchain-windows-testing/windows/vcpkg/packages/fluidsynth-easyrpg_x86-windows-static
+exec_prefix=${prefix}
+libdir=${exec_prefix}/lib
+includedir=${prefix}/include
+
+Name: FluidSynth
+Description: Software SoundFont synth
+Version: 2.2.3
+Libs: -L${libdir} -lfluidsynth
+Libs.private: -lLIBS_PRIVATE-NOTFOUND 
+Cflags: -I${includedir}
