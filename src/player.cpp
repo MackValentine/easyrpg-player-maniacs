@@ -190,8 +190,8 @@ void Player::Init(std::vector<std::string> arguments) {
 
 	Main_Data::Init();
 
-	Player::Screen_Width = 320;
-	Player::Screen_Height = 240;
+	Player::Screen_Width = 320; // Default
+	Player::Screen_Height = 240; // Default
 
 	DisplayUi.reset();
 	
