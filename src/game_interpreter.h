@@ -287,6 +287,31 @@ protected:
 	void ForegroundTextPush(PendingMessage pm);
 	void EndEventProcessing();
 
+	void show_Gauge(std::string param);
+	void show_Number(std::string param);
+	void btl_CommandActive(std::string param);
+	void btl_GetCommandIndex(std::string param);
+	void btl_SetCommandIndex(std::string param);
+	void btl_GetCommandMax(std::string param);
+	void btl_GetCommandID(std::string param);
+	void btl_HideCommand();
+	void btl_HideStatusAllies();
+	void btl_getOptionX(std::string param);
+	void btl_GetActiveAlly(std::string param);
+	void btl_ShowCursorAlly(std::string param);
+	void btl_Play_Move_SE();
+	void btl_ShowActionName(std::string param);
+	void btl_AutoSelectActor(std::string param);
+	void btl_SkillActive(std::string param);
+	void btl_ChangeSkillWindow(std::string param);
+	void btl_ChangeItemWindow(std::string param);
+	void btl_TargetActive(std::string param);
+	void btl_TargetAll(std::string param);
+	void btl_EnemyActive(std::string param);
+	void btl_LastAction(std::string param);
+
+	void tokenize(std::string const& str, const char delim, std::vector<std::string>& out);
+
 	FileRequestBinding request_id;
 	enum class Keys {
 		eDown,

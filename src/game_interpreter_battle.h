@@ -32,6 +32,33 @@
 class Game_Event;
 class Game_CommonEvent;
 
+namespace ManiacsBattle
+{
+	void Set_DamageCE(int i);
+	int Get_DamageCE();
+
+	void Set_DamageVar(int i);
+	int Get_DamageVar();
+
+
+	void Set_TargetCE(int i);
+	int Get_TargetCE();
+
+	void Set_TargetVar(int i);
+	int Get_TargetVar();
+
+	void Set_AutoSelect(bool i);
+	bool Get_AutoSelect();
+
+	void Set_ATBCE(int i);
+	int Get_ATBCE();
+
+	void Set_ATBVar(int i);
+	int Get_ATBVar();
+
+
+}
+
 /**
  * Game_Interpreter_Battle class.
  */
@@ -58,6 +85,9 @@ public:
 	bool IsForceFleeEnabled() const;
 
 	bool ExecuteCommand() override;
+
+	Game_CommonEvent* StartCommonEvent(int i);
+
 private:
 	bool CommandCallCommonEvent(lcf::rpg::EventCommand const& com);
 	bool CommandForceFlee(lcf::rpg::EventCommand const& com);

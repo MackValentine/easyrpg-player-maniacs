@@ -37,6 +37,8 @@
 #include "utils.h"
 #include "rand.h"
 
+#include "game_map.h"
+
 namespace Game_Battle {
 	const lcf::rpg::Troop* troop = nullptr;
 
@@ -52,6 +54,8 @@ namespace Game_Battle {
 	bool battle_running = false;
 
 	struct BattleTest battle_test;
+
+	std::vector<Game_CommonEvent> common_events;
 }
 
 namespace {
@@ -80,6 +84,92 @@ void Game_Battle::Init(int troop_id) {
 	for (auto* actor: Main_Data::game_party->GetActors()) {
 		actor->ResetEquipmentStates(true);
 	}
+}
+
+Game_CommonEvent* Game_Battle::StartCommonEventID(int id) {
+	Game_CommonEvent* ce = GetInterpreterBattle().StartCommonEvent(id);
+	ce->ForceCreate(id);
+	return ce;
+}
+void Game_Battle::StartCommonEvent(int type) {
+	//bool b = GetInterpreterBattle().StartCommonEvent(i);
+
+	for (int i = 1; i < lcf::Data::commonevents.size(); i++) {
+
+		Game_CommonEvent* common_event = lcf::ReaderUtil::GetElement(Game_Map::GetCommonEvents(), i);
+
+		int trigger = common_event->GetTrigger();
+		//Output::Warning(std::to_string(trigger));
+
+		if (trigger == type + 5)
+			bool b = GetInterpreterBattle().StartCommonEvent(i);
+	}
+
+	/*
+		common_events.clear();
+		common_events.reserve(lcf::Data::commonevents.size());
+		for (const lcf::rpg::CommonEvent& ev : lcf::Data::commonevents) {
+			common_events.emplace_back(ev.ID);
+		}
+
+		int resume_ce = 0;//actx.GetParallelCommonEvent();
+
+		for (Game_CommonEvent& ev : common_events) {
+			bool resume_async = false;
+			if (resume_ce != 0) {
+				// If resuming, skip all until the event to resume from ..
+				if (ev.GetIndex() != resume_ce) {
+					continue;
+				} else {
+					resume_ce = 0;
+					resume_async = true;
+				}
+			}
+	Output::Warning("QSD");
+			ev.interpreter->Update(!resume_async);
+			//if (aop.IsActive()) {
+				// Suspend due to this event ..
+				//actx = MapUpdateAsyncContext::FromCommonEvent(ev.GetIndex(), aop);
+				//return false;
+			//}
+		}
+	*/
+	/*
+		auto& interp = GetInterpreter();
+
+		while (!interp.IsRunning() && !interp.ReachedLoopLimit()) {
+
+			interp.Clear();
+
+			// This logic is probably one big loop in RPG_RT. We have to replicate
+			// it here because once we stop executing from this we should not
+			// clear anymore waiting flags.
+			if (Scene::instance->HasRequestedScene() && interp.GetLoopCount() > 0) {
+				//break;
+			}
+			Game_CommonEvent* run_ce = nullptr;
+
+			for (auto& ce: common_events) {
+				if (ce.GetTrigger() == 7 &&
+				(!ce.GetSwitchFlag() || Main_Data::game_switches->Get(ce.GetSwitchId()))
+				&& !ce.GetList().empty()){
+				//if (ce.IsWaitingForegroundExecution()) {
+					run_ce = &ce;
+					break;
+				}
+			}
+			if (run_ce) {
+				interp.Push(run_ce);
+			}
+
+			// If no events to run we're finished.
+			if (!interp.IsRunning()) {
+				break;
+			}
+
+			interp.Update(false);
+		}
+	*/
 }
 
 void Game_Battle::Quit() {
@@ -218,6 +308,31 @@ void Game_Battle::UpdateAtbGauges() {
 				const auto cur_atb = bat->GetAtbGauge();
 				const auto multiplier = std::max(1.0, static_cast<double>(275000 - cur_atb) / 55000.0);
 				increment = Utils::RoundTo<int>(multiplier * increment);
+				int CE_ID = ManiacsBattle::Get_ATBCE();
+				int Var_ID = ManiacsBattle::Get_ATBVar();
+				if (CE_ID > 0) {
+					if (bat->GetType() == Game_Battler::Type_Enemy) {
+
+						Main_Data::game_variables->Set(Var_ID, 1);
+						auto* enemy = static_cast<Game_Enemy*>(bat);
+						Main_Data::game_variables->Set(Var_ID + 1, enemy->GetTroopMemberId() - 1);
+
+					}
+					else {
+						Main_Data::game_variables->Set(Var_ID, 0);
+						Main_Data::game_variables->Set(Var_ID + 1, Main_Data::game_party->GetActorPositionInParty(bat->GetId()));
+					}
+
+					Main_Data::game_variables->Set(Var_ID + 2, cur_atb);
+					Main_Data::game_variables->Set(Var_ID + 3, increment);
+
+					Game_CommonEvent* ce = Game_Battle::StartCommonEventID(CE_ID);
+					ce->UpdateTest(true, CE_ID);
+					Game_Battle::GetInterpreter().Clear();
+
+					increment = Main_Data::game_variables->Get(Var_ID + 3);
+
+				}
 			}
 			bat->IncrementAtbGauge(increment);
 		}

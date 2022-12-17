@@ -34,6 +34,7 @@ public:
 	 */
 	Window_Item(int ix, int iy, int iwidth, int iheight);
 
+	void SetColumn(int c);
 	/**
 	 * Gets item.
 	 *

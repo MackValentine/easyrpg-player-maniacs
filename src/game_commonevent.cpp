@@ -23,14 +23,17 @@
 #include "main_data.h"
 #include <lcf/reader_util.h>
 #include <cassert>
+#include "output.h"
+#include "game_interpreter_battle.h"
 
 Game_CommonEvent::Game_CommonEvent(int common_event_id) :
 	common_event_id(common_event_id)
 {
 	auto* ce = lcf::ReaderUtil::GetElement(lcf::Data::commonevents, common_event_id);
 
-	if (ce->trigger == lcf::rpg::EventPage::Trigger_parallel
-			&& !ce->event_commands.empty()) {
+	if ((ce->trigger == lcf::rpg::EventPage::Trigger_parallel || ce->ID == ManiacsBattle::Get_ATBCE() || ce->ID == ManiacsBattle::Get_TargetCE())
+			&& !ce->event_commands.empty())
+	{
 		interpreter.reset(new Game_Interpreter_Map());
 		interpreter->Push(this);
 	}
@@ -38,6 +41,16 @@ Game_CommonEvent::Game_CommonEvent(int common_event_id) :
 
 }
 
+void Game_CommonEvent::ForceCreate(int ce_ID) {
+	auto* ce = lcf::ReaderUtil::GetElement(lcf::Data::commonevents, ce_ID);
+
+	if ((ce->trigger == lcf::rpg::EventPage::Trigger_parallel || ce->ID == ManiacsBattle::Get_ATBCE() || ce->ID == ManiacsBattle::Get_TargetCE() || ce->ID == ManiacsBattle::Get_DamageCE())
+		&& !ce->event_commands.empty())
+	{
+		interpreter.reset(new Game_Interpreter_Map());
+		interpreter->Push(this);
+	}
+}
 void Game_CommonEvent::SetSaveData(const lcf::rpg::SaveEventExecState& data) {
 	// RPG_RT Savegames have empty stacks for parallel events.
 	// We are LSD compatible but don't load these into interpreter.
@@ -58,6 +71,23 @@ AsyncOp Game_CommonEvent::Update(bool resume_async) {
 		if (interpreter->IsAsyncPending()) {
 			return interpreter->GetAsyncOp();
 		}
+	}
+
+	return {};
+}
+
+AsyncOp Game_CommonEvent::UpdateTest(bool resume_async, int ce_ID) {
+	if (interpreter) {
+		assert(interpreter->IsRunning());
+		interpreter->Update(!resume_async);
+
+		// Suspend due to async op ...
+		if (interpreter->IsAsyncPending()) {
+			return interpreter->GetAsyncOp();
+		}
+	}
+	else {
+		Output::Warning("Common Event {} is empty or doesn't exist", ce_ID);
 	}
 
 	return {};

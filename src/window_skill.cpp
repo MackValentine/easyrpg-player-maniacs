@@ -39,6 +39,11 @@ void Window_Skill::SetActor(int actor_id) {
 	Refresh();
 }
 
+void Window_Skill::SetColumn(int c) {
+	this->column_max = c;
+	//Refresh();
+}
+
 const lcf::rpg::Skill* Window_Skill::GetSkill() const {
 	if (index < 0) {
 		return nullptr;

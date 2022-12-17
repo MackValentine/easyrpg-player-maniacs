@@ -31,6 +31,11 @@ Window_Item::Window_Item(int ix, int iy, int iwidth, int iheight) :
 	column_max = 2;
 }
 
+void Window_Item::SetColumn(int c) {
+	this->column_max = c;
+	//Refresh();
+}
+
 const lcf::rpg::Item* Window_Item::GetItem() const {
 	if (index < 0) {
 		return nullptr;

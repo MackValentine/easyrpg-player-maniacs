@@ -66,6 +66,12 @@
 #include "algo.h"
 #include "rand.h"
 
+#include "scene_battle.h"
+#include "scene_battle_rpg2k3.h"
+#include "cache.h"
+#include "game_interpreter_battle.h"
+#include "game_battlealgorithm.h"
+
 enum BranchSubcommand {
 	eOptionBranchElse = 1
 };
@@ -2042,7 +2048,791 @@ bool Game_Interpreter::CommandComment(const lcf::rpg::EventCommand &com) {
 
 		return DynRpg::Invoke(command);
 	}
+	else {
+
+
+		//Output::Warning("1" + ToString(com.string) +".");
+		std::string s = ToString(com.string);
+		if (s.rfind("@show_Gauge", 0) == 0) {
+			show_Gauge(s);
+		}
+		else if (s.rfind("@show_Number", 0) == 0) {
+			show_Number(s);
+		}
+		else if (s.rfind("@btl_CommandActive", 0) == 0) {
+			btl_CommandActive(s);
+		}
+		else if (s.rfind("@btl_GetCommandIndex", 0) == 0) {
+			btl_GetCommandIndex(s);
+		}
+		else if (s.rfind("@btl_SetCommandIndex", 0) == 0) {
+			btl_SetCommandIndex(s);
+		}
+		else if (s.rfind("@btl_GetCommandMax", 0) == 0) {
+			btl_GetCommandMax(s);
+		}
+		else if (s.rfind("@btl_GetCommandID", 0) == 0) {
+			btl_GetCommandID(s);
+		}
+		else if (s.rfind("@btl_HideCommands", 0) == 0) {
+			btl_HideCommand();
+		}
+		else if (s.rfind("@btl_HideStatusAllies", 0) == 0) {
+			btl_HideStatusAllies();
+		}
+		else if (s.rfind("@btl_GetOptionX", 0) == 0) {
+			btl_getOptionX(s);
+		}
+		else if (s.rfind("@btl_GetActiveAlly", 0) == 0) {
+			btl_GetActiveAlly(s);
+		}
+		else if (s.rfind("@btl_ShowCursorAlly", 0) == 0) {
+			btl_ShowCursorAlly(s);
+		}
+		else if (s.rfind("@play_MoveSE", 0) == 0) {
+			btl_Play_Move_SE();
+		}
+		else if (s.rfind("@btl_ShowActionName", 0) == 0) {
+			btl_ShowActionName(s);
+		}
+		else if (s.rfind("@btl_AutoSelectActor", 0) == 0) {
+			btl_AutoSelectActor(s);
+		}
+		else if (s.rfind("@btl_SkillsActive", 0) == 0) {
+			btl_SkillActive(s);
+		}
+		else if (s.rfind("@btl_ChangeSkillWindow", 0) == 0) {
+			btl_ChangeSkillWindow(s);
+		}
+		else if (s.rfind("@btl_ChangeItemWindow", 0) == 0) {
+			btl_ChangeItemWindow(s);
+		}
+		else if (s.rfind("@btl_TargetActive", 0) == 0) {
+			btl_TargetActive(s);
+		}
+		else if (s.rfind("@btl_TargetAll", 0) == 0) {
+			btl_TargetAll(s);
+		}
+		else if (s.rfind("@btl_EnemyActive", 0) == 0) {
+			btl_EnemyActive(s);
+		}
+		else if (s.rfind("@btl_LastAction", 0) == 0) {
+			btl_LastAction(s);
+		}
+
+		
+	}
 	return true;
+}
+
+
+void Game_Interpreter::btl_LastAction(std::string param) {
+	param.replace(0, 16, "");
+	param.replace(param.end() - 1, param.end(), "");
+
+	int id = std::stoi(param);
+
+
+	Scene_Battle* scene = (Scene_Battle*)Scene::Find(Scene::Battle).get();
+	if (scene) {
+		int t = 0;
+		if (scene->getPreviousState() == Scene_Battle::State::State_SelectCommand)
+			t = 0;
+		else if (scene->getPreviousState() == Scene_Battle::State::State_SelectItem)
+			t = 1;
+		else if (scene->getPreviousState() == Scene_Battle::State::State_SelectSkill)
+			t = 2;
+		else if (scene->getPreviousState() == Scene_Battle::State::State_SelectEnemyTarget)
+			t = 3;
+		else if (scene->getPreviousState() == Scene_Battle::State::State_SelectAllyTarget)
+			t = 4;
+
+		Main_Data::game_variables->Set(id, t);
+
+	}
+
+}
+
+void Game_Interpreter::btl_AutoSelectActor(std::string param) {
+	param.replace(0, 20, "");
+	param.replace(param.end() - 1, param.end(), "");
+	bool b = false;
+	if (param == "true")
+		b = true;
+
+	ManiacsBattle::Set_AutoSelect(b);
+
+}
+
+void Game_Interpreter::btl_ShowActionName(std::string param) {
+	param.replace(0, 20, "");
+	param.replace(param.end() - 1, param.end(), "");
+	int id = std::stoi(param);
+
+	Scene_Battle_Rpg2k3* scene = (Scene_Battle_Rpg2k3*)Scene::Find(Scene::Battle).get();
+	if (scene) {
+		if (scene->active_actor)
+		{
+			auto& pic = Main_Data::game_pictures->GetPicture(id);
+			if (&pic != NULL)
+				if (pic.data.easyrpg_type == lcf::rpg::SavePicture::EasyRpgType_window) {
+
+					int command_id = scene->command_window->GetIndex();
+					auto commands = scene->active_actor->GetBattleCommands();
+					if (command_id < commands.size()) {
+						Main_Data::game_windows->GetWindow(id).data.texts[0].text = commands[command_id]->name;
+						Main_Data::game_windows->GetWindow(id).Refresh();
+
+					}
+					else {
+						Main_Data::game_windows->GetWindow(id).data.texts[0].text = lcf::Data::terms.row;
+						Main_Data::game_windows->GetWindow(id).Refresh();
+					}
+
+				}
+		}
+	}
+
+}
+
+void Game_Interpreter::btl_Play_Move_SE() {
+	Main_Data::game_system->SePlay(Main_Data::game_system->GetSystemSE(Main_Data::game_system->SFX_Cursor));
+
+}
+void Game_Interpreter::btl_HideCommand() {
+	Scene_Battle* scene = (Scene_Battle*)Scene::Find(Scene::Battle).get();
+	if (scene) {
+		scene->command_window->SetVisible(false);
+		scene->command_window->SetY(-9999);
+	}
+
+}
+void Game_Interpreter::btl_HideStatusAllies() {
+	Scene_Battle* scene = (Scene_Battle*)Scene::Find(Scene::Battle).get();
+	if (scene) {
+		scene->status_window->SetVisible(false);
+		scene->status_window->SetY(-9999);
+	}
+
+}
+void Game_Interpreter::btl_ShowCursorAlly(std::string param) {
+	param.replace(0, 20, "");
+	param.replace(param.end() - 1, param.end(), "");
+	int id = std::stoi(param);
+
+	Scene_Battle_Rpg2k3* scene = (Scene_Battle_Rpg2k3*)Scene::Find(Scene::Battle).get();
+	if (scene) {
+		if (scene->active_actor)
+		{
+			int x = scene->active_actor->GetBattlePosition().x;
+			int y = scene->active_actor->GetBattlePosition().y;
+
+			auto& pic = Main_Data::game_pictures->GetPicture(id);
+			if (&pic != NULL)
+				if (pic.Exists()) {
+					Game_Pictures::ShowParams params;
+					params = pic.GetShowParams();
+					params.position_x = x + 8;
+					params.position_y = y - 32;
+					pic.Show(params);
+
+				}
+		}
+	}
+
+}
+
+void Game_Interpreter::btl_TargetAll(std::string param) {
+	param.replace(0, 15, "");
+	param.replace(param.end() - 1, param.end(), "");
+	int id = std::stoi(param);
+
+	Scene_Battle_Rpg2k3* scene = (Scene_Battle_Rpg2k3*)Scene::Find(Scene::Battle).get();
+	if (scene) {
+		if (scene->active_actor)
+		{
+			std::vector<Game_Battler*> party;
+			if (scene->status_window->GetActive())
+				scene->active_actor->GetParty().GetBattlers(party);
+			else
+				Main_Data::game_enemyparty->GetActiveBattlers(party);
+			int m = party.size();
+			for (int i = 0; i < m; i++) {
+
+
+				int index = 0;
+				if (scene->status_window->GetActive()) {
+					index = scene->status_window->GetIndex();
+				}
+				else {
+					index = scene->target_window->GetIndex();
+				}
+				if (index != i) {
+					int x = party[i]->GetBattlePosition().x;
+					int y = party[i]->GetBattlePosition().y;
+
+					auto& pic = Main_Data::game_pictures->GetPicture(id + i);
+					if (&pic != NULL)
+						if (pic.Exists()) {
+							Game_Pictures::ShowParams params;
+							params = pic.GetShowParams();
+							if (scene->target_window->GetActive()) {
+								auto* enemy = party[i];
+								const auto* sprite = enemy->GetBattleSprite();
+								if (sprite) {
+									params.position_x = enemy->GetBattlePosition().x + sprite->GetWidth() / 2 + 8;
+									params.position_y = enemy->GetBattlePosition().y + 8;
+								}
+							}
+							else {
+								params.position_x = x + 8;
+								params.position_y = y - 32;
+							}
+							pic.Show(params);
+							pic.ApplyOrigin(false);
+
+						}
+				}
+				else {
+					auto& pic = Main_Data::game_pictures->GetPicture(id + i);
+					if (&pic != NULL)
+						if (pic.Exists()) {
+							Game_Pictures::ShowParams params;
+							params = pic.GetShowParams();
+							params.position_x = -9999;
+							params.position_y = -9999;
+							pic.Show(params);
+
+						}
+				}
+			}
+		}
+	}
+
+}
+
+void Game_Interpreter::btl_TargetActive(std::string param) {
+	param.replace(0, 18, "");
+	param.replace(param.end() - 1, param.end(), "");
+	int id = std::stoi(param);
+
+
+	Scene_Battle* scene = (Scene_Battle*)Scene::Find(Scene::Battle).get();
+	if (scene) {
+		if (scene->target_window) {
+			bool b = scene->target_window->GetActive() || scene->status_window->GetActive();
+			Main_Data::game_switches->Set(id, b);
+		}
+	}
+
+}
+
+void Game_Interpreter::btl_EnemyActive(std::string param) {
+	param.replace(0, 17, "");
+	param.replace(param.end() - 1, param.end(), "");
+	int id = std::stoi(param);
+
+
+	Scene_Battle* scene = (Scene_Battle*)Scene::Find(Scene::Battle).get();
+	if (scene) {
+		if (scene->target_window) {
+			bool b = scene->target_window->GetActive();
+			Main_Data::game_switches->Set(id, b);
+		}
+	}
+
+}
+
+void Game_Interpreter::btl_SkillActive(std::string param) {
+	param.replace(0, 18, "");
+	param.replace(param.end() - 1, param.end(), "");
+	int id = std::stoi(param);
+
+
+	Scene_Battle* scene = (Scene_Battle*)Scene::Find(Scene::Battle).get();
+	if (scene) {
+		if (scene->skill_window) {
+			Main_Data::game_switches->Set(id, scene->skill_window->GetActive());
+		}
+	}
+
+}
+
+void Game_Interpreter::btl_ChangeItemWindow(std::string param) {
+	param.replace(0, 22, "");
+	param.replace(param.end() - 1, param.end(), "");
+
+	std::string s = param;
+	const char delim = ',';
+
+	std::vector<std::string> out;
+	tokenize(s, delim, out);
+	int c = 2;
+	int x = 0;
+	int w = Player::Screen_Width;
+	int h = 80;
+	int y = Player::Screen_Height - h;
+
+	int i = 0;
+	for (auto& s : out) {
+		if (i == 0)
+			c = std::stoi(s);
+		else if (i == 1)
+			if (s.rfind("v[", 0) == 0) {
+				s.replace(0, 2, "");
+				s.replace(s.end() - 1, s.end(), "");
+				x = Main_Data::game_variables->Get(std::stoi(s));
+			}
+			else {
+				x = std::stoi(s);
+			}
+		else if (i == 2)
+			if (s.rfind("v[", 0) == 0) {
+				s.replace(0, 2, "");
+				s.replace(s.end() - 1, s.end(), "");
+				y = Main_Data::game_variables->Get(std::stoi(s));
+			}
+			else {
+				y = std::stoi(s);
+			}
+		else if (i == 3)
+			if (s.rfind("v[", 0) == 0) {
+				s.replace(0, 2, "");
+				s.replace(s.end() - 1, s.end(), "");
+				w = Main_Data::game_variables->Get(std::stoi(s));
+			}
+			else {
+				w = std::stoi(s);
+			}
+		else if (i == 4)
+			if (s.rfind("v[", 0) == 0) {
+				s.replace(0, 2, "");
+				s.replace(s.end() - 1, s.end(), "");
+				h = Main_Data::game_variables->Get(std::stoi(s));
+			}
+			else {
+				h = std::stoi(s);
+			}
+
+
+		i += 1;
+
+	}
+
+	Scene_Battle* scene = (Scene_Battle*)Scene::Find(Scene::Battle).get();
+	if (scene) {
+		if (scene->item_window) {
+			scene->item_window.reset(new Window_Item(x, y, w, h));
+			scene->item_window->SetColumn(c);
+			scene->item_window->Refresh();
+			scene->item_window->SetIndex(0);
+		}
+	}
+
+}
+
+void Game_Interpreter::btl_ChangeSkillWindow(std::string param) {
+	param.replace(0, 23, "");
+	param.replace(param.end() - 1, param.end(), "");
+
+	std::string s = param;
+	const char delim = ',';
+
+	std::vector<std::string> out;
+	tokenize(s, delim, out);
+	int c = 2;
+	int x = 0;
+	int w = Player::Screen_Width;
+	int h = 80;
+	int y = Player::Screen_Height - h;
+
+	int i = 0;
+	for (auto& s : out) {
+		if (i == 0)
+			c = std::stoi(s);
+		else if (i == 1)
+			if (s.rfind("v[", 0) == 0) {
+				s.replace(0, 2, "");
+				s.replace(s.end() - 1, s.end(), "");
+				x = Main_Data::game_variables->Get(std::stoi(s));
+			}
+			else {
+				x = std::stoi(s);
+			}
+		else if (i == 2)
+			if (s.rfind("v[", 0) == 0) {
+				s.replace(0, 2, "");
+				s.replace(s.end() - 1, s.end(), "");
+				y = Main_Data::game_variables->Get(std::stoi(s));
+			}
+			else {
+				y = std::stoi(s);
+			}
+		else if (i == 3)
+			if (s.rfind("v[", 0) == 0) {
+				s.replace(0, 2, "");
+				s.replace(s.end() - 1, s.end(), "");
+				w = Main_Data::game_variables->Get(std::stoi(s));
+			}
+			else {
+				w = std::stoi(s);
+			}
+		else if (i == 4)
+			if (s.rfind("v[", 0) == 0) {
+				s.replace(0, 2, "");
+				s.replace(s.end() - 1, s.end(), "");
+				h = Main_Data::game_variables->Get(std::stoi(s));
+			}
+			else {
+				h = std::stoi(s);
+			}
+
+
+		i += 1;
+
+	}
+
+	Scene_Battle* scene = (Scene_Battle*)Scene::Find(Scene::Battle).get();
+	if (scene) {
+		if (scene->skill_window) {
+			scene->skill_window.reset(new Window_BattleSkill(x, y ,w ,h));
+			scene->skill_window->SetColumn(c);
+		}
+	}
+
+}
+
+void Game_Interpreter::btl_CommandActive(std::string param) {
+	param.replace(0, 19, "");
+	param.replace(param.end() - 1, param.end(), "");
+	int id = std::stoi(param);
+
+
+	Scene_Battle* scene = (Scene_Battle*)Scene::Find(Scene::Battle).get();
+	if (scene) {
+		Main_Data::game_switches->Set(id, scene->command_window->GetActive());
+	}
+
+}
+void Game_Interpreter::btl_GetCommandIndex(std::string param) {
+	param.replace(0, 21, "");
+	param.replace(param.end() - 1, param.end(), "");
+	int id = std::stoi(param);
+
+	Scene_Battle* scene = (Scene_Battle*)Scene::Find(Scene::Battle).get();
+	if (scene) {
+
+		Main_Data::game_variables->Set(id, scene->command_window->GetIndex());
+	}
+
+}
+void Game_Interpreter::btl_GetCommandMax(std::string param) {
+	param.replace(0, 19, "");
+	param.replace(param.end() - 1, param.end(), "");
+	int id = std::stoi(param);
+
+
+	Scene_Battle* scene = (Scene_Battle*)Scene::Find(Scene::Battle).get();
+	if (scene) {
+		Main_Data::game_variables->Set(id, scene->command_window->GetItemMax());
+	}
+
+}
+
+void Game_Interpreter::btl_GetActiveAlly(std::string param) {
+	param.replace(0, 19, "");
+	param.replace(param.end() - 1, param.end(), "");
+
+	int id = std::stoi(param);
+	Main_Data::game_variables->Set(id, -1);
+
+	Scene_Battle* scene = (Scene_Battle*)Scene::Find(Scene::Battle).get();
+	if (scene) {
+		//const auto* command = scene->active_actor->GetBattleCommand(v);
+		if (scene->active_actor)
+			Main_Data::game_variables->Set(id, scene->active_actor->GetId());
+	}
+
+}
+
+void Game_Interpreter::btl_GetCommandID(std::string param) {
+	param.replace(0, 18, "");
+	param.replace(param.end() - 1, param.end(), "");
+
+
+	std::string s = param;
+	const char delim = ',';
+
+	std::vector<std::string> out;
+	tokenize(s, delim, out);
+	int id;
+	int v;
+
+	int i = 0;
+	for (auto& s : out) {
+		if (i == 0)
+			id = std::stoi(s);
+		else if (i == 1)
+			if (s.rfind("v[", 0) == 0) {
+				s.replace(0, 2, "");
+				s.replace(s.end() - 1, s.end(), "");
+				v = Main_Data::game_variables->Get(std::stoi(s));
+			}
+			else {
+				v = std::stoi(s);
+			}
+
+
+		i += 1;
+
+	}
+
+	std::string ss = std::to_string(id) + "/" + std::to_string(v);
+	//Output::Warning(ss); 
+
+	Scene_Battle* scene = (Scene_Battle*)Scene::Find(Scene::Battle).get();
+	if (scene) {
+		if (v < scene->command_window->GetItemMax() - 1) {
+
+			const auto* command = scene->active_actor->GetBattleCommand(v);
+
+			Main_Data::game_variables->Set(id, command->ID);
+		}
+		else {
+			Main_Data::game_variables->Set(id, 0);
+		}
+	}
+
+}
+
+void Game_Interpreter::btl_SetCommandIndex(std::string param) {
+	param.replace(0, 21, "");
+	param.replace(param.end() - 1, param.end(), "");
+
+	int id;
+	if (param.rfind("v[", 0) == 0) {
+		param.replace(0, 2, "");
+		param.replace(param.end() - 1, param.end(), "");
+		id = Main_Data::game_variables->Get(std::stoi(param));
+	}
+	else {
+		id = std::stoi(param);
+	}
+
+	// Output::Warning(param + "AZE"); 
+
+	Scene_Battle* scene = (Scene_Battle*)Scene::Find(Scene::Battle).get();
+	if (scene) {
+
+		scene->command_window->SetIndex(id);
+	}
+
+}
+void Game_Interpreter::show_Number(std::string param) {
+	param.replace(0, 12, "");
+	param.replace(0, 1, "");
+	param.replace(param.end() - 1, param.end(), "");
+
+	std::string s = param;
+	const char delim = ',';
+
+	std::vector<std::string> out;
+	tokenize(s, delim, out);
+	int id;
+	int v;
+	std::string system;
+
+	int i = 0;
+	for (auto& s : out) {
+		if (i == 0)
+			if (s.rfind("v[", 0) == 0) {
+				s.replace(0, 2, "");
+				s.replace(s.end() - 1, s.end(), "");
+				id = Main_Data::game_variables->Get(std::stoi(s));
+			}
+			else {
+				id = std::stoi(s);
+			}
+		else if (i == 1)
+			if (s.rfind("v[", 0) == 0) {
+				s.replace(0, 2, "");
+				s.replace(s.end() - 1, s.end(), "");
+				v = Main_Data::game_variables->Get(std::stoi(s));
+			}
+			else {
+				v = std::stoi(s);
+			}
+		else if (i == 2)
+			system = s;
+
+
+		i += 1;
+
+	}
+	std::string ss = std::to_string(id) + "/" + std::to_string(v);
+	//Output::Warning(ss); 
+
+	Game_Pictures::ShowParams params;
+	auto& pic = Main_Data::game_pictures->GetPicture(id);
+	BitmapRef system2;
+
+	if (system != "")
+	{
+		system2 = Cache::System2(system);
+	}
+	else
+		system2 = Cache::System2();
+
+	if (&pic != NULL && system2 != NULL)
+		if (pic.Exists()) {
+
+			BitmapRef bitmap = Bitmap::Create(4 * 8, 16, true);
+			pic.sprite->SetBitmap(bitmap);
+
+			pic.sprite->GetBitmap()->Clear();
+
+			bool handle_zero = false;
+
+			if (v >= 1000) {
+				pic.sprite->GetBitmap()->Blit(0, 0, *system2, Rect((v / 1000) * 8, 80, 8, 16), Opacity::Opaque());
+				v %= 1000;
+				if (v < 100) {
+					handle_zero = true;
+				}
+			}
+			if (handle_zero || v >= 100) {
+				handle_zero = false;
+				pic.sprite->GetBitmap()->Blit(8, 0, *system2, Rect((v / 100) * 8, 80, 8, 16), Opacity::Opaque());
+				v %= 100;
+				if (v < 10) {
+					handle_zero = true;
+				}
+			}
+			if (handle_zero || v >= 10) {
+				pic.sprite->GetBitmap()->Blit(8 * 2, 0, *system2, Rect((v / 10) * 8, 80, 8, 16), Opacity::Opaque());
+				v %= 10;
+			}
+
+			pic.sprite->GetBitmap()->Blit(8 * 3, 0, *system2, Rect(v * 8, 80, 8, 16), Opacity::Opaque());
+
+
+			int x = pic.GetShowParams().position_x;
+			int y = pic.GetShowParams().position_y;
+
+			pic.ApplyOrigin(false);
+
+		}
+
+}
+
+void Game_Interpreter::btl_getOptionX(std::string param) {
+	param.replace(0, 16, "");
+	param.replace(param.end() - 1, param.end(), "");
+	int id = std::stoi(param);
+
+	// Output::Warning(param + "AZE"); 
+
+	Scene_Battle* scene = (Scene_Battle*)Scene::Find(Scene::Battle).get();
+	if (scene) {
+		Main_Data::game_variables->Set(id, scene->options_window->GetX());
+	}
+}
+
+void Game_Interpreter::show_Gauge(std::string param) {
+
+	param.replace(0, 11, "");
+	param.replace(0, 1, "");
+	param.replace(param.end() - 1, param.end(), "");
+
+	std::string s = param;
+	const char delim = ',';
+
+	std::vector<std::string> out;
+	tokenize(s, delim, out);
+	int id = 1;
+	int type;
+	int w;
+	int v;
+
+	int i = 0;
+	for (auto& s : out) {
+		if (i == 0)
+			if (s.rfind("v[", 0) == 0) {
+				s.replace(0, 2, "");
+				s.replace(s.end() - 1, s.end(), "");
+				id = Main_Data::game_variables->Get(std::stoi(s));
+			}
+			else {
+				id = std::stoi(s);
+			}
+		else if (i == 1)
+			type = std::stoi(s);
+		else if (i == 2)
+			w = std::stoi(s);
+		else if (i == 3)
+			if (s.rfind("v[", 0) == 0) {
+				s.replace(0, 2, "");
+				s.replace(s.end() - 1, s.end(), "");
+				v = Main_Data::game_variables->Get(std::stoi(s));
+			}
+			else {
+				v = std::stoi(s);
+			}
+
+		i += 1;
+
+	}
+	std::string ss = std::to_string(id) + "/" + std::to_string(w) + "/" + std::to_string(v);
+
+	//Output::Warning(ss); 
+
+	Game_Pictures::ShowParams params;
+	auto& pic = Main_Data::game_pictures->GetPicture(id);
+	BitmapRef system2 = Cache::System2(Main_Data::game_system->GetSystem2Name());
+
+	if (&pic != NULL && system2 != NULL)
+		if (pic.Exists()) {
+			
+			int gauge_x;
+			if (v == 100) {
+				gauge_x = 16;
+			}
+			else {
+				gauge_x = 0;
+			}
+			
+			BitmapRef bitmap = Bitmap::Create(w + 32, 16, true);
+			pic.sprite->SetBitmap(bitmap);
+			
+			pic.sprite->GetBitmap()->Clear();
+
+			pic.sprite->GetBitmap()->Blit(0, 0, *system2, Rect(0, 32 + type * 16, 16, 16), 255);
+			pic.sprite->GetBitmap()->StretchBlit(Rect(16, 0, w, 16), *system2, Rect(16, 32 + type * 16, 16, 16), Opacity::Opaque());
+			pic.sprite->GetBitmap()->Blit(16 + w, 0, *system2, Rect(32, 32 + type * 16, 16, 16), 255);
+
+			int gauge_width = w * v / 100;
+
+			pic.sprite->GetBitmap()->StretchBlit(Rect(16, 0, gauge_width, 16), *system2, Rect(48 + gauge_x, 32 + 16 * type, 16, 16), Opacity::Opaque());
+
+			pic.ApplyOrigin(false);
+			
+		}
+
+		
+
+}
+
+void Game_Interpreter::tokenize(std::string const& str, const char delim,
+	std::vector<std::string>& out)
+{
+	size_t start;
+	size_t end = 0;
+
+	while ((start = str.find_first_not_of(delim, end)) != std::string::npos)
+	{
+		end = str.find(delim, start);
+		out.push_back(str.substr(start, end - start));
+	}
 }
 
 void Game_Interpreter::EndEventProcessing() {

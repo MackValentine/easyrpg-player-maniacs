@@ -31,6 +31,87 @@
 #include "spriteset_battle.h"
 #include <cassert>
 
+
+
+namespace ManiacsBattle
+{
+	int damage_CE;
+	int damage_Var;
+
+	void Set_DamageCE(int i) {
+		damage_CE = i;
+	}
+	int Get_DamageCE() {
+		return damage_CE;
+	}
+
+	void Set_DamageVar(int i) {
+		damage_Var = i;
+	}
+	int Get_DamageVar() {
+		return damage_Var;
+	}
+
+	int target_CE;
+	int target_Var;
+
+	void Set_TargetCE(int i) {
+		target_CE = i;
+	}
+	int Get_TargetCE() {
+		return target_CE;
+	}
+
+	void Set_TargetVar(int i) {
+		target_Var = i;
+	}
+	int Get_TargetVar() {
+		return target_Var;
+	}
+
+	bool autoSelect;
+	void Set_AutoSelect(bool i) {
+		autoSelect = i;
+	}
+	bool Get_AutoSelect() {
+		return autoSelect;
+	}
+
+	int atb_CE;
+	int atb_Var;
+
+	void Set_ATBCE(int i) {
+		atb_CE = i;
+	}
+	int Get_ATBCE() {
+		return atb_CE;
+	}
+
+	void Set_ATBVar(int i) {
+		atb_Var = i;
+	}
+	int Get_ATBVar() {
+		return atb_Var;
+	}
+
+}
+
+//TODO
+Game_CommonEvent* Game_Interpreter_Battle::StartCommonEvent(int i) {
+	int evt_id = i;
+
+	Game_CommonEvent* common_event = lcf::ReaderUtil::GetElement(Game_Map::GetCommonEvents(), evt_id);
+	if (!common_event) {
+		Output::Warning("CallCommonEvent: Can't call invalid common event {}", evt_id);
+		return common_event;
+	}
+
+
+	Push(common_event);
+
+	return common_event;
+}
+
 enum BranchBattleSubcommand {
 	eOptionBranchBattleElse = 1
 };
@@ -526,12 +607,27 @@ bool Game_Interpreter_Battle::CommandEndBranchBattle(lcf::rpg::EventCommand cons
 	return true;
 }
 
-bool Game_Interpreter_Battle::CommandManiacControlBattle(lcf::rpg::EventCommand const&) {
+bool Game_Interpreter_Battle::CommandManiacControlBattle(lcf::rpg::EventCommand const& com) {
 	if (!Player::IsPatchManiac()) {
 		return true;
 	}
+	if (com.parameters[0] == 1) {
+		// Damage Pop
 
-	Output::Warning("Maniac Patch: Command ControlBattle not supported");
+		ManiacsBattle::Set_DamageCE(com.parameters[2]);
+		ManiacsBattle::Set_DamageVar(com.parameters[3]);
+	} else if (com.parameters[0] == 2) {
+		// Target
+
+		ManiacsBattle::Set_TargetCE(com.parameters[2]);
+		ManiacsBattle::Set_TargetVar(com.parameters[3]);
+	} else if (com.parameters[0] == 0) {
+		// Target
+
+		ManiacsBattle::Set_ATBCE(com.parameters[2]);
+		ManiacsBattle::Set_ATBVar(com.parameters[3]);
+	} else
+		Output::Warning("Maniac Patch: Command ControlBattle not supported {}", com.parameters[0]);
 	return true;
 }
 

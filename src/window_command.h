@@ -75,6 +75,11 @@ public:
 	 */
 	void ReplaceCommands(std::vector<std::string> commands);
 
+	/**
+	* Return Command Index
+	*/
+	int GetCommandIndex(int i);
+
 protected:
 	std::vector<std::string> commands;
 

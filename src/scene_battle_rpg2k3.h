@@ -90,6 +90,8 @@ public:
 	void OnPartyChanged(Game_Actor* actor, bool add) override;
 	void OnEventHpChanged(Game_Battler* battler, int hp) override;
 
+	std::unique_ptr<Sprite> ally_cursor, enemy_cursor;
+
 protected:
 	void Start2();
 	void InitAtbGauge(Game_Battler& battler, int preempt_atb, int ambush_atb);
@@ -211,7 +213,6 @@ protected:
 	std::vector<std::string> GetBattleCommandNames(const Game_Actor* actor);
 	void SetBattleCommandsDisable(Window_Command& window, const Game_Actor* actor);
 
-	std::unique_ptr<Sprite> ally_cursor, enemy_cursor;
 
 	struct FloatText {
 		std::shared_ptr<Sprite> sprite;

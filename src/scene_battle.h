@@ -128,6 +128,23 @@ public:
 
 	static void SelectionFlash(Game_Battler* battler);
 
+	std::unique_ptr<Window_Command> command_window;
+	std::unique_ptr<Window_BattleStatus> status_window;
+	std::unique_ptr<Window_Item> item_window;
+	std::unique_ptr<Window_BattleSkill> skill_window;
+	std::unique_ptr<Window_Help> help_window;
+	/** Displays list of enemies */
+	std::unique_ptr<Window_Command> target_window;
+
+	Game_Actor* active_actor = nullptr;
+
+	/** Displays Fight, Autobattle, Flee */
+	std::unique_ptr<Window_Command> options_window;
+
+	State getPreviousState() {
+		return previous_state;
+	}
+
 protected:
 	explicit Scene_Battle(const BattleArgs& args);
 
@@ -175,19 +192,10 @@ protected:
 	bool allow_escape = false;
 	bool first_strike = false;
 
-	Game_Actor* active_actor = nullptr;
-
-	/** Displays Fight, Autobattle, Flee */
-	std::unique_ptr<Window_Command> options_window;
-	/** Displays list of enemies */
-	std::unique_ptr<Window_Command> target_window;
 	/** Displays Attack, Defense, Magic, Item */
-	std::unique_ptr<Window_Command> command_window;
-	std::unique_ptr<Window_Item> item_window;
-	std::unique_ptr<Window_BattleSkill> skill_window;
-	std::unique_ptr<Window_Help> help_window;
+
 	/** Displays allies status */
-	std::unique_ptr<Window_BattleStatus> status_window;
+
 	std::unique_ptr<Window_Message> message_window;
 
 	std::deque<Game_Battler*> battle_actions;

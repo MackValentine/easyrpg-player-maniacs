@@ -173,6 +173,8 @@ void Game_Pictures::OnBattleEnd() {
 bool Game_Pictures::Picture::Show(const ShowParams& params) {
 	needs_update = true;
 
+	data.easyrpg_type = lcf::rpg::SavePicture::EasyRpgType_default;
+
 	data.name = params.name;
 	data.use_transparent_color = params.use_transparent_color;
 	data.fixed_to_map = params.fixed_to_map;
@@ -489,6 +491,8 @@ void Game_Pictures::Picture::AttachWindow(const Window_Base& window) {
 	sprite->SetBitmap(std::make_shared<Bitmap>(window.GetWidth(), window.GetHeight(), data.use_transparent_color));
 	sprite->OnPictureShow();
 	sprite->SetVisible(true);
+
+	ApplyOrigin(false);
 }
 
 void Game_Pictures::Picture::Update(bool is_battle) {

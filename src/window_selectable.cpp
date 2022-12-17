@@ -32,6 +32,11 @@ void Window_Selectable::CreateContents() {
 	SetContents(Bitmap::Create(width - 16, max(height - border_y * 2, GetRowMax() * menu_item_height)));
 }
 
+
+int Window_Selectable::GetItemMax() const {
+	return item_max;
+}
+
 // Properties
 
 int Window_Selectable::GetIndex() const {

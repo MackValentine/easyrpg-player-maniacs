@@ -55,6 +55,22 @@ public:
 	AsyncOp Update(bool resume_async);
 
 	/**
+	 * Force creation of Common Event
+	 *
+	 * @param ce_ID Common Event ID
+	 */
+	void ForceCreate(int ce_ID);
+
+	/**
+	 * Updates common event parallel interpreter.
+	 *
+	 * @param resume_async If we're resuming from an async operation.
+	 * @param ce_ID Common Event ID
+	 * @return async operation if we should suspend, otherwise returns AsyncOp::eNone
+	 */
+	AsyncOp UpdateTest(bool resume_async, int ce_ID);
+
+	/**
 	 * Gets common event index.
 	 *
 	 * @return common event index in list.

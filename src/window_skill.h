@@ -33,6 +33,8 @@ public:
 	 */
 	Window_Skill(int ix, int iy, int iwidth, int iheight);
 
+
+	void Window_Skill::SetColumn(int c);
 	/**
 	 * Sets the actor whose skills are displayed.
 	 *

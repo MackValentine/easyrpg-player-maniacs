@@ -43,6 +43,7 @@ public:
 	void SetTopRow(int row);
 	int GetPageRowMax() const;
 	int GetPageItemMax();
+	int GetItemMax() const;
 
 	/**
 	 * Returns the Item Rect used for item drawing.
