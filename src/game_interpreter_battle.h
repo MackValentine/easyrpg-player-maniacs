@@ -56,6 +56,18 @@ namespace ManiacsBattle
 	void Set_ATBVar(int i);
 	int Get_ATBVar();
 
+	void Set_StateCE(int i);
+	int Get_StateCE();
+
+	void Set_StateVar(int i);
+	int Get_StateVar();
+
+	void Set_StatsCE(int i);
+	int Get_StatsCE();
+
+	void Set_StatsVar(int i);
+	int Get_StatsVar();
+
 
 }
 
@@ -106,7 +118,6 @@ private:
 	bool CommandManiacControlBattle(lcf::rpg::EventCommand const& com);
 	bool CommandManiacControlAtbGauge(lcf::rpg::EventCommand const& com);
 	bool CommandManiacChangeBattleCommandEx(lcf::rpg::EventCommand const& com);
-	bool CommandManiacGetBattleInfo(lcf::rpg::EventCommand const& com);
 
 private:
 	Span<const lcf::rpg::TroopPage> pages;

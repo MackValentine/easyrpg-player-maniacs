@@ -1139,9 +1139,13 @@ Scene_Battle_Rpg2k3::SceneActionReturn Scene_Battle_Rpg2k3::ProcessSceneActionFi
 		ResetWindows(true);
 		target_window->SetIndex(-1);
 
-		if (lcf::Data::battlecommands.battle_type == lcf::rpg::BattleCommands::BattleType_traditional || ((std::find(battle_options.begin(), battle_options.end(), AutoBattle) == battle_options.end()) && !IsEscapeAllowedFromOptionWindow())) {
+		//if (lcf::Data::battlecommands.battle_type == lcf::rpg::BattleCommands::BattleType_traditional || ((std::find(battle_options.begin(), battle_options.end(), AutoBattle) == battle_options.end()) && !IsEscapeAllowedFromOptionWindow())) {
+		if (lcf::Data::battlecommands.battle_type == lcf::rpg::BattleCommands::BattleType_traditional || battle_options.size() == 1) {// ((std::find(battle_options.begin(), battle_options.end(), Battle) == battle_options.end()) && !IsEscapeAllowedFromOptionWindow())) {
 			if (lcf::Data::battlecommands.battle_type != lcf::rpg::BattleCommands::BattleType_traditional) MoveCommandWindows(-options_window->GetWidth(), 1);
-			SetState(State_SelectActor);
+				if (lcf::Data::battlecommands.battle_type == lcf::rpg::BattleCommands::BattleType_traditional || std::find(battle_options.begin(), battle_options.end(), AutoBattle) == battle_options.end() && !IsEscapeAllowedFromOptionWindow())
+					SetState(State_SelectActor);
+				else
+					SetState(State_AutoBattle);
 			return SceneActionReturn::eContinueThisFrame;
 		}
 
@@ -1200,6 +1204,21 @@ Scene_Battle_Rpg2k3::SceneActionReturn Scene_Battle_Rpg2k3::ProcessSceneActionFi
 					} else {
 						Main_Data::game_system->SePlay(Main_Data::game_system->GetSystemSE(Main_Data::game_system->SFX_Buzzer));
 					}
+					break;
+				case Win: // Auto Battle
+					MoveCommandWindows(-options_window->GetWidth(), 8);
+					SetState(State_Victory);
+					Main_Data::game_system->SePlay(Main_Data::game_system->GetSystemSE(Main_Data::game_system->SFX_Decision));
+
+					for (int i = 0;i< Main_Data::game_enemyparty->GetEnemies().size(); i++) {
+						Main_Data::game_enemyparty->GetEnemy(i)->Kill();
+					}
+
+					break;
+				case Lose: // Auto Battle
+					MoveCommandWindows(-options_window->GetWidth(), 8);
+					SetState(State_Defeat);
+					Main_Data::game_system->SePlay(Main_Data::game_system->GetSystemSE(Main_Data::game_system->SFX_Decision));
 					break;
 			}
 		}
@@ -1992,6 +2011,10 @@ Scene_Battle_Rpg2k3::BattleActionReturn Scene_Battle_Rpg2k3::ProcessBattleAction
 		return BattleActionReturn::eWait;
 	}
 
+	if (action->forceCancel) {
+		return BattleActionReturn::eFinished;
+	}
+
 	if (source->GetType() == Game_Battler::Type_Ally) {
 		auto* sprite = static_cast<Game_Actor*>(source)->GetActorBattleSprite();
 		if (sprite && !sprite->IsIdling()) {
@@ -2173,11 +2196,37 @@ Scene_Battle_Rpg2k3::BattleActionReturn Scene_Battle_Rpg2k3::ProcessBattleAction
 		b->BattleStateHeal();
 		int damageTaken = b->ApplyConditions();
 		if (damageTaken != 0) {
-			DrawFloatText(
-					b->GetBattlePosition().x,
-					b->GetBattlePosition().y,
-					damageTaken < 0 ? Font::ColorDefault : Font::ColorHeal,
-					std::to_string(std::abs(damageTaken)));
+
+			int CE_ID = ManiacsBattle::Get_DamageCE();
+			int Var_ID = ManiacsBattle::Get_DamageVar();
+			if (CE_ID > 0) {
+				Main_Data::game_variables->Set(Var_ID + 4, 0);
+				Main_Data::game_variables->Set(Var_ID + 5, 0);
+				if (b->GetType() == Game_Battler::Type_Enemy) {
+					Main_Data::game_variables->Set(Var_ID, 1);
+					auto* enemy = static_cast<Game_Enemy*>(b);
+					Main_Data::game_variables->Set(Var_ID + 1, enemy->GetTroopMemberId() - 1);
+				}
+				else {
+					Main_Data::game_variables->Set(Var_ID, 0);
+					Main_Data::game_variables->Set(Var_ID + 1, Main_Data::game_party->GetActorPositionInParty(b->GetId()));
+				}
+
+				Main_Data::game_variables->Set(Var_ID + 2, b->GetBattlePosition().x);
+				Main_Data::game_variables->Set(Var_ID + 3, b->GetBattlePosition().y);
+
+				Main_Data::game_variables->Set(Var_ID + 4, damageTaken < 0 ? 0 : 1);
+				Main_Data::game_variables->Set(Var_ID + 5, std::abs(damageTaken));
+
+				auto ce = Game_Battle::StartCommonEventID(CE_ID);
+				ce->UpdateTest(true, CE_ID);
+				Game_Battle::GetInterpreter().Clear();
+			} else
+				DrawFloatText(
+						b->GetBattlePosition().x,
+						b->GetBattlePosition().y,
+						damageTaken < 0 ? Font::ColorDefault : Font::ColorHeal,
+						std::to_string(std::abs(damageTaken)));
 		}
 		if (b->GetType() == Game_Battler::Type_Ally) {
 			auto* sprite = static_cast<Game_Actor*>(b)->GetActorBattleSprite();
@@ -2589,9 +2638,9 @@ Scene_Battle_Rpg2k3::BattleActionReturn Scene_Battle_Rpg2k3::ProcessBattleAction
 
 	int CE_ID = ManiacsBattle::Get_DamageCE();
 	int Var_ID = ManiacsBattle::Get_DamageVar();
-	Main_Data::game_variables->Set(Var_ID + 4, 0);
-	Main_Data::game_variables->Set(Var_ID + 5, 0);
 	if (CE_ID > 0) {
+		Main_Data::game_variables->Set(Var_ID + 4, 0);
+		Main_Data::game_variables->Set(Var_ID + 5, 0);
 		if (target->GetType() == Game_Battler::Type_Enemy) {
 			Main_Data::game_variables->Set(Var_ID, 1);
 			auto* enemy = static_cast<Game_Enemy*>(target);

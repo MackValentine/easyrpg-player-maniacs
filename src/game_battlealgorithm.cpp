@@ -380,7 +380,6 @@ void Game_BattleAlgorithm::AlgorithmBase::Start() {
 	int CE_ID = ManiacsBattle::Get_TargetCE();
 	int Var_ID = ManiacsBattle::Get_TargetVar();
 	if (CE_ID > 0) {
-		
 		Main_Data::game_variables->Set(Var_ID + 1, 123);
 
 		Main_Data::game_variables->Set(Var_ID + 5, 123);
@@ -429,6 +428,7 @@ void Game_BattleAlgorithm::AlgorithmBase::Start() {
 
 		Game_CommonEvent* ce = Game_Battle::StartCommonEventID(CE_ID);
 		ce->UpdateTest(true, CE_ID);
+		Game_Battle::GetInterpreter().Clear();
 
 		int v = ManiacsBattle::Get_TargetVar() + 4;
 		int target_type = Main_Data::game_variables->Get(v);
@@ -447,7 +447,7 @@ void Game_BattleAlgorithm::AlgorithmBase::Start() {
 		else if (target_type == 1) {
 			// All enemies
 			auto* target = GetTarget();
-			AddTargets(&target->GetParty(), false);
+			AddTargets(&target->GetParty(), true);
 		}
 		else if (target_type == 2) {
 			// Single ally
@@ -953,12 +953,13 @@ void Game_BattleAlgorithm::Skill::Init() {
 
 bool Game_BattleAlgorithm::Skill::vStart() {
 	auto* source = GetSource();
-	if (item) {
-		Main_Data::game_party->ConsumeItemUse(item->ID);
-	} else {
-		source->ChangeSp(-source->CalculateSkillCost(skill.ID));
-		source->ChangeHp(-source->CalculateSkillHpCost(skill.ID), false);
-	}
+	if (forceAction == false)
+		if (item) {
+			Main_Data::game_party->ConsumeItemUse(item->ID);
+		} else {
+			source->ChangeSp(-source->CalculateSkillCost(skill.ID));
+			source->ChangeHp(-source->CalculateSkillHpCost(skill.ID), false);
+		}
 
 	int CE_ID = ManiacsBattle::Get_TargetCE();
 	int Var_ID = ManiacsBattle::Get_TargetVar();
@@ -1317,11 +1318,13 @@ bool Game_BattleAlgorithm::Skill::IsReflected(const Game_Battler& target) const 
 
 bool Game_BattleAlgorithm::Skill::ActionIsPossible() const {
 	auto* source = GetSource();
-	if (item) {
-		return Main_Data::game_party->GetItemTotalCount(item->ID) > 0;
-	}
-	if (!source->IsSkillUsable(skill.ID)) {
-		return false;
+	if (forceAction == false) {
+		if (item) {
+			return Main_Data::game_party->GetItemTotalCount(item->ID) > 0;
+		}
+		if (!source->IsSkillUsable(skill.ID)) {
+			return false;
+		}
 	}
 	// RPG_RT performs this check only for enemies and if skill is single target
 	const auto* target = GetOriginalSingleTarget();

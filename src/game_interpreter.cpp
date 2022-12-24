@@ -71,6 +71,8 @@
 #include "cache.h"
 #include "game_interpreter_battle.h"
 #include "game_battlealgorithm.h"
+#include <lcf/reader_util.h>
+
 
 enum BranchSubcommand {
 	eOptionBranchElse = 1
@@ -812,6 +814,8 @@ bool Game_Interpreter::ExecuteCommand() {
 			return CommandManiacSetGameOption(com);
 		case Cmd::Maniac_CallCommand:
 			return CommandManiacCallCommand(com);
+		case Cmd::Maniac_GetBattleInfo:
+			return CommandManiacGetBattleInfo(com);
 		default:
 			return true;
 	}
@@ -2119,13 +2123,78 @@ bool Game_Interpreter::CommandComment(const lcf::rpg::EventCommand &com) {
 		else if (s.rfind("@btl_LastAction", 0) == 0) {
 			btl_LastAction(s);
 		}
+		else if (s.rfind("@btl_forceAction", 0) == 0) {
+			btl_forceAction(s);
+		}
+		else if (s.rfind("@btl_cancel_skill", 0) == 0) {
+			btl_cancel_skill(s);
+		}
 
 		
 	}
 	return true;
 }
 
+void Game_Interpreter::btl_cancel_skill(std::string param) {
+	param.replace(0, 18, "");
+	param.replace(param.end() - 1, param.end(), "");
 
+	std::string s = param;
+	const char delim = ',';
+
+	std::vector<std::string> out;
+	tokenize(s, delim, out);
+
+	int user_type = 0;
+	int user_id = 0;
+
+	int i = 0;
+	for (auto& s : out) {
+		if (i == 0)
+			if (s.rfind("v[", 0) == 0) {
+				s.replace(0, 2, "");
+				s.replace(s.end() - 1, s.end(), "");
+				user_type = Main_Data::game_variables->Get(std::stoi(s));
+			}
+			else {
+				user_type = std::stoi(s);
+			}
+		else if (i == 1)
+			if (s.rfind("v[", 0) == 0) {
+				s.replace(0, 2, "");
+				s.replace(s.end() - 1, s.end(), "");
+				user_id = Main_Data::game_variables->Get(std::stoi(s));
+			}
+			else {
+				user_id = std::stoi(s);
+			}
+		i += 1;
+
+	}
+	Scene_Battle_Rpg2k3* scene = (Scene_Battle_Rpg2k3*)Scene::Find(Scene::Battle).get();
+	if (scene) {
+		Game_Battler* a = Main_Data::game_party.get()->GetActor(user_id);
+		if (user_type == 1)
+			a = Main_Data::game_enemyparty.get()->GetEnemy(user_id);
+
+		auto ac = scene->pending_battle_action;
+		if (ac) {
+
+			ac.get()->forceCancel = true;
+		}
+		/*
+		if (a) {
+
+			BattleAlgorithmRef b = a->GetBattleAlgorithm();
+			if (b) {
+				Output::Debug("Cancel : " + a->GetName().to_string());
+				b.get()->forceCancel = true;
+			}
+		}
+		*/
+	}
+
+}
 void Game_Interpreter::btl_LastAction(std::string param) {
 	param.replace(0, 16, "");
 	param.replace(param.end() - 1, param.end(), "");
@@ -2151,6 +2220,159 @@ void Game_Interpreter::btl_LastAction(std::string param) {
 
 	}
 
+}
+void Game_Interpreter::btl_forceAction(std::string param) {
+	param.replace(0, 17, "");
+	param.replace(param.end() - 1, param.end(), "");
+
+	std::string s = param;
+	const char delim = ',';
+
+	std::vector<std::string> out;
+	tokenize(s, delim, out);
+
+	int user_type = 0;
+	int user_id = 0;
+	int action_type = 0;
+	int action_id = 0;
+	int target_type = 0;
+	int target_id = 0;
+
+	int i = 0;
+	for (auto& s : out) {
+		if (i == 0)
+			if (s.rfind("v[", 0) == 0) {
+				s.replace(0, 2, "");
+				s.replace(s.end() - 1, s.end(), "");
+				user_type = Main_Data::game_variables->Get(std::stoi(s));
+			}
+			else {
+				user_type = std::stoi(s);
+			}
+		else if (i == 1)
+			if (s.rfind("v[", 0) == 0) {
+				s.replace(0, 2, "");
+				s.replace(s.end() - 1, s.end(), "");
+				user_id = Main_Data::game_variables->Get(std::stoi(s));
+			}
+			else {
+				user_id  = std::stoi(s);
+			}
+		else if (i == 2)
+			if (s.rfind("v[", 0) == 0) {
+				s.replace(0, 2, "");
+				s.replace(s.end() - 1, s.end(), "");
+				action_type = Main_Data::game_variables->Get(std::stoi(s));
+			}
+			else {
+				action_type = std::stoi(s);
+			}
+		else if (i == 3)
+			if (s.rfind("v[", 0) == 0) {
+				s.replace(0, 2, "");
+				s.replace(s.end() - 1, s.end(), "");
+				action_id = Main_Data::game_variables->Get(std::stoi(s));
+			}
+			else {
+				action_id = std::stoi(s);
+			}
+		else if (i == 4)
+			if (s.rfind("v[", 0) == 0) {
+				s.replace(0, 2, "");
+				s.replace(s.end() - 1, s.end(), "");
+				target_type = Main_Data::game_variables->Get(std::stoi(s));
+			}
+			else {
+				target_type = std::stoi(s);
+			}
+		else if (i == 5)
+			if (s.rfind("v[", 0) == 0) {
+				s.replace(0, 2, "");
+				s.replace(s.end() - 1, s.end(), "");
+				target_id = Main_Data::game_variables->Get(std::stoi(s));
+			}
+			else {
+				target_id = std::stoi(s);
+			}
+
+		i += 1;
+
+	}
+
+	//Output::Debug("Force params : " + std::to_string(user_type) + "/" + std::to_string(user_id) + "/" + std::to_string(action_type) + "/" + std::to_string(action_id) + "/" + std::to_string(target_type) + "/" + std::to_string(target_id));
+
+	Scene_Battle_Rpg2k3* scene = (Scene_Battle_Rpg2k3*)Scene::Find(Scene::Battle).get();
+	if (scene) {
+		Game_Battler* a = nullptr;
+
+		bool b = false;
+
+		if (user_type == 0)
+			a = Main_Data::game_party->GetActor(user_id);
+		else
+			a = Main_Data::game_enemyparty->GetEnemy(user_id);
+
+
+		const lcf::rpg::Skill* skill = nullptr;
+		const lcf::rpg::Item* item = nullptr;
+		if (action_type == 1) {
+			skill = lcf::ReaderUtil::GetElement(lcf::Data::skills, action_id);
+		}
+		if (action_type == 3)
+			item = lcf::ReaderUtil::GetElement(lcf::Data::items, action_id);// = lcf::ReaderUtil::GetElement(lcf::Data::items, 1);
+
+		if (a && skill) {
+			Game_Party* targetA = Main_Data::game_party.get();
+			Game_EnemyParty* targetE = Main_Data::game_enemyparty.get();
+
+			if (target_type == 0) {
+				Game_Battler* t;
+				if (user_type == 0)
+					t = targetE->GetEnemy(target_id);
+				else
+					t = targetA->GetActor(target_id);
+
+				if (t && !t->IsDead()) {
+					a->SetBattleAlgorithm(std::make_shared<Game_BattleAlgorithm::Skill>(a, t, *skill, item));
+					b = true;
+				}
+
+			}
+			else if (target_type == 1) {
+				if (user_type == 0)
+					a->SetBattleAlgorithm(std::make_shared<Game_BattleAlgorithm::Skill>(a, targetE, *skill, item));
+				else
+					a->SetBattleAlgorithm(std::make_shared<Game_BattleAlgorithm::Skill>(a, targetA, *skill, item));
+				
+				b = true;
+			}
+			else if (target_type == 2) {
+				Game_Battler* t;
+				if (user_type == 0)
+					t = targetA->GetActor(target_id);
+				else
+					t = targetE->GetEnemy(target_id);
+
+				if (t && !t->IsDead()) {
+					a->SetBattleAlgorithm(std::make_shared<Game_BattleAlgorithm::Skill>(a, t, *skill, item));
+					b = true;
+				}
+			}
+			else if (target_type == 3) {
+				if (user_type == 0)
+					a->SetBattleAlgorithm(std::make_shared<Game_BattleAlgorithm::Skill>(a, targetA, *skill, item));
+				else
+					a->SetBattleAlgorithm(std::make_shared<Game_BattleAlgorithm::Skill>(a, targetE, *skill, item));
+
+				b = true;
+			}
+
+			if (b) {
+				a->GetBattleAlgorithm().get()->forceAction = true;
+				scene->ActionSelectedCallback(a);
+			}
+		}
+	}
 }
 
 void Game_Interpreter::btl_AutoSelectActor(std::string param) {
@@ -2592,7 +2814,7 @@ void Game_Interpreter::btl_GetCommandID(std::string param) {
 
 	Scene_Battle* scene = (Scene_Battle*)Scene::Find(Scene::Battle).get();
 	if (scene) {
-		if (v < scene->command_window->GetItemMax() - 1) {
+		if (scene->active_actor->GetBattleCommand(v)) {
 
 			const auto* command = scene->active_actor->GetBattleCommand(v);
 
@@ -2718,8 +2940,10 @@ void Game_Interpreter::show_Number(std::string param) {
 
 			int x = pic.GetShowParams().position_x;
 			int y = pic.GetShowParams().position_y;
-
-			pic.ApplyOrigin(false);
+			if (pic.data.time_left > 0)
+				pic.ApplyOrigin(true);
+			else
+				pic.ApplyOrigin(false);
 
 		}
 
@@ -2753,6 +2977,7 @@ void Game_Interpreter::show_Gauge(std::string param) {
 	int type;
 	int w;
 	int v;
+	std::string sys = Main_Data::game_system->GetSystem2Name().to_string();
 
 	int i = 0;
 	for (auto& s : out) {
@@ -2778,6 +3003,8 @@ void Game_Interpreter::show_Gauge(std::string param) {
 			else {
 				v = std::stoi(s);
 			}
+		else if (i == 4)
+			sys = s;
 
 		i += 1;
 
@@ -2788,7 +3015,7 @@ void Game_Interpreter::show_Gauge(std::string param) {
 
 	Game_Pictures::ShowParams params;
 	auto& pic = Main_Data::game_pictures->GetPicture(id);
-	BitmapRef system2 = Cache::System2(Main_Data::game_system->GetSystem2Name());
+	BitmapRef system2 = Cache::System2(sys);
 
 	if (&pic != NULL && system2 != NULL)
 		if (pic.Exists()) {
@@ -5347,3 +5574,192 @@ bool Game_Interpreter::ManiacCheckContinueLoop(int val, int val2, int type, int 
 			return false;
 	}
 }
+
+bool Game_Interpreter::CommandManiacGetBattleInfo(lcf::rpg::EventCommand const& com) {
+	if (!Player::IsPatchManiac()) {
+		return true;
+	}
+	int user_type = com.parameters[0];
+	int user_id = com.parameters[3];
+	int user_var = com.parameters[2];
+	int type = com.parameters[1];
+	int var_id = com.parameters[4];
+
+	//Output::Debug(std::to_string(user_type) + "/" + std::to_string(user_id) + "/" + std::to_string(user_var) + "/" + std::to_string(type) + "/" + std::to_string(var_id));
+
+	Game_Battler* battler = NULL;
+	Game_Party_Base* party = NULL;
+	int id;
+
+	if (user_type == 0) {
+		if (user_var == 1)
+			id = Main_Data::game_variables.get()->Get(user_id);
+		else if (user_var == 2)
+			id = Main_Data::game_variables.get()->Get(Main_Data::game_variables.get()->Get(user_id));
+		else
+			id = user_id;
+
+		battler = Main_Data::game_actors.get()->GetActor(id);
+	}
+	else if (user_type == 1) {
+		if (user_var == 1)
+			id = Main_Data::game_variables.get()->Get(user_id);
+		else if (user_var == 2)
+			id = Main_Data::game_variables.get()->Get(Main_Data::game_variables.get()->Get(user_id));
+		else
+			id = user_id;
+		battler = Main_Data::game_party.get()->GetActor(id);
+
+	}
+	else if (user_type == 2) {
+
+		party = Main_Data::game_party.get();
+	}
+	else if (user_type == 3) {
+
+		if (user_var == 1)
+			id = Main_Data::game_variables.get()->Get(user_id);
+		else if (user_var == 2)
+			id = Main_Data::game_variables.get()->Get(Main_Data::game_variables.get()->Get(user_id));
+		else
+			id = user_id;
+
+		battler = Main_Data::game_enemyparty.get()->GetEnemy(id);
+
+	}
+	else if (user_type == 4) {
+
+		party = Main_Data::game_enemyparty.get();
+	}
+
+	if (type == 0) {
+		if (user_type == 2 || user_type == 4) {
+			// Party
+			std::vector<Game_Battler*> o;
+			party->GetBattlers(o);
+			Main_Data::game_variables->Set(var_id, o.size());
+			for (int i = 0; i < o.size(); i++) {
+				Main_Data::game_variables->Set(var_id + i + 1, i);
+			}
+		}
+		else if (user_type == 0 || user_type == 1 || user_type == 3) {
+			// Stats
+			for (int i = 0; i < 4; ++i) {
+				Main_Data::game_variables->Set(var_id + i, 0);
+			}
+
+			if (battler) {
+
+				int stat = battler->GetAtk() - battler->GetBaseAtk();
+				Main_Data::game_variables->Set(var_id,stat);
+
+				stat = battler->GetDef() - battler->GetBaseDef();
+				Main_Data::game_variables->Set(var_id + 1, stat);
+
+				stat = battler->GetSpi() - battler->GetBaseSpi();
+				Main_Data::game_variables->Set(var_id + 2, stat);
+
+				stat = battler->GetAgi() - battler->GetBaseAgi();
+				Main_Data::game_variables->Set(var_id + 3, stat);
+
+			}
+		}
+	}
+	else if (type == 1) {
+		if (user_type == 2 || user_type == 4) {
+			// Party alive
+			std::vector<Game_Battler*> o;
+			party->GetBattlers(o);
+
+			for (int i = 0; i < o.size(); i++) {
+				Main_Data::game_variables->Set(var_id + i + 1, 0);
+			}
+
+			o.clear();
+
+			party->GetActiveBattlers(o);
+			Main_Data::game_variables->Set(var_id, o.size());
+			for (int i = 0; i < o.size(); i++) {
+				Main_Data::game_variables->Set(var_id + i + 1, i);
+			}
+		}
+		else if (user_type == 0 || user_type == 1 || user_type == 3) {
+
+			// Status
+
+			int m = lcf::Data::states.size();
+			for (int i = 0; i < m; ++i) {
+				Main_Data::game_variables->Set(var_id + i + 1, 0);
+			}
+			Main_Data::game_variables->Set(var_id, m);
+
+			if (battler) {
+				std::vector<int16_t> states = battler->GetStates();
+
+				for (int i = 0; i < states.size(); ++i) {
+						Main_Data::game_variables->Set(var_id + i + 1, states[i]);
+				}
+			}
+		}
+	}
+	else if (type == 2) {
+		if (user_type == 2 || user_type == 4) {
+			// Party can move
+			std::vector<Game_Battler*> o;
+			party->GetBattlers(o);
+
+			int size = 0;
+			for (int i = 0; i < o.size(); i++) {
+				Main_Data::game_variables->Set(var_id + i + 1, 0);
+				if (o[i]->CanAct()) {
+					Main_Data::game_variables->Set(var_id + size + 1, i);
+					size += 1;
+				}
+			}
+
+			Main_Data::game_variables->Set(var_id, size);
+		}
+		else if (user_type == 0 || user_type == 1 || user_type == 3) {
+
+			// Attributes
+
+			int m = lcf::Data::attributes.size();
+			for (int i = 0; i < m; ++i) {
+				Main_Data::game_variables->Set(var_id + i + 1, 0);
+			}
+			Main_Data::game_variables->Set(var_id, m);
+			if (battler) {
+				for (int i = 0; i < m; ++i) {
+					Main_Data::game_variables->Set(var_id + i + 1, battler->GetAttributeRate(i));
+				}
+			}
+		}
+	}
+	else if (type == 3) {
+		if (user_type == 0 || user_type == 1 || user_type == 3) {
+			// Other
+			int m = 1;
+			for (int i = 0; i < m; ++i) {
+				Main_Data::game_variables->Set(var_id + i + 1, 0);
+			}
+			if (battler) {
+
+				Main_Data::game_variables->Set(var_id, battler->GetBattlePosition().x);
+				Main_Data::game_variables->Set(var_id + 1, battler->GetBattlePosition().y + 8);
+
+				if (battler->CanAct())
+					Main_Data::game_variables->Set(var_id + 2, 1);
+				if (battler->IsDefending())
+					Main_Data::game_variables->Set(var_id + 3, 1);
+				if (battler->IsCharged())
+					Main_Data::game_variables->Set(var_id + 4, 1);
+				if (battler->IsHidden())
+					Main_Data::game_variables->Set(var_id + 5, 1);
+			}
+		}
+	}
+
+	return true;
+}
+
+

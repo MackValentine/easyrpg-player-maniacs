@@ -123,7 +123,9 @@ public:
 	enum BattleOptionType {
 		Battle,
 		AutoBattle,
-		Escape
+		Escape,
+		Win,
+		Lose
 	};
 
 	static void SelectionFlash(Game_Battler* battler);
@@ -136,6 +138,14 @@ public:
 	/** Displays list of enemies */
 	std::unique_ptr<Window_Command> target_window;
 
+	/**
+ * Executed when selection an action (normal, skill, item, ...) and
+ * (if needed) choosing an attack target was finished.
+ *
+ * @param for_battler Battler whose action was selected.
+ */
+	virtual void ActionSelectedCallback(Game_Battler* for_battler);
+
 	Game_Actor* active_actor = nullptr;
 
 	/** Displays Fight, Autobattle, Flee */
@@ -144,6 +154,8 @@ public:
 	State getPreviousState() {
 		return previous_state;
 	}
+
+	void reset_easyrpg_battle_options(std::vector<int16_t> cmds);
 
 protected:
 	explicit Scene_Battle(const BattleArgs& args);
@@ -164,13 +176,7 @@ protected:
 
 	virtual void AssignSkill(const lcf::rpg::Skill* skill, const lcf::rpg::Item* item);
 
-	/**
-	 * Executed when selection an action (normal, skill, item, ...) and
-	 * (if needed) choosing an attack target was finished. 
-	 *
-	 * @param for_battler Battler whose action was selected.
-	 */
-	virtual void ActionSelectedCallback(Game_Battler* for_battler);
+
 
 	void PrepareBattleAction(Game_Battler* battler);
 
