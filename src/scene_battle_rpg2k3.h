@@ -92,6 +92,10 @@ public:
 
 	std::unique_ptr<Sprite> ally_cursor, enemy_cursor;
 
+	void ActionSelectedCallback(Game_Battler* for_battler) override;
+
+	std::shared_ptr<Game_BattleAlgorithm::AlgorithmBase> pending_battle_action = {};
+
 protected:
 	void Start2();
 	void InitAtbGauge(Game_Battler& battler, int preempt_atb, int ambush_atb);
@@ -141,7 +145,7 @@ protected:
 	void EscapeSelected();
 	void RowSelected();
 
-	void ActionSelectedCallback(Game_Battler* for_battler) override;
+	
 
 	void ShowNotification(std::string text);
 	void EndNotification();
@@ -230,7 +234,7 @@ protected:
 	void RecreateSpWindow(Game_Battler* battler);
 
 	FileRequestBinding request_id;
-	std::shared_ptr<Game_BattleAlgorithm::AlgorithmBase> pending_battle_action = {};
+	
 	bool first_strike = false;
 	bool running_away = false;
 	bool resume_from_debug_scene = false;

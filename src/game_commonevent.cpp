@@ -31,7 +31,7 @@ Game_CommonEvent::Game_CommonEvent(int common_event_id) :
 {
 	auto* ce = lcf::ReaderUtil::GetElement(lcf::Data::commonevents, common_event_id);
 
-	if ((ce->trigger == lcf::rpg::EventPage::Trigger_parallel || ce->ID == ManiacsBattle::Get_ATBCE() || ce->ID == ManiacsBattle::Get_TargetCE())
+	if ((ce->trigger == lcf::rpg::EventPage::Trigger_parallel)
 			&& !ce->event_commands.empty())
 	{
 		interpreter.reset(new Game_Interpreter_Map());
@@ -44,7 +44,8 @@ Game_CommonEvent::Game_CommonEvent(int common_event_id) :
 void Game_CommonEvent::ForceCreate(int ce_ID) {
 	auto* ce = lcf::ReaderUtil::GetElement(lcf::Data::commonevents, ce_ID);
 
-	if ((ce->trigger == lcf::rpg::EventPage::Trigger_parallel || ce->ID == ManiacsBattle::Get_ATBCE() || ce->ID == ManiacsBattle::Get_TargetCE() || ce->ID == ManiacsBattle::Get_DamageCE())
+	if ((ce->trigger == lcf::rpg::EventPage::Trigger_parallel || ce->ID == ManiacsBattle::Get_ATBCE() || ce->ID == ManiacsBattle::Get_TargetCE() ||
+		ce->ID == ManiacsBattle::Get_DamageCE() || ce->ID == ManiacsBattle::Get_StateCE() || ce->ID == ManiacsBattle::Get_StatsCE())
 		&& !ce->event_commands.empty())
 	{
 		interpreter.reset(new Game_Interpreter_Map());

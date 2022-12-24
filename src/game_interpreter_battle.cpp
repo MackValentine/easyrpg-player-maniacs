@@ -31,6 +31,8 @@
 #include "spriteset_battle.h"
 #include <cassert>
 
+#include "scene_battle.h"
+
 
 
 namespace ManiacsBattle
@@ -92,6 +94,40 @@ namespace ManiacsBattle
 	}
 	int Get_ATBVar() {
 		return atb_Var;
+	}
+
+	int state_CE;
+	int state_Var;
+
+	void Set_StateCE(int i) {
+		state_CE = i;
+	}
+	int Get_StateCE() {
+		return state_CE;
+	}
+
+	void Set_StateVar(int i) {
+		state_Var = i;
+	}
+	int Get_StateVar() {
+		return state_Var;
+	}
+
+	int stats_CE;
+	int stats_Var;
+
+	void Set_StatsCE(int i) {
+		stats_CE = i;
+	}
+	int Get_StatsCE() {
+		return stats_CE;
+	}
+
+	void Set_StatsVar(int i) {
+		stats_Var = i;
+	}
+	int Get_StatsVar() {
+		return stats_Var;
 	}
 
 }
@@ -611,7 +647,13 @@ bool Game_Interpreter_Battle::CommandManiacControlBattle(lcf::rpg::EventCommand 
 	if (!Player::IsPatchManiac()) {
 		return true;
 	}
-	if (com.parameters[0] == 1) {
+	if (com.parameters[0] == 0) {
+		// Target
+
+		ManiacsBattle::Set_ATBCE(com.parameters[2]);
+		ManiacsBattle::Set_ATBVar(com.parameters[3]);
+	}
+	else if (com.parameters[0] == 1) {
 		// Damage Pop
 
 		ManiacsBattle::Set_DamageCE(com.parameters[2]);
@@ -621,40 +663,177 @@ bool Game_Interpreter_Battle::CommandManiacControlBattle(lcf::rpg::EventCommand 
 
 		ManiacsBattle::Set_TargetCE(com.parameters[2]);
 		ManiacsBattle::Set_TargetVar(com.parameters[3]);
-	} else if (com.parameters[0] == 0) {
-		// Target
+	}
+	else if (com.parameters[0] == 3) {
+		// Set State
 
-		ManiacsBattle::Set_ATBCE(com.parameters[2]);
-		ManiacsBattle::Set_ATBVar(com.parameters[3]);
-	} else
+		ManiacsBattle::Set_StateCE(com.parameters[2]);
+		ManiacsBattle::Set_StateVar(com.parameters[3]);
+	}
+	else if (com.parameters[0] == 4) {
+		// Set Stats
+
+		ManiacsBattle::Set_StatsCE(com.parameters[2]);
+		ManiacsBattle::Set_StatsVar(com.parameters[3]);
+	}
+	else
 		Output::Warning("Maniac Patch: Command ControlBattle not supported {}", com.parameters[0]);
 	return true;
 }
 
-bool Game_Interpreter_Battle::CommandManiacControlAtbGauge(lcf::rpg::EventCommand const&) {
+bool Game_Interpreter_Battle::CommandManiacControlAtbGauge(lcf::rpg::EventCommand const& com) {
 	if (!Player::IsPatchManiac()) {
 		return true;
 	}
 
-	Output::Warning("Maniac Patch: Command ControlAtbGauge not supported");
+	//Output::Warning("Maniac Patch: {}-{}-{}-{}-{}-{}-{}", com.parameters[0], com.parameters[1], com.parameters[2], com.parameters[3], com.parameters[4], com.parameters[5], com.parameters[6]);
+
+	int user_type = com.parameters[0];
+	int user_var = com.parameters[1];
+	int user_id = com.parameters[2];
+
+	int operation = com.parameters[3];
+	int operand = com.parameters[4];
+
+	int incr_type = com.parameters[5];
+	int incr_value = com.parameters[6];
+
+	//Output::Debug(std::to_string(user_type) + "/" + std::to_string(user_id) + "/" + std::to_string(user_var) + "/" + std::to_string(type) + "/" + std::to_string(var_id));
+
+	Game_Battler* battler = NULL;
+	Game_Party_Base* party = NULL;
+	int id;
+	int incr;
+
+	if (user_type == 0) {
+		if (user_var == 1)
+			id = Main_Data::game_variables.get()->Get(user_id);
+		else if (user_var == 2)
+			id = Main_Data::game_variables.get()->Get(Main_Data::game_variables.get()->Get(user_id));
+		else
+			id = user_id;
+
+		battler = Main_Data::game_actors.get()->GetActor(id);
+	}
+	else if (user_type == 1) {
+		if (user_var == 1)
+			id = Main_Data::game_variables.get()->Get(user_id);
+		else if (user_var == 2)
+			id = Main_Data::game_variables.get()->Get(Main_Data::game_variables.get()->Get(user_id));
+		else
+			id = user_id;
+		battler = Main_Data::game_party.get()->GetActor(id);
+
+	}
+	else if (user_type == 2) {
+
+		party = Main_Data::game_party.get();
+	}
+	else if (user_type == 3) {
+
+		if (user_var == 1)
+			id = Main_Data::game_variables.get()->Get(user_id);
+		else if (user_var == 2)
+			id = Main_Data::game_variables.get()->Get(Main_Data::game_variables.get()->Get(user_id));
+		else
+			id = user_id;
+
+		battler = Main_Data::game_enemyparty.get()->GetEnemy(id);
+
+	}
+	else if (user_type == 4) {
+
+		party = Main_Data::game_enemyparty.get();
+	}
+
+	if (incr_type == 1)
+		incr = Main_Data::game_variables.get()->Get(incr_value);
+	else if (incr_type == 2)
+		incr = Main_Data::game_variables.get()->Get(Main_Data::game_variables.get()->Get(incr_value));
+	else
+		incr = incr_value;
+
+	
+
+	if (user_type == 2 || user_type == 4) {
+		std::vector<Game_Battler*> o;
+		party->GetBattlers(o);
+
+		for (int i = 0; i < o.size(); i++) {
+			Game_Battler* b = o[i];
+			int c = incr;
+			if (operand == 1)
+				c = incr * 300000 / 100;
+
+			if (operation == 0)
+				b->SetAtbGauge(c);
+			else if (operation == 1)
+				b->IncrementAtbGauge(c);
+			else if (operation == 2)
+				b->IncrementAtbGauge(-c);
+
+		}
+	}
+	else if (user_type == 0 || user_type == 1 || user_type == 3) {
+
+		if (operand == 1)
+			incr = incr * 300000 / 100;
+
+		if (operation == 0)
+			battler->SetAtbGauge(incr);
+		else if (operation == 1)
+			battler->IncrementAtbGauge(incr);
+		else if (operation == 2)
+			battler->IncrementAtbGauge(-incr);
+	}
+
+
 	return true;
 }
 
-bool Game_Interpreter_Battle::CommandManiacChangeBattleCommandEx(lcf::rpg::EventCommand const&) {
+bool Game_Interpreter_Battle::CommandManiacChangeBattleCommandEx(lcf::rpg::EventCommand const& com) {
 	if (!Player::IsPatchManiac()) {
 		return true;
 	}
+	if (com.parameters[0] == 0)
+		lcf::Data::battlecommands.easyrpg_enable_battle_row_command = true;
+	else
+		lcf::Data::battlecommands.easyrpg_enable_battle_row_command = false;
+	
+	//Output::Debug("CommandEx : {}-{}-{}-{}-{}", com.parameters[0], com.parameters[1], com.parameters[2], com.parameters[3], com.parameters[4], com.parameters[5]);
 
-	Output::Warning("Maniac Patch: Command ChangeBattleCommandEx not supported");
-	return true;
-}
+	int i1 = (com.parameters[1] ) % 2;
+	int i2 = (com.parameters[1] >> 1) % 2;
+	int i3 = (com.parameters[1] >> 2) % 2;
+	int i4 = (com.parameters[1] >> 3) % 2;
+	int i5 = (com.parameters[1] >> 4) % 2;
 
-bool Game_Interpreter_Battle::CommandManiacGetBattleInfo(lcf::rpg::EventCommand const&) {
-	if (!Player::IsPatchManiac()) {
-		return true;
+	std::vector<int16_t> cmds = {};
+
+	if (i1 == 0)
+		cmds.push_back(0);
+
+	if (i2 == 0)
+		cmds.push_back(1);
+
+	if (i3 == 0)
+		cmds.push_back(2);
+
+	if (i4 == 1)
+		cmds.push_back(3);
+
+	if (i5 == 1)
+		cmds.push_back(4);
+
+	Scene_Battle* scene = (Scene_Battle*)Scene::Find(Scene::Battle).get();
+	if (scene)
+	{
+		if (scene->options_window) {
+			scene->reset_easyrpg_battle_options(cmds);
+			
+		}
 	}
 
-	Output::Warning("Maniac Patch: Command GetBattleInfo not supported");
 	return true;
 }
 

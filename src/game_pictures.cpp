@@ -406,8 +406,13 @@ void Game_Pictures::Picture::ApplyOrigin(bool is_move) {
 		y = data.current_y;
 	}
 
-	double width = sprite->GetWidth();
-	double height = sprite->GetHeight();
+	double width = sprite->GetWidth() / data.spritesheet_cols;
+	double height = sprite->GetHeight() / data.spritesheet_rows;
+	if (data.easyrpg_type == lcf::rpg::SavePicture::EasyRpgType_window && !drawFrame) {
+		//height -= 36;
+	}
+
+	Output::Debug("Width {} / Height {}",width, height);
 
 	switch (origin) {
 		case 1:
@@ -422,6 +427,7 @@ void Game_Pictures::Picture::ApplyOrigin(bool is_move) {
 			break;
 		case 3:
 			// Top-Right
+			//if (data.easyrpg_type != lcf::rpg::SavePicture::EasyRpgType_window)
 			x -= (width / 2);
 			y += (height / 2);
 			break;

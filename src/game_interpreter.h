@@ -309,8 +309,12 @@ protected:
 	void btl_TargetAll(std::string param);
 	void btl_EnemyActive(std::string param);
 	void btl_LastAction(std::string param);
+	void btl_forceAction(std::string param);
+	void btl_cancel_skill(std::string param);
 
 	void tokenize(std::string const& str, const char delim, std::vector<std::string>& out);
+
+	bool CommandManiacGetBattleInfo(lcf::rpg::EventCommand const& com);
 
 	FileRequestBinding request_id;
 	enum class Keys {

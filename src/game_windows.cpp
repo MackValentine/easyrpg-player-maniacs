@@ -125,6 +125,7 @@ bool Game_Windows::Create(int id, const WindowParams& params) {
 	if (window.Create(params)) {
 		if (Main_Data::game_pictures->Show(id, params)) {
 			auto& pic = Main_Data::game_pictures->GetPicture(id);
+			pic.drawFrame = params.draw_frame;
 			pic.AttachWindow(*window.window);
 			return true;
 		} else {
@@ -198,7 +199,7 @@ void Game_Windows::Window_User::Refresh() {
 		messages.emplace_back(pm);
 	}
 
-	if (data.width == 0 && data.height == 0) {
+	if (data.width == 0 || data.height == 0) {
 		// Automatic window size
 		int x_max = 0;
 		int y_max = 0;
@@ -274,10 +275,13 @@ void Game_Windows::Window_User::Refresh() {
 
 		// Border size
 		x_max += 16;
-		y_max += 20; // 16 looks better but this matches better with Maniac Patch
+		if (data.flags.border_margin)
+			y_max += 20; // 16 looks better but this matches better with Maniac Patch
 
-		data.width = x_max;
-		data.height = y_max;
+		if (data.width == 0)
+			data.width = x_max;
+		if (data.height == 0)
+			data.height = y_max;
 	}
 
 	window = std::make_unique<Window_Selectable>(0, 0, data.width, data.height);
@@ -305,7 +309,7 @@ void Game_Windows::Window_User::Refresh() {
 
 	if (!data.flags.border_margin) {
 		window->SetBorderX(0);
-		window->SetBorderY(0);
+		window->SetBorderY(-3);
 	}
 
 	for (size_t i = 0; i < data.texts.size(); ++i) {

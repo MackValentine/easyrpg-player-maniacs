@@ -80,6 +80,10 @@ struct AttributeEffect {
 
 class AlgorithmBase {
 public:
+
+	bool forceCancel = false;
+	bool forceAction = false;
+
 	virtual ~AlgorithmBase() {}
 
 	/** @return the source of the battle action. */

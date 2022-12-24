@@ -102,6 +102,8 @@ public:
 		bool needs_update = false;
 		int origin = 0;
 
+		bool drawFrame;
+
 		void Update(bool is_battle);
 
 		bool IsOnMap() const;
