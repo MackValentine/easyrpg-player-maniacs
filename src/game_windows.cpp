@@ -229,7 +229,7 @@ void Game_Windows::Window_User::Refresh() {
 						continue;
 					}
 
-					const auto ch = tret.ch;
+					const char ch = tret.ch;
 
 					if (Utils::IsControlCharacter(ch)) {
 						// control characters not handled
@@ -249,6 +249,20 @@ void Game_Windows::Window_User::Refresh() {
 							{
 								// Color
 								Game_Message::ParseColor(text_index, end, Player::escape_char, true);
+
+								auto* ti = text_index;
+								while (ti != end) {
+									auto ret = Utils::TextNext(ti, end, Player::escape_char);
+									ti = ret.next;
+
+									const char c = ret.ch;
+									x -= Text::GetSize(*font, c, false).width;
+									
+									if (c == ']') {
+										break;
+									}
+								}
+
 							}
 							break;
 						}
