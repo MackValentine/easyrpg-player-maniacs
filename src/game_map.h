@@ -76,6 +76,9 @@ class MapUpdateAsyncContext {
  * Game_Map namespace
  */
 namespace Game_Map {
+
+	int ChangeTile(int layer, int x, int y, int new_id);
+
 	/**
 	 * Initialize Game_Map.
 	 */

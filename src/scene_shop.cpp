@@ -51,6 +51,17 @@ void Scene_Shop::Start() {
 		}
 	}
 
+	shop_window.reset(new Window_Shop(shop_type, 0, 160, Player::Screen_Width, 80));
+	help_window.reset(new Window_Help(0, 0, Player::Screen_Width, 32));
+	gold_window.reset(new Window_Gold(Player::Screen_Width - 136, 128, 136, 32));
+	empty_window.reset(new Window_Base(0, 32, Player::Screen_Width, 128));
+	empty_window2.reset(new Window_Base(0, 32, Player::Screen_Width - 136, 128));
+	buy_window.reset(new Window_ShopBuy(goods, 0, 32, Player::Screen_Width - 136, 128));
+	party_window.reset(new Window_ShopParty(Player::Screen_Width - 136, 32, 136, 48));
+	sell_window.reset(new Window_ShopSell(0, 32, Player::Screen_Width, 128));
+	status_window.reset(new Window_ShopStatus(Player::Screen_Width - 136, 80, 136, 48));
+	number_window.reset(new Window_ShopNumber(0, 32, Player::Screen_Width - 136, 128));
+	/*
 	shop_window.reset(new Window_Shop(shop_type, 0, (Player::Screen_Width /2), Player::Screen_Width, 80));
 	help_window.reset(new Window_Help(0, 0, Player::Screen_Width, 32));
 	gold_window.reset(new Window_Gold(184, 128, 136, 32));
@@ -61,6 +72,7 @@ void Scene_Shop::Start() {
 	sell_window.reset(new Window_ShopSell(0, 32, Player::Screen_Width, 128));
 	status_window.reset(new Window_ShopStatus(184, 80, 136, 48));
 	number_window.reset(new Window_ShopNumber(0, 32, 184, 128));
+	*/
 
 	buy_window->SetActive(false);
 	buy_window->SetVisible(false);

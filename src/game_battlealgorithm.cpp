@@ -446,8 +446,24 @@ void Game_BattleAlgorithm::AlgorithmBase::Start() {
 		}
 		else if (target_type == 1) {
 			// All enemies
+
 			auto* target = GetTarget();
-			AddTargets(&target->GetParty(), true);
+
+			std::vector<Game_Battler*> o;
+			target->GetParty().GetBattlers(o);
+
+			int s = 0;
+			for (int i = 0; i < o.size(); i++) {
+				if (o[i]->CanAct() && !o[i]->IsHidden()) {
+					if (s == 0)
+						AddTarget(o[i], true);
+					else
+						AddTarget(o[i], false);
+					s++;
+				}
+			}
+
+			//AddTargets(&target->GetParty(), true);
 		}
 		else if (target_type == 2) {
 			// Single ally
@@ -459,7 +475,23 @@ void Game_BattleAlgorithm::AlgorithmBase::Start() {
 		}
 		else if (target_type == 3) {
 			// Allies
-			AddTargets(&source->GetParty(), true);
+
+			std::vector<Game_Battler*> o;
+			source->GetParty().GetBattlers(o);
+
+			int s = 0;
+			for (int i = 0; i < o.size(); i++) {
+				if (o[i]->CanAct() && !o[i]->IsHidden()) {
+					if (s == 0)
+						AddTarget(o[i], true);
+					else
+						AddTarget(o[i], false);
+					s++;
+				}
+			}
+
+			//AddTargets(&source->GetParty(), true);
+
 		}
 
 

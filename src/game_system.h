@@ -485,6 +485,8 @@ public:
 
 	/** @return the RpgRt event message active flag */
 	bool GetMessageEventMessageActive();
+
+	std::string orderBackName;
 private:
 	void OnBgmReady(FileRequestResult* result);
 	void OnBgmInelukiReady(FileRequestResult* result);

@@ -1,5 +1,4 @@
 prefix=${pcfiledir}/../..
-
 exec_prefix=${prefix}
 libdir=${prefix}/lib
 includedir=${prefix}/include
@@ -7,6 +6,7 @@ includedir=${prefix}/include
 Name: libsyn123
 Description: A signal synthesis library accompanying mpg123
 Version: 1.29.3
-Libs: -L"${libdir}" -lsyn123  
+
+Libs: "-L${libdir}" -lsyn123
 Requires: 
-Cflags: -I"${includedir}" 
+Cflags: "-I${includedir}" 

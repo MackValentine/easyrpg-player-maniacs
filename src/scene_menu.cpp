@@ -43,6 +43,8 @@ Scene_Menu::Scene_Menu(int menu_index) :
 void Scene_Menu::Start() {
 	CreateCommandWindow();
 
+	//spriteset.reset(new Spriteset_Map());
+
 	// Gold Window
 	gold_window.reset(new Window_Gold(0, (Player::Screen_Height -32), 88, 32));
 

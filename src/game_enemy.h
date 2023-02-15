@@ -275,6 +275,16 @@ public:
 	 */
 	bool HasStrongDefense() const override;
 
+	void scaleLevel(int l);
+
+	int scl_maxHP;
+	int scl_maxSP;
+	int scl_BaseATK;
+	int scl_BaseDEF;
+	int scl_BaseSPI;
+	int scl_BaseAGI;
+	int scl_Level;
+
 protected:
 	const lcf::rpg::Enemy* enemy = nullptr;
 	const lcf::rpg::TroopMember* troop_member = nullptr;
@@ -327,26 +337,38 @@ inline int Game_Enemy::GetTroopMemberId() const {
 }
 
 inline int Game_Enemy::GetBaseMaxHp() const {
+	if (scl_maxHP > 0)
+		return scl_maxHP;
 	return enemy->max_hp;
 }
 
 inline int Game_Enemy::GetBaseMaxSp() const {
+	if (scl_maxSP > 0)
+		return scl_maxSP;
 	return enemy->max_sp;
 }
 
 inline int Game_Enemy::GetBaseAtk(Weapon) const {
+	if (scl_BaseATK > 0)
+		return scl_BaseATK;
 	return enemy->attack;
 }
 
 inline int Game_Enemy::GetBaseDef(Weapon) const {
+	if (scl_BaseATK > 0)
+		return scl_BaseDEF;
 	return enemy->defense;
 }
 
 inline int Game_Enemy::GetBaseSpi(Weapon) const {
+	if (scl_BaseATK > 0)
+		return scl_BaseSPI;
 	return enemy->spirit;
 }
 
 inline int Game_Enemy::GetBaseAgi(Weapon) const {
+	if (scl_BaseATK > 0)
+		return scl_BaseAGI;
 	return enemy->agility;
 }
 

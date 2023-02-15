@@ -3,13 +3,13 @@
   "spdxVersion": "SPDX-2.2",
   "dataLicense": "CC0-1.0",
   "SPDXID": "SPDXRef-DOCUMENT",
-  "documentNamespace": "https://spdx.org/spdxdocs/speexdsp-x64-windows-static-1.2.1-6a9fcd84-957b-40e2-84f7-251847b7a151",
-  "name": "speexdsp:x64-windows-static@1.2.1 e46c8093f01888cd31cbcea4c89c13dbaf9c945cd2fc7282f9babd89d494e063",
+  "documentNamespace": "https://spdx.org/spdxdocs/speexdsp-x64-windows-static-1.2.1-b634f766-365a-44ab-ac31-dee127aba3c7",
+  "name": "speexdsp:x64-windows-static@1.2.1 09bbc4879cdec6951a08c5c2f3e42f19f913e1615a229c2c4e869a84cd7a22a2",
   "creationInfo": {
     "creators": [
-      "Tool: vcpkg-5fdee72bc1fceca198fb1ab7589837206a8b81ba"
+      "Tool: vcpkg-8a88d63f241d391772fbde69af9cab96c3c64c75"
     ],
-    "created": "2022-12-02T02:49:37Z"
+    "created": "2023-02-09T00:27:47Z"
   },
   "relationships": [
     {
@@ -84,7 +84,7 @@
     {
       "name": "speexdsp:x64-windows-static",
       "SPDXID": "SPDXRef-binary",
-      "versionInfo": "e46c8093f01888cd31cbcea4c89c13dbaf9c945cd2fc7282f9babd89d494e063",
+      "versionInfo": "09bbc4879cdec6951a08c5c2f3e42f19f913e1615a229c2c4e869a84cd7a22a2",
       "downloadLocation": "NONE",
       "licenseConcluded": "BSD-3-Clause",
       "licenseDeclared": "NOASSERTION",

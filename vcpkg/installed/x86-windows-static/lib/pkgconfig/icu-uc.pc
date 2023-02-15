@@ -35,5 +35,6 @@ Version: 71.1
 # end of icu.pc.in
 Description: International Components for Unicode: Common and Data libraries
 Name: icu-uc
-Libs: -L"${libdir}" -licuuc -licudt ${baselibs}
-Cflags: -I"${includedir}"
+
+Libs: "-L${libdir}" -licuuc -licudt "${baselibs}"
+Cflags: "-I${includedir}"

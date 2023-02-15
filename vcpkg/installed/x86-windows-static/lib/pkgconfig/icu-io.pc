@@ -35,6 +35,7 @@ Version: 71.1
 # end of icu.pc.in
 Description: International Components for Unicode: Stream and I/O Library
 Name: icu-io
+
 Libs: -licuio
 Requires: icu-i18n
-Cflags: -I"${includedir}"
+Cflags: "-I${includedir}"

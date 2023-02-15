@@ -35,6 +35,7 @@ Version: 71.1
 # end of icu.pc.in
 Description: International Components for Unicode: Internationalization library
 Name: icu-i18n
+
 Libs: -licuin
 Requires: icu-uc
-Cflags: -I"${includedir}"
+Cflags: "-I${includedir}"

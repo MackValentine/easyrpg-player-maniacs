@@ -132,7 +132,26 @@ bool Scene_Save::Save(std::ostream& os, int slot_id, bool prepare_save) {
 	save.targets = Main_Data::game_targets->GetSaveData();
 	save.system = Main_Data::game_system->GetSaveData();
 	save.system.switches = Main_Data::game_switches->GetData();
-	save.system.variables = Main_Data::game_variables->GetData();
+	//save.system.variables = Main_Data::game_variables->GetData();
+	save.system.variables.clear(); 
+
+	int m = 1;
+	for (int i = 0; i < 999999; i++) {
+		int val = Main_Data::game_variables->Get(i + 1);
+		if (val != 0)
+			m = i;
+	}
+
+
+	if (m > save.system.variables.size()) {
+		save.system.variables.resize(m, 0);
+	}
+
+	for (int i = 0; i < m; i++) {
+		int val = Main_Data::game_variables->Get(i + 1);
+		save.system.variables[i] = val;
+	}
+
 	save.inventory = Main_Data::game_party->GetSaveData();
 	save.actors = Main_Data::game_actors->GetSaveData();
 

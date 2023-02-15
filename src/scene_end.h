@@ -22,6 +22,7 @@
 #include "scene.h"
 #include "window_command.h"
 #include "window_help.h"
+#include "spriteset_map.h"
 
 /**
  * Scene End class.
@@ -54,6 +55,8 @@ private:
 	std::unique_ptr<Window_Help> help_window;
 	/** Command window containing the yes and no option. */
 	std::unique_ptr<Window_Command> command_window;
+
+	std::unique_ptr<Spriteset_Map> spriteset;
 };
 
 #endif

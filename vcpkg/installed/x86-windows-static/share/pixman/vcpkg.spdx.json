@@ -3,13 +3,13 @@
   "spdxVersion": "SPDX-2.2",
   "dataLicense": "CC0-1.0",
   "SPDXID": "SPDXRef-DOCUMENT",
-  "documentNamespace": "https://spdx.org/spdxdocs/pixman-x86-windows-static-0.40.0#4-04abd20c-891a-47a0-9617-8ee29a957420",
-  "name": "pixman:x86-windows-static@0.40.0#4 7a4203a21e9e5478e1ccce20737010a1ec7e89d719c1afc128626198a2f952fb",
+  "documentNamespace": "https://spdx.org/spdxdocs/pixman-x86-windows-static-0.42.2#2-959b8728-b1f5-466d-bcd9-21946f9e6835",
+  "name": "pixman:x86-windows-static@0.42.2#2 f119527b652ad4b8b716797369970679a889e8288179550d54dcb67df867274c",
   "creationInfo": {
     "creators": [
-      "Tool: vcpkg-5fdee72bc1fceca198fb1ab7589837206a8b81ba"
+      "Tool: vcpkg-8a88d63f241d391772fbde69af9cab96c3c64c75"
     ],
-    "created": "2022-12-02T02:28:54Z"
+    "created": "2023-02-09T00:11:58Z"
   },
   "relationships": [
     {
@@ -43,11 +43,6 @@
       "relatedSpdxElement": "SPDXRef-file-4"
     },
     {
-      "spdxElementId": "SPDXRef-port",
-      "relationshipType": "CONTAINS",
-      "relatedSpdxElement": "SPDXRef-file-5"
-    },
-    {
       "spdxElementId": "SPDXRef-binary",
       "relationshipType": "GENERATED_FROM",
       "relatedSpdxElement": "SPDXRef-port"
@@ -78,12 +73,7 @@
       "relatedSpdxElement": "SPDXRef-port"
     },
     {
-      "spdxElementId": "SPDXRef-file-5",
-      "relationshipType": "CONTAINED_BY",
-      "relatedSpdxElement": "SPDXRef-port"
-    },
-    {
-      "spdxElementId": "SPDXRef-file-5",
+      "spdxElementId": "SPDXRef-file-4",
       "relationshipType": "DEPENDENCY_MANIFEST_OF",
       "relatedSpdxElement": "SPDXRef-port"
     }
@@ -92,7 +82,7 @@
     {
       "name": "pixman",
       "SPDXID": "SPDXRef-port",
-      "versionInfo": "0.40.0#4",
+      "versionInfo": "0.42.2#2",
       "downloadLocation": "git+https://github.com/Microsoft/vcpkg#ports/pixman",
       "homepage": "https://www.cairographics.org/releases",
       "licenseConcluded": "MIT",
@@ -104,27 +94,12 @@
     {
       "name": "pixman:x86-windows-static",
       "SPDXID": "SPDXRef-binary",
-      "versionInfo": "7a4203a21e9e5478e1ccce20737010a1ec7e89d719c1afc128626198a2f952fb",
+      "versionInfo": "f119527b652ad4b8b716797369970679a889e8288179550d54dcb67df867274c",
       "downloadLocation": "NONE",
       "licenseConcluded": "MIT",
       "licenseDeclared": "NOASSERTION",
       "copyrightText": "NOASSERTION",
       "comment": "This is a binary package built by vcpkg."
-    },
-    {
-      "SPDXID": "SPDXRef-resource-1",
-      "name": "pixman-${PIXMAN_VERSION}.tar.gz",
-      "packageFileName": "pixman-${PIXMAN_VERSION}.tar.gz",
-      "downloadLocation": "https://www.cairographics.org/releases/pixman-${PIXMAN_VERSION}.tar.gz",
-      "licenseConcluded": "NOASSERTION",
-      "licenseDeclared": "NOASSERTION",
-      "copyrightText": "NOASSERTION",
-      "checksums": [
-        {
-          "algorithm": "SHA512",
-          "checksumValue": "063776e132f5d59a6d3f94497da41d6fc1c7dca0d269149c78247f0e0d7f520a25208d908cf5e421d1564889a91da44267b12d61c0bd7934cd54261729a7de5f"
-        }
-      ]
     }
   ],
   "files": [
@@ -170,19 +145,7 @@
       "checksums": [
         {
           "algorithm": "SHA256",
-          "checksumValue": "464600905dcd5ea68b844ec41d1f56af286caf35b9c7a300cea6202f7b5153bc"
-        }
-      ],
-      "licenseConcluded": "NOASSERTION",
-      "copyrightText": "NOASSERTION"
-    },
-    {
-      "fileName": "./remove_test_demos.patch",
-      "SPDXID": "SPDXRef-file-4",
-      "checksums": [
-        {
-          "algorithm": "SHA256",
-          "checksumValue": "bf6e76c908c3164c829f1518bb5890f63e64fd10c060a6b1dabd76abe323204a"
+          "checksumValue": "4d696df1b6fe26c8d72c856c9482674f832c98f1a0ef975fdbbcfb932f8dd88b"
         }
       ],
       "licenseConcluded": "NOASSERTION",
@@ -190,11 +153,11 @@
     },
     {
       "fileName": "./vcpkg.json",
-      "SPDXID": "SPDXRef-file-5",
+      "SPDXID": "SPDXRef-file-4",
       "checksums": [
         {
           "algorithm": "SHA256",
-          "checksumValue": "efbc144aa45cb1f77dc2fc649faaddf0b1c4588f27b10bc51cfa70ab0848559e"
+          "checksumValue": "4a73af0f47856e5d2ae4fb8d0d74cf6ac61e20c6391d64253949d17df5182612"
         }
       ],
       "licenseConcluded": "NOASSERTION",

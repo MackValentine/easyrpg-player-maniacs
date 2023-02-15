@@ -3,13 +3,13 @@
   "spdxVersion": "SPDX-2.2",
   "dataLicense": "CC0-1.0",
   "SPDXID": "SPDXRef-DOCUMENT",
-  "documentNamespace": "https://spdx.org/spdxdocs/wildmidi-x64-windows-static-0.4.4-129ef307-a09b-4d89-b766-0388568e30a9",
-  "name": "wildmidi:x64-windows-static@0.4.4 47302cd4a97fe6822f566681cb8b7a97d0f417817250dad650b39d48188a1a2c",
+  "documentNamespace": "https://spdx.org/spdxdocs/wildmidi-x64-windows-static-0.4.5-ae3dd5a9-7076-44f5-b0be-6d140292cd0a",
+  "name": "wildmidi:x64-windows-static@0.4.5 b3008815d0b298fce878afd52079fdf22dd19d99f1db87ad09d9262b6fd072d0",
   "creationInfo": {
     "creators": [
-      "Tool: vcpkg-5fdee72bc1fceca198fb1ab7589837206a8b81ba"
+      "Tool: vcpkg-8a88d63f241d391772fbde69af9cab96c3c64c75"
     ],
-    "created": "2022-12-02T02:49:46Z"
+    "created": "2023-02-03T02:50:45Z"
   },
   "relationships": [
     {
@@ -52,10 +52,10 @@
     {
       "name": "wildmidi",
       "SPDXID": "SPDXRef-port",
-      "versionInfo": "0.4.4",
+      "versionInfo": "0.4.5",
       "downloadLocation": "git+https://github.com/Microsoft/vcpkg#ports/wildmidi",
       "homepage": "https://github.com/Mindwerks/wildmidi",
-      "licenseConcluded": "NOASSERTION",
+      "licenseConcluded": "LGPL-3.0-only",
       "licenseDeclared": "NOASSERTION",
       "copyrightText": "NOASSERTION",
       "description": "MIDI software synthesizer library.",
@@ -64,9 +64,9 @@
     {
       "name": "wildmidi:x64-windows-static",
       "SPDXID": "SPDXRef-binary",
-      "versionInfo": "47302cd4a97fe6822f566681cb8b7a97d0f417817250dad650b39d48188a1a2c",
+      "versionInfo": "b3008815d0b298fce878afd52079fdf22dd19d99f1db87ad09d9262b6fd072d0",
       "downloadLocation": "NONE",
-      "licenseConcluded": "NOASSERTION",
+      "licenseConcluded": "LGPL-3.0-only",
       "licenseDeclared": "NOASSERTION",
       "copyrightText": "NOASSERTION",
       "comment": "This is a binary package built by vcpkg."
@@ -74,14 +74,14 @@
     {
       "SPDXID": "SPDXRef-resource-1",
       "name": "Mindwerks/wildmidi",
-      "downloadLocation": "git+https://github.com/Mindwerks/wildmidi@wildmidi-0.4.4",
+      "downloadLocation": "git+https://github.com/Mindwerks/wildmidi@wildmidi-0.4.5",
       "licenseConcluded": "NOASSERTION",
       "licenseDeclared": "NOASSERTION",
       "copyrightText": "NOASSERTION",
       "checksums": [
         {
           "algorithm": "SHA512",
-          "checksumValue": "5b74ee83f1d7ce3b45d2f996aaa30ec6e7d7808eab294a3eaf6fcef77443523df1f54bb0fb1b3105edd0d72d75885fda1a2e97c68defb5bbd687bda5077d3454"
+          "checksumValue": "0229914ecc60091b649b790a82ad5e755a2b9dfab7443fb3e3c19f4ae64b82817cafe74d78c27f05c68c3c8fb30092c96da732d27ff82fbd7dd7d577facc23d6"
         }
       ]
     }
@@ -93,7 +93,7 @@
       "checksums": [
         {
           "algorithm": "SHA256",
-          "checksumValue": "a09e16096cde72b1ed477d915ac49a2bd0a550dfde8ffe6ce69a6ba25573ed50"
+          "checksumValue": "e9d608f951dc9af826b96c6706b776ee7872a8df7504b4f5f9fd6fe039dd3653"
         }
       ],
       "licenseConcluded": "NOASSERTION",
@@ -105,7 +105,7 @@
       "checksums": [
         {
           "algorithm": "SHA256",
-          "checksumValue": "cd6a94a5ec42956c512ba256be7447c2b27e9b0ba630f3afbb2a718886ce22b7"
+          "checksumValue": "c594397a5d90b832d876c4ad152c9c86ebb78bb1c2f62877056eb6efc8617d0a"
         }
       ],
       "licenseConcluded": "NOASSERTION",

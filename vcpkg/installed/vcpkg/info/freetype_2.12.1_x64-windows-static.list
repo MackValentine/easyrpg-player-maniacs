@@ -74,6 +74,7 @@ x64-windows-static/share/freetype/freetype-config.cmake
 x64-windows-static/share/freetype/freetype-targets-debug.cmake
 x64-windows-static/share/freetype/freetype-targets-release.cmake
 x64-windows-static/share/freetype/freetype-targets.cmake
+x64-windows-static/share/freetype/usage
 x64-windows-static/share/freetype/vcpkg-cmake-wrapper.cmake
 x64-windows-static/share/freetype/vcpkg.spdx.json
 x64-windows-static/share/freetype/vcpkg_abi_info.txt

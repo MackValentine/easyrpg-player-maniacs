@@ -36,7 +36,8 @@ public:
 	void Start() override;
 	void Terminate();
 	void Update() override;
-
+	
+	std::unique_ptr<Sprite> title;
 private:
 	/** Contains new actor order or 0 if actor wasnt rearranged yet. */
 	std::vector<int> actors;
@@ -52,6 +53,7 @@ private:
 
 	void Redo();
 	void Confirm();
+
 };
 
 #endif

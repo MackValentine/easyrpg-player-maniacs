@@ -3,13 +3,13 @@
   "spdxVersion": "SPDX-2.2",
   "dataLicense": "CC0-1.0",
   "SPDXID": "SPDXRef-DOCUMENT",
-  "documentNamespace": "https://spdx.org/spdxdocs/expat-x86-windows-static-2.5.0#1-670a27d3-08dc-4ddf-b872-68e560aa1093",
-  "name": "expat:x86-windows-static@2.5.0#1 b1cf8ea3e164459826e17d41dce8d32c820880bdcc82790b24c233bb9d5c79da",
+  "documentNamespace": "https://spdx.org/spdxdocs/expat-x86-windows-static-2.5.0#3-a71752f8-00a8-46d3-b3dd-dab5a1411fda",
+  "name": "expat:x86-windows-static@2.5.0#3 03c87169c005487f7bbcad46b3aab1be32f2bc8ee0706cc501d142c43f824fea",
   "creationInfo": {
     "creators": [
-      "Tool: vcpkg-5fdee72bc1fceca198fb1ab7589837206a8b81ba"
+      "Tool: vcpkg-8a88d63f241d391772fbde69af9cab96c3c64c75"
     ],
-    "created": "2022-12-02T02:02:40Z"
+    "created": "2023-02-03T02:02:30Z"
   },
   "relationships": [
     {
@@ -62,7 +62,7 @@
     {
       "name": "expat",
       "SPDXID": "SPDXRef-port",
-      "versionInfo": "2.5.0#1",
+      "versionInfo": "2.5.0#3",
       "downloadLocation": "git+https://github.com/Microsoft/vcpkg#ports/expat",
       "homepage": "https://github.com/libexpat/libexpat",
       "licenseConcluded": "MIT",
@@ -74,7 +74,7 @@
     {
       "name": "expat:x86-windows-static",
       "SPDXID": "SPDXRef-binary",
-      "versionInfo": "b1cf8ea3e164459826e17d41dce8d32c820880bdcc82790b24c233bb9d5c79da",
+      "versionInfo": "03c87169c005487f7bbcad46b3aab1be32f2bc8ee0706cc501d142c43f824fea",
       "downloadLocation": "NONE",
       "licenseConcluded": "MIT",
       "licenseDeclared": "NOASSERTION",
@@ -84,7 +84,7 @@
     {
       "SPDXID": "SPDXRef-resource-1",
       "name": "libexpat/libexpat",
-      "downloadLocation": "git+https://github.com/libexpat/libexpat@R_2_5_0",
+      "downloadLocation": "git+https://github.com/libexpat/libexpat@${REF}",
       "licenseConcluded": "NOASSERTION",
       "licenseDeclared": "NOASSERTION",
       "copyrightText": "NOASSERTION",
@@ -103,7 +103,7 @@
       "checksums": [
         {
           "algorithm": "SHA256",
-          "checksumValue": "b269ba1fa541a68ba22e4db4344eee74bb4163893446949d066a99dc65a25b4c"
+          "checksumValue": "a10681f083277bb99d5d2948683aa5ff159c1ea1d72a8900f6c5b91629385b60"
         }
       ],
       "licenseConcluded": "NOASSERTION",
@@ -127,7 +127,7 @@
       "checksums": [
         {
           "algorithm": "SHA256",
-          "checksumValue": "3df05e374f894e08317f5b7103c85328f1b484df5f2a4933f26058bec8593008"
+          "checksumValue": "81409dc71b2919b230d2329193e33c76960aca1b0b2485efb013dc33061409fd"
         }
       ],
       "licenseConcluded": "NOASSERTION",

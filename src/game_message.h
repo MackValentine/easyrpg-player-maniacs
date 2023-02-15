@@ -157,6 +157,8 @@ namespace Game_Message {
 	 * @return \refer ParseParamResult
 	 */
 	ParseParamResult ParseActor(const char* iter, const char* end, uint32_t escape_char, bool skip_prefix = false, int max_recursion = default_max_recursion);
+
+	ParseParamResult ParseItem(const char* iter, const char* end, uint32_t escape_char, bool skip_prefix = false, int max_recursion = default_max_recursion);
 }
 
 

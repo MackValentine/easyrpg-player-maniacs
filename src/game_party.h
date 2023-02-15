@@ -413,6 +413,9 @@ public:
 	/** Reset turn counter to 0 */
 	void ResetTurns();
 
+	int max_Party = 4;
+	int max_PartyBattle = 4;
+
 private:
 	std::pair<int,bool> GetItemIndex(int item_id) const;
 

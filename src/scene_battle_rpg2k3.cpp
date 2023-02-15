@@ -52,6 +52,34 @@
 
 #include "game_variables.h"
 
+void Scene_Battle_Rpg2k3::forceEscapeEnemy(int id) {
+	auto enemy = Main_Data::game_enemyparty->GetEnemy(id);
+	if (enemy) {
+		enemy->SetHidden(true);
+		enemy->SetDeathTimer();
+	}
+}
+
+void Scene_Battle_Rpg2k3::scaleEnemies(int level) {
+	for (auto& enemy : Main_Data::game_enemyparty->GetEnemies()) {
+		enemy->scaleLevel(level);
+	}
+}
+std::shared_ptr<Game_BattleAlgorithm::AlgorithmBase> Scene_Battle_Rpg2k3::GetBattleActionPending() {
+	return pending_battle_action;
+}
+void Scene_Battle_Rpg2k3::ResetBattleActionPending() {
+	
+}
+int Scene_Battle_Rpg2k3::getLastCommand(int id) {
+	auto actor = Main_Data::game_actors->GetActor(id);
+	if (actor)
+		return actor->GetLastBattleAction();
+		//game_party->GetActors()[id];
+
+	return 0;
+}
+
 Scene_Battle_Rpg2k3::Scene_Battle_Rpg2k3(const BattleArgs& args) :
 	Scene_Battle(args),
 	first_strike(args.first_strike)
@@ -368,6 +396,14 @@ void Scene_Battle_Rpg2k3::CreateActorSprites() {
 	for (auto* actor: Main_Data::game_party->GetActors()) {
 		actor->SetBattleSprite(std::make_unique<Sprite_Actor>(actor));
 		actor->SetWeaponSprite(std::make_unique<Sprite_Weapon>(actor));
+		int party_index = Main_Data::game_party->GetActorPositionInParty(actor->GetId());
+
+		if (party_index >= Main_Data::game_party->max_PartyBattle) {
+			actor->SetHidden(true);
+		}
+		else {
+			actor->SetHidden(false);
+		}
 	}
 }
 
@@ -1901,6 +1937,14 @@ Scene_Battle_Rpg2k3::SceneActionReturn Scene_Battle_Rpg2k3::ProcessSceneActionDe
 			return SceneActionReturn::eContinueThisFrame;
 		}
 		Main_Data::game_system->BgmPlay(Main_Data::game_system->GetSystemBGM(Main_Data::game_system->BGM_GameOver));
+
+		Output::Debug("--- GameOver ---");
+		Game_Battle::StartCommonEvent(2);
+
+		UpdateEvents(); 
+
+
+
 		SetWait(60, 60);
 		SetSceneActionSubState(eMessages);
 		return SceneActionReturn::eContinueThisFrame;
@@ -2246,12 +2290,18 @@ Scene_Battle_Rpg2k3::BattleActionReturn Scene_Battle_Rpg2k3::ProcessBattleAction
 	std::string notification = action->GetStartMessage(0);
 	ShowNotification(notification);
 	if (!notification.empty()) {
-		if (action->GetType() == Game_BattleAlgorithm::Type::Skill) {
+		if (action->GetType() == Game_BattleAlgorithm::Type::Skill && skillShowHelp == true) {
 			SetWait(15, 50);
-		} else {
+		}
+		else if (action->GetType() == Game_BattleAlgorithm::Type::Skill && skillShowHelp == false) {
+
+		}
+		else {
 			SetWait(10, 40);
 		}
 	}
+
+	skillShowHelp = true;
 
 	SetBattleActionState(BattleActionState_Combo);
 	return BattleActionReturn::eContinue;
@@ -2908,7 +2958,12 @@ void Scene_Battle_Rpg2k3::ShowNotification(std::string text) {
 	if (text.empty()) {
 		return;
 	}
-	help_window->SetVisible(true);
+	if (skillShowHelp)
+		help_window->SetVisible(true);
+	else
+		help_window->SetVisible(false);
+	//help_window->SetVisible(true);
+
 	help_window->SetText(std::move(text), Font::ColorDefault, Text::AlignLeft, false);
 }
 

@@ -178,12 +178,19 @@ bool Game_Actor::UseItem(int item_id, const Game_Battler* source) {
 		}
 
 		if (item->type == lcf::rpg::Item::Type_material) {
-			SetBaseMaxHp(GetBaseMaxHp() + item->max_hp_points);
-			SetBaseMaxSp(GetBaseMaxSp() + item->max_sp_points);
-			SetBaseAtk(GetBaseAtk() + item->atk_points2);
-			SetBaseDef(GetBaseDef() + item->def_points2);
-			SetBaseAgi(GetBaseAgi() + item->agi_points2);
-			SetBaseSpi(GetBaseSpi() + item->spi_points2);
+			if (item->max_hp_points == 0 && item->max_sp_points == 0 && item->atk_points2 == 0 && item->def_points2 == 0 && item->agi_points2 == 0 && item->spi_points2 == 0)
+			{
+				SetLevel(GetLevel() + 1);
+			}
+			else
+			{
+				SetBaseMaxHp(GetBaseMaxHp() + item->max_hp_points);
+				SetBaseMaxSp(GetBaseMaxSp() + item->max_sp_points);
+				SetBaseAtk(GetBaseAtk() + item->atk_points2);
+				SetBaseDef(GetBaseDef() + item->def_points2);
+				SetBaseAgi(GetBaseAgi() + item->agi_points2);
+				SetBaseSpi(GetBaseSpi() + item->spi_points2);
+			}
 
 			return true;
 		}

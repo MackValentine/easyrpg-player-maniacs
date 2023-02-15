@@ -3,13 +3,13 @@
   "spdxVersion": "SPDX-2.2",
   "dataLicense": "CC0-1.0",
   "SPDXID": "SPDXRef-DOCUMENT",
-  "documentNamespace": "https://spdx.org/spdxdocs/mpg123-x64-windows-static-1.29.3-aee93ede-6ac4-4c5a-96d7-f0eaedc3e0a8",
-  "name": "mpg123:x64-windows-static@1.29.3 291cc477ba4726388ac9187fe524ca357c72d94b68c5b927186f3bbdecf12978",
+  "documentNamespace": "https://spdx.org/spdxdocs/mpg123-x64-windows-static-1.29.3-5c6a85ff-d16c-40ba-b2c9-4e1052cc5db1",
+  "name": "mpg123:x64-windows-static@1.29.3 c5c82aeab9760b71c9d5f66f797eceb6a60ced087412c9834edc41d80594b2ea",
   "creationInfo": {
     "creators": [
-      "Tool: vcpkg-5fdee72bc1fceca198fb1ab7589837206a8b81ba"
+      "Tool: vcpkg-8a88d63f241d391772fbde69af9cab96c3c64c75"
     ],
-    "created": "2022-12-02T02:46:59Z"
+    "created": "2023-02-03T02:47:53Z"
   },
   "relationships": [
     {
@@ -84,7 +84,7 @@
     {
       "name": "mpg123:x64-windows-static",
       "SPDXID": "SPDXRef-binary",
-      "versionInfo": "291cc477ba4726388ac9187fe524ca357c72d94b68c5b927186f3bbdecf12978",
+      "versionInfo": "c5c82aeab9760b71c9d5f66f797eceb6a60ced087412c9834edc41d80594b2ea",
       "downloadLocation": "NONE",
       "licenseConcluded": "LGPL-2.1-or-later",
       "licenseDeclared": "NOASSERTION",

@@ -3,13 +3,13 @@
   "spdxVersion": "SPDX-2.2",
   "dataLicense": "CC0-1.0",
   "SPDXID": "SPDXRef-DOCUMENT",
-  "documentNamespace": "https://spdx.org/spdxdocs/harfbuzz-x64-windows-static-5.0.1#3-163ae6ef-6f1d-45e7-8f93-99daabb6afdb",
-  "name": "harfbuzz:x64-windows-static@5.0.1#3 c5b6d7ff0284c9c0b7ac2ab70bf91bb23250844a4bb59939bfd8b8c726631d1f",
+  "documentNamespace": "https://spdx.org/spdxdocs/harfbuzz-x64-windows-static-6.0.0-22ae5320-9e49-4dd1-8a8b-314b54b70754",
+  "name": "harfbuzz:x64-windows-static@6.0.0 cbee8bc4320debfe0489de12b691f9621aa6f6081ca41a3c58a687f6016677ba",
   "creationInfo": {
     "creators": [
-      "Tool: vcpkg-5fdee72bc1fceca198fb1ab7589837206a8b81ba"
+      "Tool: vcpkg-8a88d63f241d391772fbde69af9cab96c3c64c75"
     ],
-    "created": "2022-12-02T02:36:43Z"
+    "created": "2023-02-09T00:17:08Z"
   },
   "relationships": [
     {
@@ -33,11 +33,6 @@
       "relatedSpdxElement": "SPDXRef-file-2"
     },
     {
-      "spdxElementId": "SPDXRef-port",
-      "relationshipType": "CONTAINS",
-      "relatedSpdxElement": "SPDXRef-file-3"
-    },
-    {
       "spdxElementId": "SPDXRef-binary",
       "relationshipType": "GENERATED_FROM",
       "relatedSpdxElement": "SPDXRef-port"
@@ -58,12 +53,7 @@
       "relatedSpdxElement": "SPDXRef-port"
     },
     {
-      "spdxElementId": "SPDXRef-file-3",
-      "relationshipType": "CONTAINED_BY",
-      "relatedSpdxElement": "SPDXRef-port"
-    },
-    {
-      "spdxElementId": "SPDXRef-file-3",
+      "spdxElementId": "SPDXRef-file-2",
       "relationshipType": "DEPENDENCY_MANIFEST_OF",
       "relatedSpdxElement": "SPDXRef-port"
     }
@@ -72,7 +62,7 @@
     {
       "name": "harfbuzz",
       "SPDXID": "SPDXRef-port",
-      "versionInfo": "5.0.1#3",
+      "versionInfo": "6.0.0",
       "downloadLocation": "git+https://github.com/Microsoft/vcpkg#ports/harfbuzz",
       "homepage": "https://github.com/harfbuzz/harfbuzz",
       "licenseConcluded": "MIT-Modern-Variant",
@@ -84,7 +74,7 @@
     {
       "name": "harfbuzz:x64-windows-static",
       "SPDXID": "SPDXRef-binary",
-      "versionInfo": "c5b6d7ff0284c9c0b7ac2ab70bf91bb23250844a4bb59939bfd8b8c726631d1f",
+      "versionInfo": "cbee8bc4320debfe0489de12b691f9621aa6f6081ca41a3c58a687f6016677ba",
       "downloadLocation": "NONE",
       "licenseConcluded": "MIT-Modern-Variant",
       "licenseDeclared": "NOASSERTION",
@@ -94,34 +84,22 @@
     {
       "SPDXID": "SPDXRef-resource-1",
       "name": "harfbuzz/harfbuzz",
-      "downloadLocation": "git+https://github.com/harfbuzz/harfbuzz@5.0.1",
+      "downloadLocation": "git+https://github.com/harfbuzz/harfbuzz@${VERSION}",
       "licenseConcluded": "NOASSERTION",
       "licenseDeclared": "NOASSERTION",
       "copyrightText": "NOASSERTION",
       "checksums": [
         {
           "algorithm": "SHA512",
-          "checksumValue": "9d05b97dfce248634b6b3ff69fac5cc344f0c8265bf05595b74b0b060049dba082d358184662b8ea045cd51c3d07e7c4a4804513052094566b777c33ec5af89c"
+          "checksumValue": "7a96b5ffc1c15c919275dad9456575fe12dfa54883fecad5fd42c0e3c64360178425f70d2fbe3c44f39a61361320b4a6ec8af7c4f8378ad788d460a609f3e224"
         }
       ]
     }
   ],
   "files": [
     {
-      "fileName": "./fix-win32-build.patch",
-      "SPDXID": "SPDXRef-file-0",
-      "checksums": [
-        {
-          "algorithm": "SHA256",
-          "checksumValue": "e933471e5da84a2da3f5385247167e6176ee1f6038bd4a921f6b6b93ffa25a2b"
-        }
-      ],
-      "licenseConcluded": "NOASSERTION",
-      "copyrightText": "NOASSERTION"
-    },
-    {
       "fileName": "./harfbuzzConfig.cmake.in",
-      "SPDXID": "SPDXRef-file-1",
+      "SPDXID": "SPDXRef-file-0",
       "checksums": [
         {
           "algorithm": "SHA256",
@@ -133,11 +111,11 @@
     },
     {
       "fileName": "./portfile.cmake",
-      "SPDXID": "SPDXRef-file-2",
+      "SPDXID": "SPDXRef-file-1",
       "checksums": [
         {
           "algorithm": "SHA256",
-          "checksumValue": "aea637b8adffa82921e1eb6b04d8ffb080889e24a3bce92f14e75984048f62a9"
+          "checksumValue": "bbd050e05d7e300afa799765237cfb2abb2c5c0225a45c431da16bbe262c27f7"
         }
       ],
       "licenseConcluded": "NOASSERTION",
@@ -145,11 +123,11 @@
     },
     {
       "fileName": "./vcpkg.json",
-      "SPDXID": "SPDXRef-file-3",
+      "SPDXID": "SPDXRef-file-2",
       "checksums": [
         {
           "algorithm": "SHA256",
-          "checksumValue": "3a665274031b5d56124f391d4292450708048cd3199d69a471876dd3b4b3bdbc"
+          "checksumValue": "32c77141edf6fdfa9a74c803b347a4850e3deee249ecf081593f02ac30e79fe4"
         }
       ],
       "licenseConcluded": "NOASSERTION",

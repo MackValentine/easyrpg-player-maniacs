@@ -25,7 +25,7 @@
 #include "game_player.h"
 #include "game_system.h"
 #include "input.h"
-#include "scene_map.h"
+#include <cache.h>
 
 Scene_Order::Scene_Order() :
 	actor_counter(0) {
@@ -36,6 +36,13 @@ void Scene_Order::Start() {
 	actors.resize(Main_Data::game_party->GetActors().size());
 
 	CreateCommandWindow();
+
+	if (Main_Data::game_system->orderBackName != "") {
+		title.reset(new Sprite());
+		title->SetBitmap(Cache::Frame(Main_Data::game_system->orderBackName, true));
+		title->SetZ(window_left->GetZ() - 1);
+	}
+
 }
 
 void Scene_Order::Update() {

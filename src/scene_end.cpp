@@ -36,6 +36,8 @@ Scene_End::Scene_End() {
 void Scene_End::Start() {
 	CreateCommandWindow();
 	CreateHelpWindow();
+
+	spriteset.reset(new Spriteset_Map());
 }
 
 void Scene_End::Update() {

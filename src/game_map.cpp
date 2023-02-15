@@ -1573,6 +1573,21 @@ void Game_Map::RemoveAllPendingMoves() {
 	}
 }
 
+int Game_Map::ChangeTile(int layer, int x, int y, int new_id) {
+
+	int tile_index = x + y * GetWidth();
+
+	//Output::Debug("{}", map->upper_layer[tile_index]);
+
+	if (layer == 0)
+		map->lower_layer[tile_index] = 5048 - 48 + (new_id)-18;
+	else
+		map->upper_layer[tile_index] = new_id + 10000;
+
+	SetNeedRefresh(true);
+	return 1;
+}
+
 static int DoSubstitute(std::vector<uint8_t>& tiles, int old_id, int new_id) {
 	int num_subst = 0;
 	for (size_t i = 0; i < tiles.size(); ++i) {

@@ -3,13 +3,13 @@
   "spdxVersion": "SPDX-2.2",
   "dataLicense": "CC0-1.0",
   "SPDXID": "SPDXRef-DOCUMENT",
-  "documentNamespace": "https://spdx.org/spdxdocs/fmt-x86-windows-static-9.1.0-b5ff0f55-3aea-437c-917f-c2647288ddcf",
-  "name": "fmt:x86-windows-static@9.1.0 ed6f13ce38495562ebaa82a5672781570301abc22b522fa6f2c708f82dffad01",
+  "documentNamespace": "https://spdx.org/spdxdocs/fmt-x86-windows-static-9.1.0#1-28e40732-0417-4823-9511-9359e8e61348",
+  "name": "fmt:x86-windows-static@9.1.0#1 87b472d93f4936dcbfdb6edd4580b8d218a8eb6b541b3d71eb266fb20b4afc6c",
   "creationInfo": {
     "creators": [
-      "Tool: vcpkg-5fdee72bc1fceca198fb1ab7589837206a8b81ba"
+      "Tool: vcpkg-8a88d63f241d391772fbde69af9cab96c3c64c75"
     ],
-    "created": "2022-12-02T02:04:42Z"
+    "created": "2023-02-03T02:04:44Z"
   },
   "relationships": [
     {
@@ -82,10 +82,10 @@
     {
       "name": "fmt",
       "SPDXID": "SPDXRef-port",
-      "versionInfo": "9.1.0",
+      "versionInfo": "9.1.0#1",
       "downloadLocation": "git+https://github.com/Microsoft/vcpkg#ports/fmt",
       "homepage": "https://github.com/fmtlib/fmt",
-      "licenseConcluded": "NOASSERTION",
+      "licenseConcluded": "MIT",
       "licenseDeclared": "NOASSERTION",
       "copyrightText": "NOASSERTION",
       "description": "Formatting library for C++. It can be used as a safe alternative to printf or as a fast alternative to IOStreams.",
@@ -94,9 +94,9 @@
     {
       "name": "fmt:x86-windows-static",
       "SPDXID": "SPDXRef-binary",
-      "versionInfo": "ed6f13ce38495562ebaa82a5672781570301abc22b522fa6f2c708f82dffad01",
+      "versionInfo": "87b472d93f4936dcbfdb6edd4580b8d218a8eb6b541b3d71eb266fb20b4afc6c",
       "downloadLocation": "NONE",
-      "licenseConcluded": "NOASSERTION",
+      "licenseConcluded": "MIT",
       "licenseDeclared": "NOASSERTION",
       "copyrightText": "NOASSERTION",
       "comment": "This is a binary package built by vcpkg."
@@ -171,7 +171,7 @@
       "checksums": [
         {
           "algorithm": "SHA256",
-          "checksumValue": "dd101f76043162b358c1f0c3cc344d706d07544cc8fed8b08e10aad22a6473cd"
+          "checksumValue": "75a7614ba0824c4f25e3dda2cdfeb4164237d3aad2f21a33310bc0fbdd095ed2"
         }
       ],
       "licenseConcluded": "NOASSERTION",

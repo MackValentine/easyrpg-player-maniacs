@@ -3,13 +3,13 @@
   "spdxVersion": "SPDX-2.2",
   "dataLicense": "CC0-1.0",
   "SPDXID": "SPDXRef-DOCUMENT",
-  "documentNamespace": "https://spdx.org/spdxdocs/opusfile-x86-windows-static-0.12#1-b2828028-73b9-48fd-8d7a-cbf2c8cc73e3",
-  "name": "opusfile:x86-windows-static@0.12#1 d8e835449e9209d90aebc4695e66a87fce0f706c38ae292fa5c8d38af412f4a5",
+  "documentNamespace": "https://spdx.org/spdxdocs/opusfile-x86-windows-static-0.12#1-d6894741-2182-41d1-98c3-1713e6551925",
+  "name": "opusfile:x86-windows-static@0.12#1 c6c2ce757e58837f104f9d17a1d11ec5f50b8014a1e5489a6bdbe7628738744a",
   "creationInfo": {
     "creators": [
-      "Tool: vcpkg-5fdee72bc1fceca198fb1ab7589837206a8b81ba"
+      "Tool: vcpkg-8a88d63f241d391772fbde69af9cab96c3c64c75"
     ],
-    "created": "2022-12-02T02:28:17Z"
+    "created": "2023-02-03T02:29:07Z"
   },
   "relationships": [
     {
@@ -74,7 +74,7 @@
     {
       "name": "opusfile:x86-windows-static",
       "SPDXID": "SPDXRef-binary",
-      "versionInfo": "d8e835449e9209d90aebc4695e66a87fce0f706c38ae292fa5c8d38af412f4a5",
+      "versionInfo": "c6c2ce757e58837f104f9d17a1d11ec5f50b8014a1e5489a6bdbe7628738744a",
       "downloadLocation": "NONE",
       "licenseConcluded": "NOASSERTION",
       "licenseDeclared": "NOASSERTION",

@@ -3,13 +3,13 @@
   "spdxVersion": "SPDX-2.2",
   "dataLicense": "CC0-1.0",
   "SPDXID": "SPDXRef-DOCUMENT",
-  "documentNamespace": "https://spdx.org/spdxdocs/libxmp-lite-x64-windows-static-4.4.1#8-64f1616e-6696-4f05-b9db-eabd8a88ef22",
-  "name": "libxmp-lite:x64-windows-static@4.4.1#8 cc1d9acabda4a563796531e732c4c6cfa6adf421c8099c957b0617fa03794719",
+  "documentNamespace": "https://spdx.org/spdxdocs/libxmp-lite-x64-windows-static-4.4.1#8-fc52255a-52d0-4428-93e9-e05bc00969a3",
+  "name": "libxmp-lite:x64-windows-static@4.4.1#8 a6ad016a280bbdff587665a95337047b1da56a32d6c2f996d20fe5eb8b78e21f",
   "creationInfo": {
     "creators": [
-      "Tool: vcpkg-5fdee72bc1fceca198fb1ab7589837206a8b81ba"
+      "Tool: vcpkg-8a88d63f241d391772fbde69af9cab96c3c64c75"
     ],
-    "created": "2022-12-02T02:46:15Z"
+    "created": "2023-02-03T02:47:10Z"
   },
   "relationships": [
     {
@@ -94,7 +94,7 @@
     {
       "name": "libxmp-lite:x64-windows-static",
       "SPDXID": "SPDXRef-binary",
-      "versionInfo": "cc1d9acabda4a563796531e732c4c6cfa6adf421c8099c957b0617fa03794719",
+      "versionInfo": "a6ad016a280bbdff587665a95337047b1da56a32d6c2f996d20fe5eb8b78e21f",
       "downloadLocation": "NONE",
       "licenseConcluded": "NOASSERTION",
       "licenseDeclared": "NOASSERTION",

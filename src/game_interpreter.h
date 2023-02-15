@@ -31,6 +31,7 @@
 #include <lcf/rpg/saveeventexecstate.h>
 #include <lcf/flag_set.h>
 #include "async_op.h"
+#include <window_command.h>
 
 class Game_Event;
 class Game_CommonEvent;
@@ -311,6 +312,26 @@ protected:
 	void btl_LastAction(std::string param);
 	void btl_forceAction(std::string param);
 	void btl_cancel_skill(std::string param);
+	void getUpperID(std::string param);
+	void btl_waitATB(std::string param);
+	void btl_scaleEnemies(std::string param);
+	void btl_getLastCommand(std::string param);
+	void btl_forceEscapeEnemy(std::string param);
+	void btl_ChangeActorClass(std::string param);
+	void set_Seed(std::string param);
+	void set_MaxParty(std::string param);
+	void set_MaxPartyBattle(std::string param);
+	void ReplaceNameActorByClass(std::string param);
+	void OpenFormationMenu();
+	void btl_ChangeCommandWindow(std::string param);
+	void SetOrderBack(std::string param);
+	void setWindowSkill(std::string param);
+	void SkillWindowUpdate(std::string param);
+	void SkillWindowItem(std::string param);
+	void getSkillNbr(std::string param);
+	void btl_actionFinish(std::string param);
+	void getActorClassID(std::string param);
+	void btl_getLastCommandID(std::string param);
 
 	void tokenize(std::string const& str, const char delim, std::vector<std::string>& out);
 

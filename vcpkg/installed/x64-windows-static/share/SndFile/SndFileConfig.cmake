@@ -1,6 +1,6 @@
-set(SndFile_VERSION 1.1.0)
+set(SndFile_VERSION 1.2.0)
 set(SndFile_VERSION_MAJOR 1)
-set(SndFile_VERSION_MINOR 1)
+set(SndFile_VERSION_MINOR 2)
 set(SndFile_VERSION_PATCH 0)
 
 set (SndFile_WITH_EXTERNAL_LIBS 0)

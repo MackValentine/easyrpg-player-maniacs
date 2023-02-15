@@ -7,8 +7,9 @@ includedir=${exec_prefix}/include
 
 Name: WildMIDI
 Description: software synthesizer library
-Version: 0.4.4
+Version: 0.4.5
 URL: https://www.mindwerks.net/projects/wildmidi/
 
-Libs: -L"${libdir}" -lWildMidi -lm 
-Cflags: -I"${includedir}"
+
+Libs: "-L${libdir}" -lWildMidi -lm
+Cflags: "-I${includedir}"

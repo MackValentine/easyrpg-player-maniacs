@@ -295,15 +295,31 @@ static bool IsSkillEffectiveOnAnyTarget(Game_Enemy& source, int skill_id, bool e
 
 void SelectEnemyAiActionRpgRtCompat(Game_Enemy& source, bool emulate_bugs) {
 	const auto& actions = source.GetDbEnemy().actions;
+	auto dbClass = lcf::ReaderUtil::GetElement(lcf::Data::classes, source.GetId());
+	bool lvl_okay = true;
+
 	std::vector<int> prios(actions.size(), 0);
 	int max_prio = 0;
 	for (int i = 0; i < static_cast<int>(actions.size()); ++i) {
 		const auto& action = actions[i];
 		if (IsActionValid(source, action)) {
-			prios[i] = action.rating;
-			max_prio = std::max<int>(max_prio, action.rating);
-			DebugLog("ENEMYAI: Enemy {}({}) Allow Action id={} kind={} basic={} rating={}", source.GetName(), source.GetTroopMemberId(), action.ID, action.kind, action.basic, action.rating);
-		} else {
+			lvl_okay = true;
+			if (source.scl_Level > 0 && action.kind == 1)
+				for (auto action_class : dbClass->skills) {
+					if (action.skill_id == action_class.skill_id) {
+						if (action_class.level > source.scl_Level) {
+							lvl_okay = false;
+						}
+					}
+				}
+
+			if (lvl_okay) {
+				prios[i] = action.rating;
+				max_prio = std::max<int>(max_prio, action.rating);
+				DebugLog("ENEMYAI: Enemy {}({}) Allow Action id={} kind={} basic={} rating={}", source.GetName(), source.GetTroopMemberId(), action.ID, action.kind, action.basic, action.rating);
+			}
+		}
+		else {
 			DebugLog("ENEMYAI: Enemy {}({}) Discard Action id={} kind={} basic={} rating={}", source.GetName(), source.GetTroopMemberId(), action.ID, action.kind, action.basic, action.rating);
 		}
 	}

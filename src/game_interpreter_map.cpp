@@ -468,6 +468,9 @@ bool Game_Interpreter_Map::CommandEnterHeroName(lcf::rpg::EventCommand const& co
 	auto actor_id = com.parameters[0];
 	auto charset = com.parameters[1];
 	auto use_default_name = com.parameters[2];
+	if (com.parameters[3] == 1) {
+		actor_id = Main_Data::game_variables->Get(com.parameters[0]);
+	}
 
 	auto scene = std::make_shared<Scene_Name>(actor_id, charset, use_default_name);
 	Scene::instance->SetRequestedScene(std::move(scene));

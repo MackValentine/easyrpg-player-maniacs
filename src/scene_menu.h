@@ -23,6 +23,7 @@
 #include "window_command.h"
 #include "window_gold.h"
 #include "window_menustatus.h"
+#include "spriteset_map.h"
 
 /**
  * Scene Menu class.
@@ -69,6 +70,8 @@ public:
 		// EasyRPG extra
 		Debug = 100
 	};
+
+	//std::unique_ptr<Spriteset_Map> spriteset;
 
 private:
 	/** Selected index on startup. */

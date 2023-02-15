@@ -24,6 +24,8 @@
 #include "async_handler.h"
 #include <lcf/rpg/savepicture.h>
 #include "sprite_picture.h"
+#include <window_selectable.h>
+#include <window_skill.h>
 
 class Sprite_Picture;
 class Scene;
@@ -128,6 +130,15 @@ public:
 		void OnMapScrolled(int dx, int dy);
 
 		void AttachWindow(const Window_Base& window);
+
+
+		void AttachWindowSkill(Window_Skill* window);
+		void AttachWindowHelp(Window_Help* window);
+		Window_Selectable* getWindow();
+		Window_Selectable* windowPic = nullptr;
+		
+		Window_Help* getWindowHelp();
+		Window_Help* windowHelp = nullptr;
 	};
 
 	Picture& GetPicture(int id);

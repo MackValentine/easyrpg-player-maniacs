@@ -124,6 +124,9 @@ bool Window_Skill::CheckInclude(int skill_id) {
 }
 
 bool Window_Skill::CheckEnable(int skill_id) {
+	if (force_Color)
+		return true;
+
 	const Game_Actor* actor = Main_Data::game_actors->GetActor(actor_id);
 
 	return actor->IsSkillLearned(skill_id) && actor->IsSkillUsable(skill_id);

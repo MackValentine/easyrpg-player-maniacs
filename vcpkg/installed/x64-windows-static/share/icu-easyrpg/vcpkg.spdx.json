@@ -3,13 +3,13 @@
   "spdxVersion": "SPDX-2.2",
   "dataLicense": "CC0-1.0",
   "SPDXID": "SPDXRef-DOCUMENT",
-  "documentNamespace": "https://spdx.org/spdxdocs/icu-easyrpg-x64-windows-static-71.1-78a44e62-ceb6-4fae-9e9f-163f424e730e",
-  "name": "icu-easyrpg:x64-windows-static@71.1 602cad6a468b66245b3865254996e2ab2c1a3bd66eea6067b4934f62eb827219",
+  "documentNamespace": "https://spdx.org/spdxdocs/icu-easyrpg-x64-windows-static-71.1-f8aceb1e-ec3a-413e-9c69-39e50fe2c504",
+  "name": "icu-easyrpg:x64-windows-static@71.1 e29d442a8aa6f5c6d54750971dc223e66e7246085c8928ce4832f03a5ff9866e",
   "creationInfo": {
     "creators": [
-      "Tool: vcpkg-5fdee72bc1fceca198fb1ab7589837206a8b81ba"
+      "Tool: vcpkg-8a88d63f241d391772fbde69af9cab96c3c64c75"
     ],
-    "created": "2022-12-02T02:44:18Z"
+    "created": "2023-02-09T00:25:07Z"
   },
   "relationships": [
     {
@@ -154,7 +154,7 @@
     {
       "name": "icu-easyrpg:x64-windows-static",
       "SPDXID": "SPDXRef-binary",
-      "versionInfo": "602cad6a468b66245b3865254996e2ab2c1a3bd66eea6067b4934f62eb827219",
+      "versionInfo": "e29d442a8aa6f5c6d54750971dc223e66e7246085c8928ce4832f03a5ff9866e",
       "downloadLocation": "NONE",
       "licenseConcluded": "ICU",
       "licenseDeclared": "NOASSERTION",

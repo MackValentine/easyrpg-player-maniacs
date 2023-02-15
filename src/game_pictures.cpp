@@ -29,6 +29,9 @@
 #include "scene.h"
 #include "drawable_mgr.h"
 #include "sprite_picture.h"
+#include <window_skill.h>
+#include <window_selectable.h>
+#include <window_help.h>
 
 static bool IsEmpty(const lcf::rpg::SavePicture& data, int frames) {
 	lcf::rpg::SavePicture empty;
@@ -315,6 +318,7 @@ void Game_Pictures::Move(int id, const MoveParams& params) {
 }
 
 void Game_Pictures::Picture::Erase() {
+
 	request_id = {};
 	data.name.clear();
 	if (sprite) {
@@ -322,6 +326,14 @@ void Game_Pictures::Picture::Erase() {
 	}
 	if (data.easyrpg_type == lcf::rpg::SavePicture::EasyRpgType_window) {
 		data.easyrpg_type = lcf::rpg::SavePicture::EasyRpgType_default;
+
+		if (windowPic) {
+			windowPic->SetVisible(false);
+			windowPic->GetHelpWindow()->SetVisible(false);
+			windowPic = nullptr;
+			windowHelp = nullptr;
+		}
+
 		Main_Data::game_windows->Erase(data.ID);
 	}
 }
@@ -503,6 +515,44 @@ void Game_Pictures::Picture::AttachWindow(const Window_Base& window) {
 
 	ApplyOrigin(false);
 }
+
+Window_Selectable* Game_Pictures::Picture::getWindow() {
+	return windowPic;
+}
+Window_Help* Game_Pictures::Picture::getWindowHelp() {
+	return windowHelp;
+}
+
+void Game_Pictures::Picture::AttachWindowSkill(Window_Skill* window) {
+	data.easyrpg_type = lcf::rpg::SavePicture::EasyRpgType_window;
+
+	CreateSprite();
+
+	sprite->SetBitmap(std::make_shared<Bitmap>(window->GetWidth(), window->GetHeight(), data.use_transparent_color));
+	sprite->OnPictureShow();
+	sprite->SetVisible(true);
+
+	windowPic = (Window_Selectable*) window;
+
+	ApplyOrigin(false);
+}
+void Game_Pictures::Picture::AttachWindowHelp(Window_Help* window) {
+	data.easyrpg_type = lcf::rpg::SavePicture::EasyRpgType_window;
+
+	//if (windowHelp != NULL)
+		//	windowHelp->SetCloseAnimation(0);
+
+	CreateSprite();
+
+	sprite->SetBitmap(std::make_shared<Bitmap>(window->GetWidth(), window->GetHeight(), data.use_transparent_color));
+	sprite->OnPictureShow();
+	sprite->SetVisible(true);
+
+	windowHelp = window;
+
+	ApplyOrigin(false);
+}
+
 
 void Game_Pictures::Picture::Update(bool is_battle) {
 	if ((is_battle && !IsOnBattle()) || (!is_battle && !IsOnMap())) {

@@ -465,13 +465,17 @@ void Game_Party::AddActor(int actor_id) {
 
 	if (IsActorInParty(actor_id))
 		return;
-	if (data.party.size() >= 4)
+	if (data.party.size() >= max_Party)
 		return;
+
+	if (data.party.size() >= max_PartyBattle) {
+		actor->SetHidden(true);
+	}
 	data.party.push_back((int16_t)actor_id);
 	Main_Data::game_player->ResetGraphic();
 
 	auto scene = Scene::Find(Scene::Battle);
-	if (scene) {
+	if (scene && data.party.size() <= max_PartyBattle) {
 		scene->OnPartyChanged(actor, true);
 	}
 }

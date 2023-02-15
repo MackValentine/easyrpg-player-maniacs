@@ -96,6 +96,16 @@ public:
 
 	std::shared_ptr<Game_BattleAlgorithm::AlgorithmBase> pending_battle_action = {};
 
+	void scaleEnemies(int l);
+	std::shared_ptr<Game_BattleAlgorithm::AlgorithmBase> GetBattleActionPending();
+	void ResetBattleActionPending();
+	void forceEscapeEnemy(int i);
+	int getLastCommand(int id);
+
+	bool skillShowHelp;
+
+	BattleActionReturn ProcessBattleActionApply(Game_BattleAlgorithm::AlgorithmBase* action);
+
 protected:
 	void Start2();
 	void InitAtbGauge(Game_Battler& battler, int preempt_atb, int ambush_atb);
@@ -209,7 +219,7 @@ protected:
 	BattleActionReturn ProcessBattleActionFinishPose(Game_BattleAlgorithm::AlgorithmBase* action);
 	BattleActionReturn ProcessBattleActionExecute(Game_BattleAlgorithm::AlgorithmBase* action);
 	BattleActionReturn ProcessBattleActionSwitchEvents(Game_BattleAlgorithm::AlgorithmBase* action);
-	BattleActionReturn ProcessBattleActionApply(Game_BattleAlgorithm::AlgorithmBase* action);
+
 	BattleActionReturn ProcessBattleActionPostAction(Game_BattleAlgorithm::AlgorithmBase* action);
 	BattleActionReturn ProcessBattleActionPostEvents(Game_BattleAlgorithm::AlgorithmBase* action);
 	BattleActionReturn ProcessBattleActionFinished(Game_BattleAlgorithm::AlgorithmBase* action);

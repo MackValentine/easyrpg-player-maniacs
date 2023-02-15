@@ -24,6 +24,7 @@
 #include "game_windows.h"
 #include "player.h"
 #include "bitmap.h"
+#include <output.h>
 
 Sprite_Picture::Sprite_Picture(int pic_id, Drawable::Flags flags)
 	: Sprite(flags),

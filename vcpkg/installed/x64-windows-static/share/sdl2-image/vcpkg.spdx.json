@@ -3,13 +3,13 @@
   "spdxVersion": "SPDX-2.2",
   "dataLicense": "CC0-1.0",
   "SPDXID": "SPDXRef-DOCUMENT",
-  "documentNamespace": "https://spdx.org/spdxdocs/sdl2-image-x64-windows-static-2.6.2-496ed045-a804-4467-be0c-842c66928ffa",
-  "name": "sdl2-image:x64-windows-static@2.6.2 7b4228e070ac5d9062c3a567ee1b1831b0ff876748c737797dc752116a7a18f9",
+  "documentNamespace": "https://spdx.org/spdxdocs/sdl2-image-x64-windows-static-2.6.2#1-4e2cc095-e8d8-4651-91a5-c7f5c8a09130",
+  "name": "sdl2-image:x64-windows-static@2.6.2#1 94cc1201bfa30247313f617a6aa7d376524f4c1bbedc184632ab70794b1b7adf",
   "creationInfo": {
     "creators": [
-      "Tool: vcpkg-5fdee72bc1fceca198fb1ab7589837206a8b81ba"
+      "Tool: vcpkg-8a88d63f241d391772fbde69af9cab96c3c64c75"
     ],
-    "created": "2022-12-03T10:00:20Z"
+    "created": "2023-02-09T00:27:41Z"
   },
   "relationships": [
     {
@@ -72,7 +72,7 @@
     {
       "name": "sdl2-image",
       "SPDXID": "SPDXRef-port",
-      "versionInfo": "2.6.2",
+      "versionInfo": "2.6.2#1",
       "downloadLocation": "git+https://github.com/Microsoft/vcpkg#ports/sdl2-image",
       "homepage": "https://github.com/libsdl-org/SDL_image",
       "licenseConcluded": "Zlib",
@@ -84,7 +84,7 @@
     {
       "name": "sdl2-image:x64-windows-static",
       "SPDXID": "SPDXRef-binary",
-      "versionInfo": "7b4228e070ac5d9062c3a567ee1b1831b0ff876748c737797dc752116a7a18f9",
+      "versionInfo": "94cc1201bfa30247313f617a6aa7d376524f4c1bbedc184632ab70794b1b7adf",
       "downloadLocation": "NONE",
       "licenseConcluded": "Zlib",
       "licenseDeclared": "NOASSERTION",
@@ -125,7 +125,7 @@
       "checksums": [
         {
           "algorithm": "SHA256",
-          "checksumValue": "6186c442546154751dce4290abd8fb3ac30c2389d26aa569388677c901818f03"
+          "checksumValue": "3ceaf8a73888e50d44e7f74f4cbe9ffb5f77a93d64e68fe2f528550cd2e0b425"
         }
       ],
       "licenseConcluded": "NOASSERTION",
@@ -149,7 +149,7 @@
       "checksums": [
         {
           "algorithm": "SHA256",
-          "checksumValue": "3ee79f2bd1d42d3c590b23fd6d85100939cc7227a98076090c035981d2c07a98"
+          "checksumValue": "1f7948ac8fafb7814b7c8f0d49e926c11523258d51407c0762aa68f3c3de107c"
         }
       ],
       "licenseConcluded": "NOASSERTION",

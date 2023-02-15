@@ -34,7 +34,7 @@ public:
 	Window_Skill(int ix, int iy, int iwidth, int iheight);
 
 
-	void Window_Skill::SetColumn(int c);
+	void SetColumn(int c);
 	/**
 	 * Sets the actor whose skills are displayed.
 	 *
@@ -86,6 +86,8 @@ public:
 	 * @param subset Subset to filter for (0 for no subset)
 	 */
 	void SetSubsetFilter(int subset);
+
+	bool force_Color = false;
 
 protected:
 	std::vector<int> data;

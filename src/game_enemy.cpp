@@ -196,3 +196,42 @@ void Game_Enemy::ResetBattle() {
 	death_timer = 0;
 	explode_timer = 0;
 }
+
+void Game_Enemy::scaleLevel(int lvl) {
+
+	scl_Level = lvl;
+
+	scl_maxHP = 0;
+	scl_maxSP = 0;
+	scl_BaseATK = 0;
+	scl_BaseDEF = 0;
+	scl_BaseSPI = 0;
+	scl_BaseAGI = 0;
+
+	auto dbClass = lcf::ReaderUtil::GetElement(lcf::Data::classes, GetId());
+
+	scl_maxHP = dbClass->parameters.maxhp[lvl] * 0.8;
+	scl_maxSP = dbClass->parameters.maxsp[lvl] * 0.8;
+	scl_BaseATK = dbClass->parameters.attack[lvl] * 0.8;
+	scl_BaseDEF = dbClass->parameters.defense[lvl] * 0.8;
+	scl_BaseSPI = dbClass->parameters.spirit[lvl] * 0.8;
+	scl_BaseAGI = dbClass->parameters.agility[lvl] * 0.8;
+
+	hp = GetMaxHp();
+	sp = GetMaxSp();
+	/*
+	for (auto action : GetDbEnemy().actions) {
+		if (action.kind == action.Kind_skill) {
+			for (auto action_class : dbClass->skills) {
+				if (action.skill_id == action_class.skill_id) {
+					if (action_class.level > scl_Level) {
+						Output::Debug("Skill {} removed", action.skill_id);
+						action.skill_id = 1;
+						action.rating = 0;
+					}
+				}
+			}
+		}
+	}
+	*/
+}

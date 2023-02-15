@@ -32,9 +32,10 @@ ICUDATA_NAME = icudt71l
 ICUDESC=International Components for Unicode
 
 Version: 71.1
-Cflags: -I"${includedir}"
+Cflags: "-I${includedir}"
 # end of icu.pc.in
 Description: International Components for Unicode: Common and Data libraries
 Name: icu-uc
-Libs: -L"${libdir}" -licuuc -licudt
+Libs: "-L${libdir}" -licuuc -licudt
 Libs.private: ${baselibs}
+

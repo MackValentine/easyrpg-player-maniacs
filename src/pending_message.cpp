@@ -10,6 +10,7 @@
 #include <cassert>
 #include <cctype>
 #include <algorithm>
+#include <lcf/reader_util.h>
 
 static void RemoveControlChars(std::string& s) {
 	// RPG_RT ignores any control characters within messages.
@@ -123,6 +124,20 @@ std::string PendingMessage::ApplyTextInsertingCommands(std::string input, uint32
 
 			int variable_value = Main_Data::game_variables->Get(value);
 			output.append(std::to_string(variable_value));
+
+			start_copy = iter;
+		} else if (ch == 'I' || ch == 'i') {
+			auto parse_ret = Game_Message::ParseItem(iter, end, escape_char, true);
+			iter = parse_ret.next;
+			int value = parse_ret.value;
+
+			auto* item = lcf::ReaderUtil::GetElement(lcf::Data::items, value);
+			if (!item) {
+				Output::Warning("Invalid Item Id {} in message text", value);
+			}
+			else {
+				output.append(ToString(item->name));
+			}
 
 			start_copy = iter;
 		}

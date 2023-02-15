@@ -36,16 +36,19 @@ Scene_Name::Scene_Name(int actor_id, int charset, bool use_default_name)
 }
 
 void Scene_Name::Start() {
+
 	// Create the windows
+
+	int margin_x = 48;
 
 	auto *actor = Main_Data::game_actors->GetActor(actor_id);
 	assert(actor);
 
-	name_window.reset(new Window_Name(96, 40, 192, 32));
+	name_window.reset(new Window_Name(96 + margin_x, 40, 192, 32));
 	name_window->Set(use_default_name ? ToString(actor->GetName()) : "");
 	name_window->Refresh();
 
-	face_window.reset(new Window_Face(32, 8, 64, 64));
+	face_window.reset(new Window_Face(32 + margin_x, 8, 64, 64));
 	face_window->Set(actor_id);
 	face_window->Refresh();
 
@@ -79,7 +82,7 @@ void Scene_Name::Start() {
 	// Letter and symbol pages are used everywhere
 	layouts.push_back(Window_Keyboard::Letter);
 	layouts.push_back(Window_Keyboard::Symbol);
-	kbd_window.reset(new Window_Keyboard(32, 72, 256, Player::Screen_Width / 2, done));
+	kbd_window.reset(new Window_Keyboard(32 + margin_x, 72, 256, 160, done));
 
 	auto next_index = layout_index + 1;
 	if (next_index >= static_cast<int>(layouts.size())) {

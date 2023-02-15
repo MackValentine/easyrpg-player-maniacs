@@ -1,5 +1,4 @@
 prefix=${pcfiledir}/../..
-
 exec_prefix=${prefix}
 libdir=${prefix}/lib
 includedir=${prefix}/include
@@ -7,6 +6,7 @@ includedir=${prefix}/include
 Name: libmpg123
 Description: An optimised MPEG Audio decoder
 Version: 1.29.3
-Libs: -L"${libdir}" -lmpg123  
+
+Libs: "-L${libdir}" -lmpg123
 Requires: 
-Cflags: -I"${includedir}" 
+Cflags: "-I${includedir}" 

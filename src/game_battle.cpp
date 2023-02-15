@@ -624,7 +624,14 @@ Point Game_Battle::Calculate2k3BattlePosition(const Game_Actor& actor) {
 	}
 
 	const auto idx = Main_Data::game_party->GetActorPositionInParty(actor.GetId());
-	const auto party_size = Main_Data::game_party->GetBattlerCount();
+	auto party_size = Main_Data::game_party->GetBattlerCount();
+	if (party_size > Main_Data::game_party->max_PartyBattle) {
+		party_size = Main_Data::game_party->max_PartyBattle;
+		if (idx >= party_size) {
+			Point position;
+			return position;
+		}
+	}
 
 	const int table_y_idx = (cond == lcf::rpg::System::BattleCondition_surround) ? 2 : 0;
 	const auto grid = CalculateBaseGridPosition(idx, party_size, 0, table_y_idx, form, terrain_id);
