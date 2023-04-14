@@ -32,6 +32,13 @@ void Window_Selectable::CreateContents() {
 	SetContents(Bitmap::Create(width - 16, max(height - border_y * 2, GetRowMax() * menu_item_height)));
 }
 
+void Window_Selectable::SetContentsPic(BitmapRef& ncontents) {
+	SetContents(ncontents);
+}
+
+void Window_Selectable::SetItemMax(int i) {
+	item_max = i;
+}
 
 int Window_Selectable::GetItemMax() const {
 	return item_max;
@@ -48,6 +55,7 @@ void Window_Selectable::SetIndex(int nindex) {
 		UpdateHelp();
 	}
 	UpdateCursorRect();
+	UpdateCursorRect2();
 }
 int Window_Selectable::GetRowMax() const {
 	return (item_max + column_max - 1) / column_max;
@@ -115,6 +123,35 @@ void Window_Selectable::UpdateCursorRect() {
 	SetCursorRect(Rect(x, y, cursor_width, menu_item_height));
 }
 
+void Window_Selectable::UpdateCursorRect2() {
+	int cursor_width = 0;
+
+	int id = second_index;
+
+	int x = 0;
+	if (id < 0) {
+		SetCursorRect2(Rect());
+		return;
+	}
+	int row = id / column_max;
+	if (row < GetTopRow()) {
+		SetTopRow(row);
+	}
+	else if (row > GetTopRow() + (GetPageRowMax() - 1)) {
+		SetTopRow(row - (GetPageRowMax() - 1));
+	}
+
+	cursor_width = (width / column_max - 16) + 8;
+	x = (id % column_max * (cursor_width + 8)) - 4;
+
+	int y = id / column_max * menu_item_height - oy;
+	SetCursorRect2(Rect(x, y, cursor_width, menu_item_height));
+}
+
+void Window_Selectable::SetRectCursor2(int id) {
+	second_index = id;
+}
+
 void Window_Selectable::UpdateArrows() {
 	bool show_up_arrow = (GetTopRow() > 0);
 	bool show_down_arrow = (GetTopRow() < (GetRowMax() - GetPageRowMax()));
@@ -144,6 +181,7 @@ void Window_Selectable::Update() {
 					UpdateHelp();
 				}
 				UpdateCursorRect();
+				UpdateCursorRect2();
 			}
 		}
 
@@ -218,6 +256,7 @@ void Window_Selectable::Update() {
 		UpdateHelp();
 	}
 	UpdateCursorRect();
+	UpdateCursorRect2();
 	UpdateArrows();
 }
 

@@ -185,6 +185,7 @@ void Game_Enemy::UpdateBattle() {
 	if (blink_timer > 0) --blink_timer;
 	if (death_timer > 0) --death_timer;
 	if (explode_timer > 0) --explode_timer;
+	if (appear_timer > 0) --appear_timer;
 
 	Game_Battler::UpdateBattle();
 }
@@ -195,6 +196,7 @@ void Game_Enemy::ResetBattle() {
 	blink_timer = 0;
 	death_timer = 0;
 	explode_timer = 0;
+	appear_timer = 0;
 }
 
 void Game_Enemy::scaleLevel(int lvl) {
@@ -219,19 +221,5 @@ void Game_Enemy::scaleLevel(int lvl) {
 
 	hp = GetMaxHp();
 	sp = GetMaxSp();
-	/*
-	for (auto action : GetDbEnemy().actions) {
-		if (action.kind == action.Kind_skill) {
-			for (auto action_class : dbClass->skills) {
-				if (action.skill_id == action_class.skill_id) {
-					if (action_class.level > scl_Level) {
-						Output::Debug("Skill {} removed", action.skill_id);
-						action.skill_id = 1;
-						action.rating = 0;
-					}
-				}
-			}
-		}
-	}
-	*/
+
 }

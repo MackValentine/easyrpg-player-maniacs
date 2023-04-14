@@ -48,6 +48,7 @@ namespace Game_Battle {
 	 */
 	void Init(int troop_id);
 
+	bool SpritesetExist();
 
 	/**
 	* Common Event in Battle

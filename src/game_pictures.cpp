@@ -329,7 +329,8 @@ void Game_Pictures::Picture::Erase() {
 
 		if (windowPic) {
 			windowPic->SetVisible(false);
-			windowPic->GetHelpWindow()->SetVisible(false);
+			if (windowPic->GetHelpWindow())
+				windowPic->GetHelpWindow()->SetVisible(false);
 			windowPic = nullptr;
 			windowHelp = nullptr;
 		}
@@ -523,6 +524,49 @@ Window_Help* Game_Pictures::Picture::getWindowHelp() {
 	return windowHelp;
 }
 
+
+void Game_Pictures::Picture::AttachWindowSelectable(Window_Selectable* window) {
+	data.easyrpg_type = lcf::rpg::SavePicture::EasyRpgType_window;
+
+	CreateSprite();
+
+	sprite->SetBitmap(std::make_shared<Bitmap>(window->GetWidth(), window->GetHeight(), data.use_transparent_color));
+	sprite->OnPictureShow();
+	sprite->SetVisible(true);
+
+	windowPic = (Window_Selectable*)window;
+
+	ApplyOrigin(false);
+}
+
+void Game_Pictures::Picture::AttachWindowMenuStatus(Window_MenuStatus* window) {
+	data.easyrpg_type = lcf::rpg::SavePicture::EasyRpgType_window;
+
+	CreateSprite();
+
+	sprite->SetBitmap(std::make_shared<Bitmap>(window->GetWidth(), window->GetHeight(), data.use_transparent_color));
+	sprite->OnPictureShow();
+	sprite->SetVisible(true);
+
+	windowPic = (Window_Selectable*)window;
+
+	ApplyOrigin(false);
+}
+
+void Game_Pictures::Picture::AttachWindowItem(Window_Item* window) {
+	data.easyrpg_type = lcf::rpg::SavePicture::EasyRpgType_window;
+
+	CreateSprite();
+
+	sprite->SetBitmap(std::make_shared<Bitmap>(window->GetWidth(), window->GetHeight(), data.use_transparent_color));
+	sprite->OnPictureShow();
+	sprite->SetVisible(true);
+
+	windowPic = (Window_Selectable*)window;
+
+	ApplyOrigin(false);
+}
+
 void Game_Pictures::Picture::AttachWindowSkill(Window_Skill* window) {
 	data.easyrpg_type = lcf::rpg::SavePicture::EasyRpgType_window;
 
@@ -536,6 +580,7 @@ void Game_Pictures::Picture::AttachWindowSkill(Window_Skill* window) {
 
 	ApplyOrigin(false);
 }
+
 void Game_Pictures::Picture::AttachWindowHelp(Window_Help* window) {
 	data.easyrpg_type = lcf::rpg::SavePicture::EasyRpgType_window;
 

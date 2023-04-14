@@ -258,6 +258,10 @@ public:
 	 */
 	void SetDeathTimer(int t = 36);
 
+	void SetAppearTimer(int t = 36);
+
+	int GetAppearTimer() const;
+
 	/** @return true if enemy is flying */
 	bool IsFlying() const;
 
@@ -294,6 +298,7 @@ protected:
 	int blink_timer = 0;
 	int death_timer = 0;
 	int explode_timer = 0;
+	int appear_timer = 0;
 };
 
 inline Game_Battler::BattlerType Game_Enemy::GetType() const {
@@ -427,6 +432,13 @@ inline int Game_Enemy::GetDeathTimer() const {
 
 inline void Game_Enemy::SetDeathTimer(int t) {
 	death_timer = t;
+}
+
+inline void Game_Enemy::SetAppearTimer(int t) {
+	appear_timer = t;
+}
+inline int Game_Enemy::GetAppearTimer() const {
+	return appear_timer;
 }
 
 inline bool Game_Enemy::IsFlying() const {

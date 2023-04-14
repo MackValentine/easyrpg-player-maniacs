@@ -171,6 +171,9 @@ public:
 	 */
 	void OnMapScrolled(int dx, int dy);
 
+
+	int transition_time;
+
 private:
 	std::unique_ptr<BattleAnimation> animation;
 	std::unique_ptr<Weather> weather;

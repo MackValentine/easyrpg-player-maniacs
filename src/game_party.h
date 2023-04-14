@@ -59,6 +59,8 @@ public:
 	 */
 	void AddActor(int actor_id);
 
+	void SwapActor(int id1, int id2);
+
 	/**
 	 * Removes an actor from the party.
 	 *

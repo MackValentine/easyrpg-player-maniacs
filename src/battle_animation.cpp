@@ -107,8 +107,19 @@ void BattleAnimation::DrawAt(Bitmap& dst, int x, int y) {
 			continue;
 		}
 
-		SetX(invert ? x - cell.x : cell.x + x);
-		SetY(cell.y + y);
+		int dx = Player::Screen_Width / 2;
+		int dy = Player::Screen_Height / 2;
+		int ddx = Game_Battle::GetSpriteset().zoomPosX;
+		int zx = x - (((dx - x) * Game_Battle::GetSpriteset().zoomX) - (dx - x)) + (dx - ddx);
+
+		int ddy = Game_Battle::GetSpriteset().zoomPosY;
+		int zy = y - (((dy - y) * Game_Battle::GetSpriteset().zoomY) - (dy - y)) + (dy - ddy);
+
+		x = zx;
+		y = zy;
+
+		SetX(invert ? x - cell.x * Game_Battle::GetSpriteset().zoomX : cell.x * Game_Battle::GetSpriteset().zoomX + x);
+		SetY(cell.y * Game_Battle::GetSpriteset().zoomX + y);
 		int sx = cell.cell_id % 5;
 		if (invert) sx = 4 - sx;
 		int sy = cell.cell_id / 5;
@@ -121,8 +132,8 @@ void BattleAnimation::DrawAt(Bitmap& dst, int x, int y) {
 			cell.tone_blue * 128 / 100,
 			cell.tone_gray * 128 / 100));
 		SetOpacity(255 * (100 - cell.transparency) / 100);
-		SetZoomX(cell.zoom / 100.0);
-		SetZoomY(cell.zoom / 100.0);
+		SetZoomX(cell.zoom / 100.0 + Game_Battle::GetSpriteset().zoomX - 1);
+		SetZoomY(cell.zoom / 100.0 + Game_Battle::GetSpriteset().zoomX - 1);
 		SetFlipX(invert);
 		Sprite::Draw(dst);
 	}

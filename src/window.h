@@ -41,6 +41,7 @@ public:
 	void SetStretch(bool nstretch);
 	Rect const& GetCursorRect() const;
 	void SetCursorRect(Rect const& ncursor_rect);
+	void SetCursorRect2(Rect const& ncursor_rect);
 	bool GetActive() const;
 	void SetActive(bool nactive);
 	bool GetPause() const;
@@ -91,6 +92,7 @@ protected:
 	BitmapRef windowskin, contents;
 	bool stretch = true;
 	Rect cursor_rect;
+	Rect cursor_rect2;
 	bool active = true;
 	bool closing = false;
 	bool up_arrow = false;

@@ -446,7 +446,8 @@ void Scene_Map::OnAsyncSuspend(F&& f, AsyncOp aop, bool is_preupdate) {
 
 	if (aop.GetType() == AsyncOp::eShowScreen) {
 		auto tt = static_cast<Transition::Type>(aop.GetTransitionType());
-		transition.InitShow(tt, this);
+		transition.InitShow(tt, this, Main_Data::game_screen->transition_time);
+		Main_Data::game_screen->transition_time = -1;
 		screen_erased_by_event = false;
 	}
 

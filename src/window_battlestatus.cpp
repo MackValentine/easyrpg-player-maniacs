@@ -69,6 +69,8 @@ void Window_BattleStatus::Refresh() {
 	}
 	else {
 		item_max = Main_Data::game_party->GetBattlerCount();
+		if (item_max > Main_Data::game_party->max_PartyBattle)
+			item_max = Main_Data::game_party->max_PartyBattle;
 	}
 
 	item_max = std::min(item_max, 4);

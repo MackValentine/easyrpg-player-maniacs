@@ -29,6 +29,9 @@
 #include <lcf/reader_util.h>
 #include "output.h"
 
+#include "game_battle.h"
+#include "spriteset_battle.h"
+
 Sprite_Actor::Sprite_Actor(Game_Actor* actor)
 	: Sprite_Battler(actor, actor->GetId())
 {
@@ -285,10 +288,25 @@ void Sprite_Actor::Draw(Bitmap& dst) {
 	int steps = static_cast<int>(256 / images.size());
 	int opacity = steps;
 	for (auto it = images.crbegin(); it != images.crend(); ++it) {
-		Sprite_Battler::SetX(it->x);
-		Sprite_Battler::SetY(it->y);
+
+		int x = it->x;
+		int y = it->y;
+
+		int dx = Player::Screen_Width / 2;
+		int dy = Player::Screen_Height / 2;
+
+		int ddx = Game_Battle::GetSpriteset().zoomPosX;
+		int zx = x - (((dx - x) * Game_Battle::GetSpriteset().zoomX) - (dx - x)) + (dx - ddx);
+
+		int ddy = Game_Battle::GetSpriteset().zoomPosY;
+		int zy = y - (((dy - y) * Game_Battle::GetSpriteset().zoomY) - (dy - y)) + (dy - ddy);
+
+		Sprite_Battler::SetX(zx);
+		Sprite_Battler::SetY(zy);
 		Sprite_Battler::SetOpacity(std::min(opacity, 255));
 		Sprite_Battler::Draw(dst);
+		Sprite_Battler::SetZoomX(Game_Battle::GetSpriteset().zoomX);
+		Sprite_Battler::SetZoomY(Game_Battle::GetSpriteset().zoomY);
 		opacity += steps;
 	}
 }

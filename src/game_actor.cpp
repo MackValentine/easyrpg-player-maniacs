@@ -180,7 +180,8 @@ bool Game_Actor::UseItem(int item_id, const Game_Battler* source) {
 		if (item->type == lcf::rpg::Item::Type_material) {
 			if (item->max_hp_points == 0 && item->max_sp_points == 0 && item->atk_points2 == 0 && item->def_points2 == 0 && item->agi_points2 == 0 && item->spi_points2 == 0)
 			{
-				SetLevel(GetLevel() + 1);
+				ChangeLevel(GetLevel() + 1, nullptr);
+				//SetLevel
 			}
 			else
 			{

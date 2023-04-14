@@ -23,6 +23,7 @@
 #include "input.h"
 #include "transition.h"
 #include "player.h"
+#include "output.h"
 
 Scene_Teleport::Scene_Teleport(Game_Actor& actor, const lcf::rpg::Skill& skill)
 		: actor(&actor), skill(&skill) {
@@ -46,6 +47,7 @@ void Scene_Teleport::Update() {
 
 	if (Input::IsTriggered(Input::DECISION)) {
 		if (item) {
+			Output::Debug("Item ID : {}", item->ID);
 			Main_Data::game_party->ConsumeItemUse(item->ID);
 		} else {
 			Main_Data::game_party->UseSkill(skill->ID, actor, actor);

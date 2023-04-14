@@ -29,6 +29,9 @@
 #include "bitmap.h"
 #include "player.h"
 
+#include "game_pictures.h"
+#include "game_screen.h"
+
 Scene_End::Scene_End() {
 	Scene::type = Scene::End;
 }
@@ -38,9 +41,15 @@ void Scene_End::Start() {
 	CreateHelpWindow();
 
 	spriteset.reset(new Spriteset_Map());
+
+	//Main_Data::game_pictures->InitGraphics();
 }
 
 void Scene_End::Update() {
+	spriteset->Update();
+	Main_Data::game_screen->Update();
+	Main_Data::game_pictures->Update(false);
+
 	command_window->Update();
 
 	if (Input::IsTriggered(Input::CANCEL)) {

@@ -433,7 +433,24 @@ void Scene_Battle_Rpg2k3::UpdateAnimations() {
 			int modifier = time <= 10 ? 1 :
 						   time < 20 ? 0 :
 						   -1;
-			it->sprite->SetY(it->sprite->GetY() + modifier);
+
+			int x = it->posX;
+			int y = it->posY;
+
+			int dx = Player::Screen_Width / 2;
+			int dy = Player::Screen_Height / 2;
+			int ddx = Game_Battle::GetSpriteset().zoomPosX;
+			int zx = x - (((dx - x) * Game_Battle::GetSpriteset().zoomX) - (dx - x)) + (dx - ddx);
+
+			int ddy = Game_Battle::GetSpriteset().zoomPosY;
+			int zy = y - (((dy - y) * Game_Battle::GetSpriteset().zoomY) - (dy - y)) + (dy - ddy);
+
+			it->sprite->SetX(zx);
+			it->sprite->SetY(zy + modifier * Game_Battle::GetSpriteset().zoomX);
+
+			it->sprite->SetZoomX(Game_Battle::GetSpriteset().zoomX);
+			it->sprite->SetZoomY(Game_Battle::GetSpriteset().zoomX);
+
 		}
 
 		--time;
@@ -471,8 +488,27 @@ void Scene_Battle_Rpg2k3::UpdateAnimations() {
 				ally_cursor->SetSrcRect(Rect(sprite_frame * 16, 16, 16, 16));
 
 				ally_cursor->SetVisible(true);
-				ally_cursor->SetX(actor->GetBattlePosition().x);
-				ally_cursor->SetY(actor->GetBattlePosition().y - 40);
+				//ally_cursor->SetX(actor->GetBattlePosition().x);
+				//ally_cursor->SetY(actor->GetBattlePosition().y - 40);
+
+				int x = actor->GetBattlePosition().x;
+				int y = actor->GetBattlePosition().y;
+
+				int dx = Player::Screen_Width / 2;
+				int dy = Player::Screen_Height / 2;
+
+				int ddx = Game_Battle::GetSpriteset().zoomPosX;
+				int zx = x - (((dx - x) * Game_Battle::GetSpriteset().zoomX) - (dx - x)) + (dx - ddx);
+
+				int ddy = Game_Battle::GetSpriteset().zoomPosY;
+				int zy = y - (((dy - y) * Game_Battle::GetSpriteset().zoomY) - (dy - y)) + (dy - ddy);
+
+				ally_cursor->SetX(zx);
+				ally_cursor->SetY(zy - (40 * Game_Battle::GetSpriteset().zoomX));
+
+
+				ally_cursor->SetZoomX(Game_Battle::GetSpriteset().zoomX);
+				ally_cursor->SetZoomY(Game_Battle::GetSpriteset().zoomY);
 
 				if (frame_counter % 30 == 0) {
 					SelectionFlash(actor);
@@ -499,9 +535,27 @@ void Scene_Battle_Rpg2k3::UpdateAnimations() {
 					int sprite_frame = frames[(frame_counter / 15) % 4];
 					enemy_cursor->SetSrcRect(Rect(sprite_frame * 16, 0, 16, 16));
 
+					int x = enemy->GetBattlePosition().x;
+					int y = enemy->GetBattlePosition().y;
+
+					int dx = Player::Screen_Width / 2;
+					int dy = Player::Screen_Height / 2;
+
+					int ddx = Game_Battle::GetSpriteset().zoomPosX;
+					int zx = x - (((dx - x) * Game_Battle::GetSpriteset().zoomX) - (dx - x)) + (dx - ddx);
+
+					int ddy = Game_Battle::GetSpriteset().zoomPosY;
+					int zy = y - (((dy - y) * Game_Battle::GetSpriteset().zoomY) - (dy - y)) + (dy - ddy);
+
+
 					enemy_cursor->SetVisible(true);
-					enemy_cursor->SetX(enemy->GetBattlePosition().x + sprite->GetWidth() / 2);
-					enemy_cursor->SetY(enemy->GetBattlePosition().y);
+					//enemy_cursor->SetX(enemy->GetBattlePosition().x + sprite->GetWidth() / 2);
+					//enemy_cursor->SetY(enemy->GetBattlePosition().y);
+					enemy_cursor->SetX(zx + sprite->GetWidth() / 2 * Game_Battle::GetSpriteset().zoomX);
+					enemy_cursor->SetY(zy);
+
+					enemy_cursor->SetZoomX(Game_Battle::GetSpriteset().zoomX);
+					enemy_cursor->SetZoomY(Game_Battle::GetSpriteset().zoomY);
 
 					std::vector<lcf::rpg::State*> ordered_states = enemy->GetInflictedStatesOrderedByPriority();
 					if (ordered_states.size() > 0) {
@@ -545,13 +599,30 @@ void Scene_Battle_Rpg2k3::DrawFloatText(int x, int y, int color, StringView text
 	floating_text->SetBitmap(graphic);
 	floating_text->SetOx(rect.width / 2);
 	floating_text->SetOy(rect.height + 5);
-	floating_text->SetX(x);
+
+	
+	int dx = Player::Screen_Width / 2;
+	int dy = Player::Screen_Height / 2;
+	int ddx = Game_Battle::GetSpriteset().zoomPosX;
+	int zx = x - (((dx - x) * Game_Battle::GetSpriteset().zoomX) - (dx - x)) + (dx - ddx);
+
+	int ddy = Game_Battle::GetSpriteset().zoomPosY;
+	int zy = y - (((dy - y) * Game_Battle::GetSpriteset().zoomY) - (dy - y)) + (dy - ddy);
+	
+
+	floating_text->SetX(zx);
 	// Move 5 pixel down because the number "jumps" with the intended y as the peak
-	floating_text->SetY(y + 5);
+	floating_text->SetY(zy + 5);
 	floating_text->SetZ(Priority_Window + y);
+	floating_text->SetZoomX(Game_Battle::GetSpriteset().zoomX);
+	floating_text->SetZoomY(Game_Battle::GetSpriteset().zoomX);
+
 
 	FloatText float_text;
 	float_text.sprite = floating_text;
+	float_text.posX = x;
+	float_text.posY = y + 5;
+
 
 	floating_texts.push_back(float_text);
 }
@@ -1286,8 +1357,9 @@ Scene_Battle_Rpg2k3::SceneActionReturn Scene_Battle_Rpg2k3::ProcessSceneActionAc
 			return SceneActionReturn::eContinueThisFrame;
 		}
 
-		if (ManiacsBattle::Get_AutoSelect)
+		if (ManiacsBattle::Get_AutoSelect) {
 			status_window->SetChoiceMode(Window_BattleStatus::ChoiceMode_None);
+		}
 		else
 			status_window->SetChoiceMode(Window_BattleStatus::ChoiceMode_Ready);
 
@@ -1489,7 +1561,7 @@ Scene_Battle_Rpg2k3::SceneActionReturn Scene_Battle_Rpg2k3::ProcessSceneActionCo
 			return SceneActionReturn::eWaitTillNextFrame;
 		}
 		if (lcf::Data::battlecommands.battle_type != lcf::rpg::BattleCommands::BattleType_traditional) {
-			if (Input::IsTriggered(Input::CANCEL)) {
+			if (Input::IsTriggered(Input::CANCEL) && ManiacsBattle::Get_AllowCancelActor()) {
 				Main_Data::game_system->SePlay(Main_Data::game_system->GetSystemSE(Main_Data::game_system->SFX_Cancel));
 				SetState(State_SelectOption);
 
@@ -1681,6 +1753,8 @@ Scene_Battle_Rpg2k3::SceneActionReturn Scene_Battle_Rpg2k3::ProcessSceneActionAl
 		if (Input::IsTriggered(Input::CANCEL)) {
 			Main_Data::game_system->SePlay(Main_Data::game_system->GetSystemSE(Main_Data::game_system->SFX_Cancel));
 			status_window->SetIndex(Main_Data::game_party->GetActorPositionInParty(active_actor->GetId()));
+			//status_window->SetIndex(-1);
+			status_window->SetActive(false);
 			SetState(previous_state);
 			return SceneActionReturn::eWaitTillNextFrame;
 		}
@@ -3123,4 +3197,29 @@ void Scene_Battle_Rpg2k3::CBAMove() {
 			cba_action = nullptr;
 		}
 	}
+}
+
+void Scene_Battle_Rpg2k3::setZoom(int px, int py, int z) {
+
+	//if ((Game_Battle::GetSpriteset().destZoomX != px || Game_Battle::GetSpriteset().destZoomY != py) && Game_Battle::GetSpriteset().zoomTimer == -1)
+	{
+
+		Game_Battle::GetSpriteset().startZoom = Game_Battle::GetSpriteset().destZoom;
+		Game_Battle::GetSpriteset().destZoom = z;
+
+
+		Game_Battle::GetSpriteset().lastZoomX = Game_Battle::GetSpriteset().destZoomX;
+		Game_Battle::GetSpriteset().lastZoomY = Game_Battle::GetSpriteset().destZoomY;
+
+		//Game_Battle::GetSpriteset().lastZoomX = Game_Battle::GetSpriteset().zoomPosX;
+		//Game_Battle::GetSpriteset().lastZoomY = Game_Battle::GetSpriteset().zoomPosY;
+
+		Game_Battle::GetSpriteset().destZoomX = px;
+		Game_Battle::GetSpriteset().destZoomY = py;
+
+		Game_Battle::GetSpriteset().zoomTimer = 15;
+
+		//Output::Debug("LX {} LY {} DX {} DY {}", Game_Battle::GetSpriteset().lastZoomX, Game_Battle::GetSpriteset().lastZoomY, Game_Battle::GetSpriteset().destZoomX, Game_Battle::GetSpriteset().destZoomY);
+	}
+
 }

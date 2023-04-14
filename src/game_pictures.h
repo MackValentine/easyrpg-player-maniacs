@@ -26,6 +26,8 @@
 #include "sprite_picture.h"
 #include <window_selectable.h>
 #include <window_skill.h>
+#include <window_item.h>
+#include <window_menustatus.h>
 
 class Sprite_Picture;
 class Scene;
@@ -131,8 +133,11 @@ public:
 
 		void AttachWindow(const Window_Base& window);
 
-
+		void AttachWindowMenuStatus(Window_MenuStatus* window);
+		void AttachWindowSelectable(Window_Selectable* window);
 		void AttachWindowSkill(Window_Skill* window);
+		void AttachWindowItem(Window_Item* window);
+
 		void AttachWindowHelp(Window_Help* window);
 		Window_Selectable* getWindow();
 		Window_Selectable* windowPic = nullptr;

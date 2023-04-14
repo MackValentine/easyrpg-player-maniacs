@@ -294,6 +294,11 @@ void Game_Player::UpdateNextMovementAction() {
 	if (IsMenuCalling()) {
 		SetMenuCalling(false);
 
+		if (Main_Data::game_player->event_as_menu_switch_id != -1) {
+			Main_Data::game_switches->Set(Main_Data::game_player->event_as_menu_switch_id, true);
+			return;
+		}
+
 		ResetAnimation();
 		Main_Data::game_system->SePlay(Main_Data::game_system->GetSystemSE(Main_Data::game_system->SFX_Decision));
 		Scene::instance->SetRequestedScene(std::make_shared<Scene_Menu>());

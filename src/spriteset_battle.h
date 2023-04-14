@@ -24,6 +24,7 @@
 #include "sprite_battler.h"
 #include "sprite_character.h"
 #include "sprite_timer.h"
+#include "player.h"
 
 class Game_Battler;
 /**
@@ -35,6 +36,24 @@ public:
 
 	void Update();
 
+	int zoom = 100;
+
+	double zoomX = 1;
+	double zoomY = 1;
+
+	double destZoom = 100;
+	double startZoom = 100;
+
+	double destZoomX = Player::Screen_Width / 2;
+	double destZoomY = Player::Screen_Height / 2;
+
+	double lastZoomX = Player::Screen_Width / 2;
+	double lastZoomY = Player::Screen_Height / 2;
+	double zoomPosX = Player::Screen_Width / 2;
+	double zoomPosY = Player::Screen_Height / 2;
+
+	int zoomTimer = -1;
+
 protected:
 	std::unique_ptr<Background> background;
 	std::vector<Sprite_Battler*> sprites;
@@ -43,6 +62,8 @@ protected:
 
 	std::unique_ptr<Sprite_Timer> timer1;
 	std::unique_ptr<Sprite_Timer> timer2;
+
+	float lerp(float a, float b, float f);
 };
 
 #endif

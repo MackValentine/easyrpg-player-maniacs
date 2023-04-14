@@ -35,6 +35,7 @@ public:
 	 * are currently in the window.
 	 */
 	void CreateContents();
+	void SetContentsPic(BitmapRef& ncontents);
 
 	int GetIndex() const;
 	void SetIndex(int nindex);
@@ -44,6 +45,7 @@ public:
 	int GetPageRowMax() const;
 	int GetPageItemMax();
 	int GetItemMax() const;
+	void SetItemMax(int i);
 
 	/**
 	 * Returns the Item Rect used for item drawing.
@@ -72,6 +74,9 @@ public:
 	virtual void UpdateCursorRect();
 	void Update() override;
 
+	virtual void UpdateCursorRect2();
+	void SetRectCursor2(int id);
+
 	virtual void UpdateHelp();
 
 	/**
@@ -95,6 +100,9 @@ protected:
 	int item_max = 1;
 	int column_max = 1;
 	int index = -1;
+
+	int second_index = -1;
+
 	int arrow_frame = 0;
 
 	bool endless_scrolling = true;

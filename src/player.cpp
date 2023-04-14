@@ -190,13 +190,41 @@ void Player::Init(std::vector<std::string> arguments) {
 
 	Main_Data::Init();
 
+	bool reset_display = true;
 	Player::Screen_Width = 320;
 	Player::Screen_Height = 240;
+	auto fs = FileFinder::Game();
 
-	DisplayUi.reset();
-	
-	if (!DisplayUi) {
-		DisplayUi = BaseUi::CreateUi(Player::Screen_Width, Player::Screen_Height, cfg.video);
+	if (!fs) {
+		fs = FileFinder::Root().Create(Main_Data::GetDefaultProjectPath());
+
+		FileFinder::SetGameFilesystem(fs);
+		if (fs) {
+
+			if (FileFinder::IsValidProject(fs)) {
+
+				std::string ini_file = FileFinder::Game().FindFile(INI_NAME);
+				auto ini_stream = FileFinder::Game().OpenInputStream(ini_file, std::ios_base::in);
+				if (ini_stream) {
+					lcf::INIReader ini(ini_stream);
+					if (ini.ParseError() != -1) {
+
+						Player::Screen_Width = std::stoi(ini.Get("RPG_RT", "WinW", "320"));
+						Player::Screen_Height = std::stoi(ini.Get("RPG_RT", "WinH", "240"));
+					}
+				}
+				reset_display = true;
+			}
+		}
+	}
+
+	if (reset_display) {
+
+		DisplayUi.reset();
+
+		if (!DisplayUi) {
+			DisplayUi = BaseUi::CreateUi(Player::Screen_Width, Player::Screen_Height, cfg.video);
+		}
 	}
 	
 	auto buttons = Input::GetDefaultButtonMappings();
@@ -747,7 +775,8 @@ void Player::CreateGameObjects() {
 	if (game_path == save_path) {
 		Output::DebugStr("Game and Save Directory:");
 		FileFinder::DumpFilesystem(FileFinder::Game());
-	} else {
+	}
+	else {
 		Output::Debug("Game Directory:");
 		FileFinder::DumpFilesystem(FileFinder::Game());
 		Output::Debug("SaveDirectory:", save_path);
@@ -779,13 +808,15 @@ void Player::CreateGameObjects() {
 
 	float ScreenW_f = std::stof(ScreenW);
 	float ScreenH_f = std::stof(ScreenH);
-	Player::Screen_Width = ScreenW_f;
-	Player::Screen_Height = ScreenH_f;
+	if (Player::Screen_Width != ScreenW_f || Player::Screen_Height != ScreenH_f) {
+		Player::Screen_Width = ScreenW_f;
+		Player::Screen_Height = ScreenH_f;
 
-	DisplayUi.reset();
+		DisplayUi.reset();
 
-	if (!DisplayUi) {
-		DisplayUi = BaseUi::CreateUi(ScreenW_f, ScreenH_f, config.video);
+		if (!DisplayUi) {
+			DisplayUi = BaseUi::CreateUi(ScreenW_f, ScreenH_f, config.video);
+		}
 	}
 
 	std::stringstream title;

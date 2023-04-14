@@ -146,6 +146,9 @@ public:
 	bool IsDatabaseCompatibleWithSave(int database_save_count) const;
 
 	void UpdateSaveCounts(int db_save_count, int map_save_count);
+
+	int event_as_menu_event_id = -1;
+	int event_as_menu_switch_id = -1;
 private:
 	using TriggerSet = lcf::FlagSet<lcf::rpg::EventPage::Trigger>;
 

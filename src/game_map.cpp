@@ -955,17 +955,35 @@ void Game_Map::Update(MapUpdateAsyncContext& actx, bool is_preupdate) {
 		UpdateProcessedFlags(is_preupdate);
 	}
 
-	if (!actx.IsActive() || actx.IsParallelCommonEvent()) {
-		if (!UpdateCommonEvents(actx)) {
-			// Suspend due to common event async op ...
-			return;
+	bool b = true;
+	if (Main_Data::game_player->event_as_menu_switch_id != -1)
+		b = !Main_Data::game_switches->Get(Main_Data::game_player->event_as_menu_switch_id);
+	else
+		b = Main_Data::game_player->event_as_menu_event_id == -1;
+
+	if (b) {
+		if (!actx.IsActive() || actx.IsParallelCommonEvent()) {
+			if (!UpdateCommonEvents(actx)) {
+				// Suspend due to common event async op ...
+				return;
+			}
+		}
+
+		if (!actx.IsActive() || actx.IsParallelMapEvent()) {
+			if (!UpdateMapEvents(actx)) {
+				// Suspend due to map event async op ...
+				return;
+			}
 		}
 	}
+	else {
+		if (!actx.IsActive() || actx.IsParallelCommonEvent()) {
 
-	if (!actx.IsActive() || actx.IsParallelMapEvent()) {
-		if (!UpdateMapEvents(actx)) {
-			// Suspend due to map event async op ...
-			return;
+			//Output::Debug("EV {}", Main_Data::game_player->event_as_menu_event_id);
+			if (!UpdateCommonEvent(actx, Main_Data::game_player->event_as_menu_event_id)) {
+				// Suspend due to common event async op ...
+				return;
+			}
 		}
 	}
 
@@ -1023,6 +1041,31 @@ void Game_Map::UpdateProcessedFlags(bool is_preupdate) {
 	}
 }
 
+bool Game_Map::UpdateCommonEvent(MapUpdateAsyncContext& actx, int id) {
+	int resume_ce = actx.GetParallelCommonEvent();
+
+	if (id < common_events.size()) {
+		Game_CommonEvent& ev = common_events[id];
+		bool resume_async = false;
+		if (resume_ce != 0) {
+			// If resuming, skip all until the event to resume from ..
+			if (!ev.GetIndex() != resume_ce) {
+				resume_ce = 0;
+				resume_async = true;
+			}
+		}
+
+		auto aop = ev.Update(resume_async);
+		if (aop.IsActive()) {
+			// Suspend due to this event ..
+			actx = MapUpdateAsyncContext::FromCommonEvent(ev.GetIndex(), aop);
+			return false;
+		}
+	}
+
+	actx = {};
+	return true;
+}
 
 bool Game_Map::UpdateCommonEvents(MapUpdateAsyncContext& actx) {
 	int resume_ce = actx.GetParallelCommonEvent();

@@ -31,6 +31,8 @@
 #include "sprite_actor.h"
 #include "sprite_enemy.h"
 
+#include "output.h"
+
 Spriteset_Battle::Spriteset_Battle(const std::string bg_name, int terrain_id)
 {
 	background_name = std::move(bg_name);
@@ -74,4 +76,45 @@ void Spriteset_Battle::Update() {
 	}
 	background->SetTone(new_tone);
 	background->Update();
+
+
+	if (zoomTimer >= 0) {
+
+		double z = (destZoom + (startZoom - destZoom) * (zoomTimer / 15.0)) / 100.0;
+
+		zoomX = z;
+		zoomY = z;
+
+		int zx;
+		int zy;
+		zx = lerp(zoomPosX, destZoomX, 1.0 / 15.0);
+		zy = lerp(zoomPosY, destZoomY, 1.0 / 15.0);
+
+		int dx = Player::Screen_Width / 2;
+		int dy = Player::Screen_Height / 2;
+
+		int minX = -(Player::Screen_Width / 2 * zoomX - Player::Screen_Width / 2) + dx - 4 * (1.0-z);
+		int minY = -(Player::Screen_Height / 2 * zoomY - Player::Screen_Height / 2) + dy - 4 * (1.0-z);
+		int maxX = Player::Screen_Width / 2 * zoomX - Player::Screen_Width / 2 + dx + 4 * (1.0-z);
+		int maxY = Player::Screen_Height / 2 * zoomY - Player::Screen_Height / 2 + dy + 4 *(1.0-z);
+
+
+		zx = std::max(zx, minX);
+		zy = std::max(zy, minY);
+
+		zx = std::min(zx, maxX);
+		zy = std::min(zy, maxY);
+
+		zoomPosX = zx;
+		zoomPosY = zy;
+
+		zoomTimer--;
+
+	}
+
+}
+
+float Spriteset_Battle::lerp(float a, float b, float f)
+{
+	return a + f * (b - a);
 }

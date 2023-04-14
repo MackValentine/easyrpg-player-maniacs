@@ -28,7 +28,7 @@ class Window_MenuStatus : public Window_Selectable {
 public:
 	Window_MenuStatus(int ix, int iy, int iwidth, int iheight);
 	void Refresh();
-	void UpdateCursorRect() override;
+	//void UpdateCursorRect() override;
 
 	Game_Actor* GetActor() const;
 

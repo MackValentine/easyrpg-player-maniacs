@@ -71,6 +71,7 @@ public:
 	void Push(Game_Event* ev);
 	void Push(Game_Event* ev, const lcf::rpg::EventPage* page, bool triggered_by_decision_key);
 	void Push(Game_CommonEvent* ev);
+	void PushCE(Game_CommonEvent* ev);
 
 	void InputButton();
 	void SetupChoices(const std::vector<std::string>& choices, int indent, PendingMessage& pm);
@@ -288,6 +289,8 @@ protected:
 	void ForegroundTextPush(PendingMessage pm);
 	void EndEventProcessing();
 
+	void printVar(std::string param);
+	void print(std::string param);
 	void show_Gauge(std::string param);
 	void show_Number(std::string param);
 	void btl_CommandActive(std::string param);
@@ -309,6 +312,7 @@ protected:
 	void btl_TargetActive(std::string param);
 	void btl_TargetAll(std::string param);
 	void btl_EnemyActive(std::string param);
+	void btl_AllyActive(std::string param);
 	void btl_LastAction(std::string param);
 	void btl_forceAction(std::string param);
 	void btl_cancel_skill(std::string param);
@@ -332,6 +336,41 @@ protected:
 	void btl_actionFinish(std::string param);
 	void getActorClassID(std::string param);
 	void btl_getLastCommandID(std::string param);
+	void call_event_as_menu(std::string param);
+	void close_event_as_menu(std::string param);
+	void set_event_as_menu(std::string param);
+	void setWindowStatusMenu(std::string param);
+	void OpenEndMenu();
+	void OpenSkillMenu(std::string param);
+	void setIndexSelectable(std::string param);
+	void SelectableWindowUpdate(std::string param);
+	void setWindowCommand(std::string param);
+	void getActorElementRate(std::string param);
+	void setWindowSelectable(std::string param);
+	void drawPicInPic(std::string param);
+	void replaceTextPicByStatus(std::string param);
+	void drawActorFaceInPic(std::string param);
+	void showTransition(std::string param);
+	void isSkillUsable(std::string param);
+	void useSkill(std::string param);
+	void setWindowItem(std::string param);
+	void ItemWindowItem(std::string param);
+	void useItem(std::string param);
+	void isItemUsable(std::string param);
+	void getItemType(std::string param);
+	void getSkillType(std::string param);
+	void getItemSkillID(std::string param);
+	void getItemSwitchID(std::string param);
+	void getSkillSwitchID(std::string param);
+	void OpenTeleport(std::string param);
+	void UseEscape(std::string param);
+	void btl_ZoomAt(std::string param);
+	void btl_isZooming(std::string param);
+	void btl_allowCancelActor(std::string param);
+	void getEnemyElementValue(std::string param);
+	void swapMember(std::string param);
+	void setSelectableCursor2(std::string param);
+	void btl_transformEnemy(std::string param);
 
 	void tokenize(std::string const& str, const char delim, std::vector<std::string>& out);
 

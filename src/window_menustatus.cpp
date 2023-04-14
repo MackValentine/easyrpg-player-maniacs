@@ -22,13 +22,18 @@
 #include "player.h"
 #include "bitmap.h"
 #include "feature.h"
+#include <output.h>
 
 Window_MenuStatus::Window_MenuStatus(int ix, int iy, int iwidth, int iheight) :
 	Window_Selectable(ix, iy, iwidth, iheight) {
 
 	if (Player::IsRPG2k3()) {
-		SetContents(Bitmap::Create(width - 12, height - 16));
-		SetBorderX(4);
+		//SetContents(Bitmap::Create(width - 12, height - 16));
+		//SetMenuItemHeight(59);
+		CreateContents();
+		SetMenuItemHeight(56);
+		column_max = 1;
+
 		text_offset = 4;
 	} else {
 		SetContents(Bitmap::Create(width - 16, height - 16));
@@ -38,7 +43,8 @@ Window_MenuStatus::Window_MenuStatus(int ix, int iy, int iwidth, int iheight) :
 }
 
 void Window_MenuStatus::Refresh() {
-	contents->Clear();
+	//contents->Clear();
+	CreateContents();
 
 	item_max = Main_Data::game_party->GetActors().size();
 
@@ -46,6 +52,8 @@ void Window_MenuStatus::Refresh() {
 	for (int i = 0; i < item_max; ++i) {
 		// The party always contains valid battlers
 		const Game_Actor& actor = *(Main_Data::game_party->GetActors()[i]);
+		Rect rect = GetItemRect(index);
+		//y = rect.y + 48;
 
 		int face_x = 0;
 		if (Player::IsRPG2k3()) {
@@ -69,15 +77,19 @@ void Window_MenuStatus::Refresh() {
 		y += 10;
 	}
 }
-
+/*
 void Window_MenuStatus::UpdateCursorRect()
 {
 	if (index < 0) {
 		cursor_rect = { 0, 0, 0, 0 };
 	} else {
+		Rect rect = GetItemRect(index);
+		//cursor_rect = { 48 + 4 + text_offset, rect.y, 168, 48 };
 		cursor_rect = { 48 + 4 + text_offset, index * (48 + 10), 168, 48 };
 	}
 }
+*/
+
 
 Game_Actor* Window_MenuStatus::GetActor() const {
 	return &(*Main_Data::game_party)[GetIndex()];

@@ -91,6 +91,7 @@ Game_CommonEvent* Game_Battle::StartCommonEventID(int id) {
 	ce->ForceCreate(id);
 	return ce;
 }
+
 void Game_Battle::StartCommonEvent(int type) {
 	//bool b = GetInterpreterBattle().StartCommonEvent(i);
 
@@ -101,75 +102,14 @@ void Game_Battle::StartCommonEvent(int type) {
 		int trigger = common_event->GetTrigger();
 		//Output::Warning(std::to_string(trigger));
 
-		if (trigger == type + 5)
+		bool switch_on = true;
+		if (common_event->GetSwitchFlag())
+			switch_on = Main_Data::game_switches->Get(common_event->GetSwitchId());
+
+		if (trigger == type + 5 && switch_on)
 			bool b = GetInterpreterBattle().StartCommonEvent(i);
 	}
 
-	/*
-		common_events.clear();
-		common_events.reserve(lcf::Data::commonevents.size());
-		for (const lcf::rpg::CommonEvent& ev : lcf::Data::commonevents) {
-			common_events.emplace_back(ev.ID);
-		}
-
-		int resume_ce = 0;//actx.GetParallelCommonEvent();
-
-		for (Game_CommonEvent& ev : common_events) {
-			bool resume_async = false;
-			if (resume_ce != 0) {
-				// If resuming, skip all until the event to resume from ..
-				if (ev.GetIndex() != resume_ce) {
-					continue;
-				} else {
-					resume_ce = 0;
-					resume_async = true;
-				}
-			}
-	Output::Warning("QSD");
-			ev.interpreter->Update(!resume_async);
-			//if (aop.IsActive()) {
-				// Suspend due to this event ..
-				//actx = MapUpdateAsyncContext::FromCommonEvent(ev.GetIndex(), aop);
-				//return false;
-			//}
-		}
-	*/
-	/*
-		auto& interp = GetInterpreter();
-
-		while (!interp.IsRunning() && !interp.ReachedLoopLimit()) {
-
-			interp.Clear();
-
-			// This logic is probably one big loop in RPG_RT. We have to replicate
-			// it here because once we stop executing from this we should not
-			// clear anymore waiting flags.
-			if (Scene::instance->HasRequestedScene() && interp.GetLoopCount() > 0) {
-				//break;
-			}
-			Game_CommonEvent* run_ce = nullptr;
-
-			for (auto& ce: common_events) {
-				if (ce.GetTrigger() == 7 &&
-				(!ce.GetSwitchFlag() || Main_Data::game_switches->Get(ce.GetSwitchId()))
-				&& !ce.GetList().empty()){
-				//if (ce.IsWaitingForegroundExecution()) {
-					run_ce = &ce;
-					break;
-				}
-			}
-			if (run_ce) {
-				interp.Push(run_ce);
-			}
-
-			// If no events to run we're finished.
-			if (!interp.IsRunning()) {
-				break;
-			}
-
-			interp.Update(false);
-		}
-	*/
 }
 
 void Game_Battle::Quit() {
@@ -234,6 +174,11 @@ bool Game_Battle::CheckLose() {
 	return true;
 }
 
+bool Game_Battle::SpritesetExist() {
+	if (spriteset)
+		return true;
+	return false;
+}
 Spriteset_Battle& Game_Battle::GetSpriteset() {
 	assert(spriteset);
 	return *spriteset;

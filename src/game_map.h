@@ -42,7 +42,7 @@ struct BattleArgs;
 
 // These are in sixteenths of a pixel.
 constexpr int SCREEN_TILE_SIZE = 256;
-constexpr int SCREEN_WIDTH = 20 * SCREEN_TILE_SIZE;
+constexpr int SCREEN_WIDTH = 28 * SCREEN_TILE_SIZE;
 constexpr int SCREEN_HEIGHT = 15 * SCREEN_TILE_SIZE;
 
 class MapUpdateAsyncContext {
@@ -610,6 +610,9 @@ namespace Game_Map {
 	void RemoveAllPendingMoves();
 
 	void UpdateProcessedFlags(bool is_preupdate);
+
+	bool UpdateCommonEvent(MapUpdateAsyncContext& actx, int id);
+
 	bool UpdateCommonEvents(MapUpdateAsyncContext& actx);
 	bool UpdateMapEvents(MapUpdateAsyncContext& actx);
 	bool UpdateMessage(MapUpdateAsyncContext& actx);

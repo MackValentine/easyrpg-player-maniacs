@@ -26,6 +26,10 @@
 #include "bitmap.h"
 #include <output.h>
 
+#include "game_battle.h"
+#include "spriteset_battle.h"
+#include "scene.h"
+
 Sprite_Picture::Sprite_Picture(int pic_id, Drawable::Flags flags)
 	: Sprite(flags),
 	pic_id(pic_id),
@@ -104,10 +108,34 @@ void Sprite_Picture::Draw(Bitmap& dst) {
 		y -= Main_Data::game_screen->GetShakeOffsetY();
 	}
 
-	SetX(x);
-	SetY(y);
-	SetZoomX(data.current_magnify / 100.0);
-	SetZoomY(data.current_magnify / 100.0);
+	bool spriteset = Game_Battle::SpritesetExist();
+
+	if (data.fixed_to_map && data.battle_layer && spriteset) {
+
+			int dx = Player::Screen_Width / 2;
+			int dy = Player::Screen_Height / 2;
+			int ddx = Game_Battle::GetSpriteset().zoomPosX;
+			int zx = x - (((dx - x) * Game_Battle::GetSpriteset().zoomX) - (dx - x)) + (dx - ddx);
+
+			int ddy = Game_Battle::GetSpriteset().zoomPosY;
+			int zy = y - (((dy - y) * Game_Battle::GetSpriteset().zoomY) - (dy - y)) + (dy - ddy);
+
+			SetX(zx);
+			SetY(zy);
+			SetZoomX(data.current_magnify / 100.0 + Game_Battle::GetSpriteset().zoomX - 1);
+			SetZoomY(data.current_magnify / 100.0 + Game_Battle::GetSpriteset().zoomX - 1);
+
+	}
+	else {
+
+		SetX(x);
+		SetY(y);
+		SetZoomX(data.current_magnify / 100.0);
+		SetZoomY(data.current_magnify / 100.0);
+
+	}
+
+
 
 	auto sr = GetSrcRect();
 	SetOx(sr.width / 2);

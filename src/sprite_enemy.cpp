@@ -27,6 +27,9 @@
 #include <lcf/reader_util.h>
 #include "output.h"
 
+#include "game_battle.h"
+#include "spriteset_battle.h"
+
 Sprite_Enemy::Sprite_Enemy(Game_Enemy* enemy)
 	: Sprite_Battler(enemy, enemy->GetTroopMemberId())
 {
@@ -91,6 +94,7 @@ void Sprite_Enemy::Draw(Bitmap& dst) {
 	const auto bt = enemy->GetBlinkTimer();
 	const auto dt = enemy->GetDeathTimer();
 	const auto et = enemy->GetExplodeTimer();
+	const auto at = enemy->GetAppearTimer();
 
 	if (!enemy->Exists() && dt == 0 && et == 0) {
 		return;
@@ -100,7 +104,9 @@ void Sprite_Enemy::Draw(Bitmap& dst) {
 		return;
 	}
 
-	if (dt > 0) {
+	if (at > 0) {
+		alpha = 7 * (36 - at);
+	} else if (dt > 0) {
 		alpha = 7 * dt;
 	} else if (et > 0) {
 		alpha = 12 * et;
@@ -112,14 +118,28 @@ void Sprite_Enemy::Draw(Bitmap& dst) {
 	}
 
 	SetOpacity(alpha);
-	SetZoomX(zoom);
-	SetZoomY(zoom);
 
 	SetTone(Main_Data::game_screen->GetTone());
-	SetX(enemy->GetDisplayX());
-	SetY(enemy->GetDisplayY());
+
+	int dx = Player::Screen_Width / 2;
+	int dy = Player::Screen_Height / 2;
+	int x = enemy->GetDisplayX();
+	int ddx = Game_Battle::GetSpriteset().zoomPosX;
+	int zx = x - (((dx - x) * Game_Battle::GetSpriteset().zoomX) - (dx - x)) + (dx - ddx);
+
+	int y = enemy->GetDisplayY();
+	int ddy = Game_Battle::GetSpriteset().zoomPosY;
+	int zy = y - (((dy - y) * Game_Battle::GetSpriteset().zoomY) - (dy - y)) + (dy - ddy);
+
+	SetX(zx);
+	SetY(zy);
+
 	SetFlashEffect(enemy->GetFlashColor());
 	SetFlipX(enemy->IsDirectionFlipped());
+
+	
+	SetZoomX(zoom + Game_Battle::GetSpriteset().zoomX - 1);
+	SetZoomY(zoom + Game_Battle::GetSpriteset().zoomY - 1);
 
 	Sprite_Battler::Draw(dst);
 }

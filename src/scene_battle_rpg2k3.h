@@ -103,6 +103,7 @@ public:
 	int getLastCommand(int id);
 
 	bool skillShowHelp;
+	void setZoom(int zx, int zy, int z);
 
 	BattleActionReturn ProcessBattleActionApply(Game_BattleAlgorithm::AlgorithmBase* action);
 
@@ -231,6 +232,9 @@ protected:
 	struct FloatText {
 		std::shared_ptr<Sprite> sprite;
 		int remaining_time = 30;
+
+		int posX;
+		int posY;
 	};
 
 	std::vector<FloatText> floating_texts;

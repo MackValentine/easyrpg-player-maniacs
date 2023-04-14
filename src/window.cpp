@@ -119,6 +119,19 @@ void Window::Draw(Bitmap& dst) {
 			else
 				dst.Blit(x + cursor_rect.x + border_x, y + cursor_rect.y + border_y, *cursor2, src_rect, 255);
 		}
+
+		if (width >= 16 && height > 16 && cursor_rect2.width > 4 && cursor_rect2.height > 4 && animation_frames == 0) {
+			if (cursor_needs_refresh) RefreshCursor();
+
+			Rect src_rect(
+				-min(cursor_rect2.x + border_x, 0),
+				-min(cursor_rect2.y + border_y, 0),
+				min(cursor_rect2.width, width - cursor_rect2.x + border_x),
+				min(cursor_rect2.height, height - cursor_rect2.y + border_y)
+			);
+
+			dst.Blit(x + cursor_rect2.x + border_x, y + cursor_rect2.y + border_y, *cursor1, src_rect, 255);
+		}
 	}
 
 	if (contents) {
@@ -329,6 +342,12 @@ void Window::SetCursorRect(Rect const& ncursor_rect) {
 	if (cursor_rect.width != ncursor_rect.width || cursor_rect.height != ncursor_rect.height) cursor_needs_refresh = true;
 	cursor_rect = ncursor_rect;
 }
+
+void Window::SetCursorRect2(Rect const& ncursor_rect) {
+	if (cursor_rect2.width != ncursor_rect.width || cursor_rect2.height != ncursor_rect.height) cursor_needs_refresh = true;
+	cursor_rect2 = ncursor_rect;
+}
+
 
 void Window::SetWidth(int nwidth) {
 	if (width != nwidth) {

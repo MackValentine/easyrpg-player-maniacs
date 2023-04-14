@@ -68,6 +68,9 @@ namespace ManiacsBattle
 	void Set_StatsVar(int i);
 	int Get_StatsVar();
 
+	bool Get_AllowCancelActor();
+	void Set_AllowCancelActor(bool b);
+
 
 }
 

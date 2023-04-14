@@ -130,6 +130,15 @@ namespace ManiacsBattle
 		return stats_Var;
 	}
 
+	bool allowCancelActor = true;
+
+	bool Get_AllowCancelActor() {
+		return allowCancelActor;
+	}
+	void Set_AllowCancelActor(bool b) {
+		allowCancelActor = b;
+	}
+
 }
 
 //TODO
@@ -141,9 +150,22 @@ Game_CommonEvent* Game_Interpreter_Battle::StartCommonEvent(int i) {
 		Output::Warning("CallCommonEvent: Can't call invalid common event {}", evt_id);
 		return common_event;
 	}
+	bool b = false;
+	for (int j = 0; j < _state.stack.size(); j++) {
 
+		//Output::Debug("S {} C {}", _state.stack[j].event_id, i);
+		if (_state.stack[j].event_id == -i) {
+			b = true;
+			//common_event = _state.stack[j];
+		}
+	}
 
-	Push(common_event);
+	if (!b)
+		PushCE(common_event);
+	else {
+		//common_event->Update(false);
+		return NULL;
+	}
 
 	return common_event;
 }
@@ -476,6 +498,7 @@ bool Game_Interpreter_Battle::CommandChangeMonsterCondition(lcf::rpg::EventComma
 bool Game_Interpreter_Battle::CommandShowHiddenMonster(lcf::rpg::EventCommand const& com) {
 	Game_Enemy& enemy = (*Main_Data::game_enemyparty)[com.parameters[0]];
 	enemy.SetHidden(false);
+	enemy.SetAppearTimer();
 	return true;
 }
 
@@ -489,6 +512,9 @@ bool Game_Interpreter_Battle::CommandShowBattleAnimation(lcf::rpg::EventCommand 
 	int target = com.parameters[1];
 	bool waiting_battle_anim = com.parameters[2] != 0;
 	bool allies = false;
+
+	if (com.parameters[4] == 1)
+		target = Main_Data::game_variables->Get(target);
 
 	if (Player::IsRPG2k3()) {
 		allies = com.parameters[3] != 0;

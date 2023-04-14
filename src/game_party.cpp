@@ -457,6 +457,14 @@ bool Game_Party::UseSkill(int skill_id, Game_Actor* source, Game_Actor* target) 
 	return was_used;
 }
 
+void Game_Party::SwapActor(int id1, int id2) {
+	auto actor1 = data.party[id1];
+
+	data.party[id1] = data.party[id2];
+	data.party[id2] = actor1;
+
+}
+
 void Game_Party::AddActor(int actor_id) {
 	auto* actor = Main_Data::game_actors->GetActor(actor_id);
 	if (!actor) {
