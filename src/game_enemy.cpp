@@ -187,6 +187,13 @@ void Game_Enemy::UpdateBattle() {
 	if (explode_timer > 0) --explode_timer;
 	if (appear_timer > 0) --appear_timer;
 
+	if (GetBattleAnimationId() > 0) {
+		auto* sprite = static_cast<Sprite_Actor*>(Game_Battler::GetBattleSprite());
+		if (sprite) {
+			sprite->Update();
+		}
+	}
+
 	Game_Battler::UpdateBattle();
 }
 
@@ -212,12 +219,12 @@ void Game_Enemy::scaleLevel(int lvl) {
 
 	auto dbClass = lcf::ReaderUtil::GetElement(lcf::Data::classes, GetId());
 
-	scl_maxHP = dbClass->parameters.maxhp[lvl] * 0.8;
-	scl_maxSP = dbClass->parameters.maxsp[lvl] * 0.8;
-	scl_BaseATK = dbClass->parameters.attack[lvl] * 0.8;
-	scl_BaseDEF = dbClass->parameters.defense[lvl] * 0.8;
-	scl_BaseSPI = dbClass->parameters.spirit[lvl] * 0.8;
-	scl_BaseAGI = dbClass->parameters.agility[lvl] * 0.8;
+	scl_maxHP = dbClass->parameters.maxhp[lvl] * 0.6;
+	scl_maxSP = dbClass->parameters.maxsp[lvl] * 0.6;
+	scl_BaseATK = dbClass->parameters.attack[lvl] * 0.6;
+	scl_BaseDEF = dbClass->parameters.defense[lvl] * 0.6;
+	scl_BaseSPI = dbClass->parameters.spirit[lvl] * 0.6;
+	scl_BaseAGI = dbClass->parameters.agility[lvl] * 0.6;
 
 	hp = GetMaxHp();
 	sp = GetMaxSp();

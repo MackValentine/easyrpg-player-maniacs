@@ -288,6 +288,11 @@ void Window_Keyboard::Update() {
 			play_cursor = true;
 			col = (col + col_max - 1) % col_max;
 		}
+		if (Input::IsTriggered(Input::SHIFT)) {
+			play_cursor = true;
+			col = (col_max - 1);
+			row = (row_max - 1);
+		}
 	}
 
 	// Special handling for wide fields

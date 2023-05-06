@@ -40,6 +40,8 @@
 #include "system.h"
 #include "output.h"
 
+#include "game_lists.h"
+
 #ifndef _WIN32
 #  include <unistd.h>
 #endif
@@ -50,6 +52,8 @@
 #  include <sys/syslimits.h>
 #  include "platform/macos/utils.h"
 #endif
+
+
 
 // Global variables.
 std::string project_path;
@@ -71,6 +75,8 @@ namespace Main_Data {
 	std::unique_ptr<Game_Ineluki> game_ineluki;
 	std::unique_ptr<Game_Switches> game_switches_global;
 	std::unique_ptr<Game_Variables> game_variables_global;
+
+	std::unique_ptr<Game_Lists> game_lists;
 
 	std::unique_ptr<FileFinder_RTP> filefinder_rtp;
 }

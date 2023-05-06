@@ -108,35 +108,37 @@ void Scene_File::PopulateSaveWindow(Window_SaveFile& win, int id) {
 }
 
 void Scene_File::Start() {
-	CreateHelpWindow();
-	border_top = Scene_File::MakeBorderSprite(32);
-
+	if (forceLoad < 0) {
+		CreateHelpWindow();
+		border_top = Scene_File::MakeBorderSprite(32);
+	}
 	// Refresh File Finder Save Folder
 	fs = FileFinder::Save();
+	if (forceLoad < 0) {
+		for (int i = 0; i < Utils::Clamp<int32_t>(lcf::Data::system.easyrpg_max_savefiles, 3, 99); i++) {
+			std::shared_ptr<Window_SaveFile>
+				w(new Window_SaveFile(0, 40 + i * 64, Player::Screen_Width, 64));
+			w->SetIndex(i);
+			w->SetZ(Priority_Window);
+			PopulateSaveWindow(*w, i);
+			w->Refresh();
 
-	for (int i = 0; i < Utils::Clamp<int32_t>(lcf::Data::system.easyrpg_max_savefiles, 3, 99); i++) {
-		std::shared_ptr<Window_SaveFile>
-			w(new Window_SaveFile(0, 40 + i * 64, Player::Screen_Width, 64));
-		w->SetIndex(i);
-		w->SetZ(Priority_Window);
-		PopulateSaveWindow(*w, i);
-		w->Refresh();
+			file_windows.push_back(w);
+		}
+		border_bottom = Scene_File::MakeBorderSprite(Player::Screen_Height - 8);
 
-		file_windows.push_back(w);
+		up_arrow = Scene_File::MakeArrowSprite(false);
+		down_arrow = Scene_File::MakeArrowSprite(true);
 	}
-
-	border_bottom = Scene_File::MakeBorderSprite(Player::Screen_Height - 8);
-
-	up_arrow = Scene_File::MakeArrowSprite(false);
-	down_arrow = Scene_File::MakeArrowSprite(true);
 
 	index = latest_slot;
 	top_index = std::max(0, index - 2);
 
-	Refresh();
-
-	for (auto& fw: file_windows) {
-		fw->Update();
+	if (forceLoad < 0){
+		Refresh();
+		for (auto& fw : file_windows) {
+			fw->Update();
+		}
 	}
 }
 
@@ -150,76 +152,84 @@ void Scene_File::Refresh() {
 }
 
 void Scene_File::Update() {
-	UpdateArrows();
+	
 
-	if (IsWindowMoving()) {
-		for (auto& fw: file_windows) {
+	if (forceLoad >= 0) {
+		Action(forceLoad);
+	}
+	else {
+		UpdateArrows();
+
+		if (IsWindowMoving()) {
+			for (auto& fw : file_windows) {
+				fw->Update();
+			}
+			return;
+		}
+
+		if (Input::IsTriggered(Input::CANCEL)) {
+			Main_Data::game_system->SePlay(Main_Data::game_system->GetSystemSE(Main_Data::game_system->SFX_Cancel));
+			Scene::Pop();
+		}
+		else if (Input::IsTriggered(Input::DECISION)) {
+			if (IsSlotValid(index)) {
+				Main_Data::game_system->SePlay(Main_Data::game_system->GetSystemSE(Main_Data::game_system->SFX_Decision));
+				Action(index);
+			}
+			else {
+				Main_Data::game_system->SePlay(Main_Data::game_system->GetSystemSE(Main_Data::game_system->SFX_Buzzer));
+			}
+		}
+
+		int old_top_index = top_index;
+		int old_index = index;
+		int max_index = static_cast<int>(file_windows.size()) - 1;
+
+		if (Input::IsRepeated(Input::DOWN) || Input::IsTriggered(Input::SCROLL_DOWN)) {
+			if (Input::IsTriggered(Input::DOWN) || Input::IsTriggered(Input::SCROLL_DOWN)
+				|| index < max_index) {
+				Main_Data::game_system->SePlay(Main_Data::game_system->GetSystemSE(Main_Data::game_system->SFX_Cursor));
+				index = (index + 1) % file_windows.size();
+			}
+
+			//top_index = std::max(top_index, index - 3 + 1);
+		}
+		if (Input::IsRepeated(Input::UP) || Input::IsTriggered(Input::SCROLL_UP)) {
+			if (Input::IsTriggered(Input::UP) || Input::IsTriggered(Input::SCROLL_UP)
+				|| index >= 1) {
+				Main_Data::game_system->SePlay(Main_Data::game_system->GetSystemSE(Main_Data::game_system->SFX_Cursor));
+				index = (index + max_index) % file_windows.size();
+			}
+
+			//top_index = std::min(top_index, index);
+		}
+
+		if (Input::IsRepeated(Input::PAGE_DOWN) && index < max_index) {
+			Main_Data::game_system->SePlay(Main_Data::game_system->GetSystemSE(Main_Data::game_system->SFX_Cursor));
+			index = (index + 3 <= max_index) ? index + 3 : max_index;
+		}
+		if (Input::IsRepeated(Input::PAGE_UP) && index >= 1) {
+			Main_Data::game_system->SePlay(Main_Data::game_system->GetSystemSE(Main_Data::game_system->SFX_Cursor));
+			index = (index > 3) ? index - 3 : 0;
+		}
+
+		if (index > top_index + 2) {
+			MoveFileWindows((top_index + 2 - index) * 64, 7);
+			top_index = std::max(top_index, index - 3 + 1);
+		}
+		else if (index < top_index) {
+			MoveFileWindows((top_index - index) * 64, 7);
+			top_index = std::min(top_index, index);
+		}
+
+		//top_index = std::min(top_index, std::max(top_index, index - 3 + 1));
+
+		if (top_index != old_top_index || index != old_index)
+			Refresh();
+
+		for (auto& fw : file_windows) {
 			fw->Update();
 		}
-		return;
-	}
-
-	if (Input::IsTriggered(Input::CANCEL)) {
-		Main_Data::game_system->SePlay(Main_Data::game_system->GetSystemSE(Main_Data::game_system->SFX_Cancel));
-		Scene::Pop();
-	} else if (Input::IsTriggered(Input::DECISION)) {
-		if (IsSlotValid(index)) {
-			Main_Data::game_system->SePlay(Main_Data::game_system->GetSystemSE(Main_Data::game_system->SFX_Decision));
-			Action(index);
-		}
-		else {
-			Main_Data::game_system->SePlay(Main_Data::game_system->GetSystemSE(Main_Data::game_system->SFX_Buzzer));
-		}
-	}
-
-	int old_top_index = top_index;
-	int old_index = index;
-	int max_index = static_cast<int>(file_windows.size()) - 1;
-
-	if (Input::IsRepeated(Input::DOWN) || Input::IsTriggered(Input::SCROLL_DOWN)) {
-		if (Input::IsTriggered(Input::DOWN) || Input::IsTriggered(Input::SCROLL_DOWN)
-			|| index < max_index) {
-			Main_Data::game_system->SePlay(Main_Data::game_system->GetSystemSE(Main_Data::game_system->SFX_Cursor));
-			index = (index + 1) % file_windows.size();
-		}
-
-		//top_index = std::max(top_index, index - 3 + 1);
-	}
-	if (Input::IsRepeated(Input::UP) || Input::IsTriggered(Input::SCROLL_UP)) {
-		if (Input::IsTriggered(Input::UP) || Input::IsTriggered(Input::SCROLL_UP)
-			|| index >= 1) {
-			Main_Data::game_system->SePlay(Main_Data::game_system->GetSystemSE(Main_Data::game_system->SFX_Cursor));
-			index = (index + max_index) % file_windows.size();
-		}
-
-		//top_index = std::min(top_index, index);
-	}
-
-	if (Input::IsRepeated(Input::PAGE_DOWN) && index < max_index) {
-		Main_Data::game_system->SePlay(Main_Data::game_system->GetSystemSE(Main_Data::game_system->SFX_Cursor));
-		index = (index + 3 <= max_index) ? index + 3 : max_index;
-	}
-	if (Input::IsRepeated(Input::PAGE_UP) && index >= 1) {
-		Main_Data::game_system->SePlay(Main_Data::game_system->GetSystemSE(Main_Data::game_system->SFX_Cursor));
-		index = (index > 3) ? index - 3 : 0;
-	}
-
-	if (index > top_index + 2) {
-		MoveFileWindows((top_index + 2 - index) * 64, 7);
-		top_index = std::max(top_index, index - 3 + 1);
-	}
-	else if (index < top_index) {
-		MoveFileWindows((top_index - index) * 64, 7);
-		top_index = std::min(top_index, index);
-	}
-
-	//top_index = std::min(top_index, std::max(top_index, index - 3 + 1));
-
-	if (top_index != old_top_index || index != old_index)
-		Refresh();
-
-	for (auto& fw: file_windows) {
-		fw->Update();
 	}
 }
 

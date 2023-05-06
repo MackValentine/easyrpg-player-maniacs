@@ -78,6 +78,8 @@ int ApplyAttributeSkillMultiplier(int effect, const Game_Battler& target, const 
  */
 int ApplyAttributeMultiplier(int effect, const Game_Battler& target, Span<const lcf::DBBitArray*> attribute_sets);
 
+bool HasAttributeExt(Span<const lcf::DBBitArray*> attribute_sets, int id);
+
 } // namespace Attribute
 
 

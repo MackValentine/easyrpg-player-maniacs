@@ -133,6 +133,12 @@ int ControlVariables::Actor(int op, int actor_id) {
 				return actor->GetAtbGauge();
 			}
 			break;
+		case 17:
+			// ATB
+			if (Player::IsPatchManiac()) {
+				return actor->GetNextExp();
+			}
+			break;
 	}
 
 	Output::Warning("ControlVariables::Actor: Unknown op {}", op);

@@ -71,8 +71,19 @@ namespace ManiacsBattle
 	bool Get_AllowCancelActor();
 	void Set_AllowCancelActor(bool b);
 
+	std::vector<int> Get_HidedStates();
+	void Add_HidedStates(int i);
+
+
+	std::vector<int> Get_SkippedWeakness();
+	void Add_SkipWeakness(int i);
+	bool SkippedWeaknessContains(int i);
+
+	bool GetUpdateEventWhileAnimation();
+	void SetUpdateEventWhileAnimation(bool b);
 
 }
+
 
 /**
  * Game_Interpreter_Battle class.

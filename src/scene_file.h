@@ -44,6 +44,8 @@ public:
 	void Start() override;
 	void Update() override;
 
+	int forceLoad;
+
 	virtual void Action(int index) = 0;
 
 	virtual bool IsSlotValid(int index) = 0;

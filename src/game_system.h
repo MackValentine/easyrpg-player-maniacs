@@ -105,6 +105,8 @@ public:
 	 */
 	Game_System();
 
+	bool justLoaded = false;
+
 	/** Initialize from save game */
 	void SetupFromSave(lcf::rpg::SaveSystem save);
 

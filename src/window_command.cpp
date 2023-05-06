@@ -53,10 +53,12 @@ void Window_Command::DrawItem(int index, Font::SystemColor color) {
 
 void Window_Command::DisableItem(int i) {
 	DrawItem(i, Font::ColorDisabled);
+	enabled[i] = false;
 }
 
 void Window_Command::EnableItem(int i) {
 	DrawItem(i, Font::ColorDefault);
+	enabled[i] = true;
 }
 
 void Window_Command::SetItemText(unsigned index, StringView text) {
@@ -73,6 +75,17 @@ void Window_Command::ReplaceCommands(std::vector<std::string> in_commands) {
 	const int num_contents = item_max > 0 ? item_max : 1;
 	SetContents(Bitmap::Create(this->width - 16, num_contents * menu_item_height));
 	SetTopRow(0);
+	enabled.resize(commands.size());
+	for (int i = 0; i < commands.size(); i++) {
+		enabled[i] = true;
+	}
 
 	Refresh();
+}
+
+bool Window_Command::Enabled(int i) {
+	if (i < enabled.size())
+		return enabled[i];
+	else
+		return false;
 }

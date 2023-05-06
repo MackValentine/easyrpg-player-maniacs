@@ -32,6 +32,7 @@ public:
 	 * Constructor.
 	 */
 	Scene_Load();
+	Scene_Load(int i);
 
 	void Action(int index) override;
 	bool IsSlotValid(int index) override;

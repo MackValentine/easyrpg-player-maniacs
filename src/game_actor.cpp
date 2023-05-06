@@ -694,6 +694,8 @@ int Game_Actor::GetBaseAttributeRate(int attribute_id) const {
 	int rate = 2; // C - default
 
 	const auto* r = lcf::ReaderUtil::GetElement(dbActor->attribute_ranks, attribute_id);
+	if (this->GetClass() != NULL)
+		r = lcf::ReaderUtil::GetElement(GetClass()->attribute_ranks, attribute_id);
 	if (r) {
 		rate = *r;
 	}

@@ -58,7 +58,9 @@ public:
 	 *
 	 * @param actor game battler to display
 	 */
-	Sprite_Actor(Game_Actor* actor);
+	//Sprite_Actor(Game_Actor* actor);
+
+	Sprite_Actor(Game_Battler* enemy);
 
 	~Sprite_Actor() override;
 
@@ -90,7 +92,7 @@ public:
 
 	void Draw(Bitmap& dst) override;
 
-	Game_Actor* GetBattler() const;
+	Game_Actor* GetActor() const;
 
 	void UpdatePosition();
 
@@ -100,6 +102,8 @@ public:
 
 	void SetAfterimageAmount(unsigned amount);
 	void DoAfterimageFade();
+
+	bool isAnimation();
 
 protected:
 	void CreateSprite();

@@ -18,6 +18,7 @@
 // Headers
 #include "sprite_battler.h"
 #include "game_battler.h"
+#include "game_actor.h"
 #include "bitmap.h"
 #include "cache.h"
 #include "main_data.h"
@@ -42,7 +43,12 @@ void Sprite_Battler::ResetZ() {
 	if (battler->GetType() == Game_Battler::Type_Enemy && graphic) {
 		y += graphic->GetHeight() / 2;
 	} else if (battler->GetType() == Game_Battler::Type_Ally) {
-		y += 24;
+		auto actor = static_cast<Game_Actor*>(battler);
+		auto sp_actor = static_cast<Sprite_Actor*>(actor->GetBattleSprite());
+		if (sp_actor && sp_actor->isAnimation())
+			y += 48;
+		else
+			y += 24;
 	}
 
 	Drawable::Z_t z = battler->GetType();
@@ -52,5 +58,9 @@ void Sprite_Battler::ResetZ() {
 	z += Priority_Battler;
 
 	SetZ(z);
+}
+
+void Sprite_Battler::Hide(int t) {
+	timer_hide = t;
 }
 

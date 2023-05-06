@@ -273,5 +273,8 @@ Game_Message::ParseParamResult Game_Message::ParseActor(const char* iter, const 
 Game_Message::ParseParamResult Game_Message::ParseItem(const char* iter, const char* end, uint32_t escape_char, bool skip_prefix, int max_recursion) {
 	return ParseParamImpl('I', 'i', iter, end, escape_char, skip_prefix, max_recursion);
 }
+Game_Message::ParseParamResult Game_Message::ParseSkill(const char* iter, const char* end, uint32_t escape_char, bool skip_prefix, int max_recursion) {
+	return ParseParamImpl('S', 's', iter, end, escape_char, skip_prefix, max_recursion);
+}
 
 

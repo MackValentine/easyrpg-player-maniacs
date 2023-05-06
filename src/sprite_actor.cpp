@@ -32,7 +32,7 @@
 #include "game_battle.h"
 #include "spriteset_battle.h"
 
-Sprite_Actor::Sprite_Actor(Game_Actor* actor)
+Sprite_Actor::Sprite_Actor(Game_Battler* actor)
 	: Sprite_Battler(actor, actor->GetId())
 {
 	CreateSprite();
@@ -40,13 +40,20 @@ Sprite_Actor::Sprite_Actor(Game_Actor* actor)
 
 Sprite_Actor::~Sprite_Actor() {
 }
+/*
+Game_Battler* Sprite_Actor::GetBattler() const {
+	return Sprite_Battler::GetBattler();
+	//return static_cast<Game_Actor*>(Sprite_Battler::GetBattler());
+}
+*/
 
-Game_Actor* Sprite_Actor::GetBattler() const {
+Game_Actor* Sprite_Actor::GetActor() const {
 	return static_cast<Game_Actor*>(Sprite_Battler::GetBattler());
 }
 
 void Sprite_Actor::Update() {
-	auto* battler = GetBattler();
+	//auto* battler = GetBattler();
+	Game_Battler* battler = GetBattler();
 
 	if (!battler->IsHidden() && old_hidden != battler->IsHidden()) {
 		DoIdleAnimation();
@@ -55,6 +62,17 @@ void Sprite_Actor::Update() {
 	old_hidden = battler->IsHidden();
 
 	++cycle;
+
+	if (timer_hide > 0) {
+		timer_hide--;
+		SetVisible(false);
+		animation->SetVisible(false);
+	}
+	else if (timer_hide == 0) {
+		SetVisible(true);
+		timer_hide--;
+		animation->SetVisible(IsVisible());
+	}
 
 	if (anim_state > 0) {
 		// Animations for allies
@@ -199,7 +217,7 @@ void Sprite_Actor::SetAnimationLoop(LoopState loop) {
 }
 
 void Sprite_Actor::DetectStateChange() {
-	if (idling) {
+	if (IsIdling()) {
 		DoIdleAnimation();
 	}
 }
@@ -346,4 +364,14 @@ void Sprite_Actor::DoAfterimageFade() {
 	if (images.size() > 1) {
 		afterimage_fade = 0;
 	}
+}
+
+bool Sprite_Actor::isAnimation() {
+	if (anim_state > 0) {
+		if (Player::IsRPG2k3()) {
+			if (animation)
+				return true;
+		}
+	}
+	return false;
 }

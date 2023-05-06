@@ -49,6 +49,9 @@ public:
 	 */
 	virtual void ResetZ();
 
+	void Hide(int i);
+	int timer_hide = -1;
+
 protected:
 	Game_Battler* battler = nullptr;
 	int battle_index = 0;

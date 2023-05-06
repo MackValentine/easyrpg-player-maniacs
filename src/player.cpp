@@ -55,6 +55,7 @@
 #include "game_pictures.h"
 #include "game_system.h"
 #include "game_variables.h"
+#include "game_lists.h"
 #include "game_targets.h"
 #include "game_windows.h"
 #include "graphics.h"
@@ -954,6 +955,8 @@ void Player::ResetGameObjects() {
 	}
 	Main_Data::game_variables = std::make_unique<Game_Variables>(min_var, max_var);
 
+	Main_Data::game_lists = std::make_unique<Game_Lists>();
+
 	// Prevent a crash when Game_Map wants to reset the screen content
 	// because Setup() modified pictures array
 	Main_Data::game_screen = std::make_unique<Game_Screen>();
@@ -974,6 +977,8 @@ void Player::ResetGameObjects() {
 	Main_Data::game_variables_global = std::make_unique<Game_Variables>(min_var, max_var);
 	Main_Data::game_ineluki = std::make_unique<Game_Ineluki>();
 
+	//Main_Data::game_lists_variables = std::make_unique<Game_ListsVariables>();
+
 	DynRpg::Reset();
 
 	Game_Clock::ResetFrame(Game_Clock::now());
@@ -981,6 +986,7 @@ void Player::ResetGameObjects() {
 	Main_Data::game_system->ReloadSystemGraphic();
 
 	Input::ResetMask();
+	
 }
 
 static bool DefaultLmuStartFileExists(const FilesystemView& fs) {
@@ -1208,8 +1214,13 @@ void Player::LoadSavegame(const std::string& save_name, int save_id) {
 	}
 	Game_Map::Dispose();
 
+	Main_Data::game_system->justLoaded = true;
+
 	Main_Data::game_switches->SetData(std::move(save->system.switches));
 	Main_Data::game_variables->SetData(std::move(save->system.variables));
+
+	Main_Data::game_lists->SetSaveData(std::move(save->system.maniac_strings));
+
 	Main_Data::game_system->SetupFromSave(std::move(save->system));
 	Main_Data::game_actors->SetSaveData(std::move(save->actors));
 	Main_Data::game_party->SetupFromSave(std::move(save->inventory));
@@ -1218,6 +1229,8 @@ void Player::LoadSavegame(const std::string& save_name, int save_id) {
 	Main_Data::game_targets->SetSaveData(std::move(save->targets));
 	Main_Data::game_player->SetSaveData(save->party_location);
 	Main_Data::game_windows->SetSaveData(std::move(save->easyrpg_data.windows));
+
+	
 
 	int map_id = Main_Data::game_player->GetMapId();
 

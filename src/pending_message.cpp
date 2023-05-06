@@ -141,6 +141,22 @@ std::string PendingMessage::ApplyTextInsertingCommands(std::string input, uint32
 
 			start_copy = iter;
 		}
+		else if (ch == 'S' || ch == 's') {
+			auto parse_ret = Game_Message::ParseSkill(iter, end, escape_char, true);
+			iter = parse_ret.next;
+			int value = parse_ret.value;
+
+			auto* item = lcf::ReaderUtil::GetElement(lcf::Data::skills, value);
+			if (!item) {
+				Output::Warning("Invalid Item Id {} in message text", value);
+			}
+			else {
+				output.append(ToString(item->name));
+			}
+
+			start_copy = iter;
+		}
+
 	}
 
 	if (start_copy == input.data()) {

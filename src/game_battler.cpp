@@ -955,3 +955,7 @@ int Game_Battler::ChangeAgiModifier(int modifier) {
 	return delta;
 }
 
+int Game_Battler::getWeakness() {
+	return weaknessRate;
+}
+

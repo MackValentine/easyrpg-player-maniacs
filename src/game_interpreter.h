@@ -371,6 +371,30 @@ protected:
 	void swapMember(std::string param);
 	void setSelectableCursor2(std::string param);
 	void btl_transformEnemy(std::string param);
+	void btl_hidePlayer(std::string param);
+	void disableCommand(std::string param);
+	void openMenuWithShift(std::string param);
+	void setList(std::string param);
+	void printList(std::string param);
+	void getEltList(std::string param);
+	void popList(std::string param);
+	void randomPopList(std::string param);
+	void deleteAtList(std::string param);
+	void clearList(std::string param);
+	void sizeList(std::string param);
+	void btl_hideState(std::string param);
+	void btl_skipWeakness(std::string param);
+	void btl_ActorHasState(std::string param);
+	void btl_EnemyHasState(std::string param);
+	void btl_EnemySetState(std::string param);
+	void containsList(std::string param);
+	void deleteEltList(std::string param);
+	void SelectableWindowEnabled(std::string param);
+	void btl_updateEventWhileAnimation(std::string param);
+	void btl_MoveActor(std::string param);
+	void btl_ResetActorPos(std::string param);
+	void btl_hideActor(std::string param);
+	void btl_GetSizeEnemy(std::string param);
 
 	void tokenize(std::string const& str, const char delim, std::vector<std::string>& out);
 

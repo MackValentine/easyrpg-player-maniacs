@@ -26,6 +26,17 @@
 Scene_Load::Scene_Load() :
 	Scene_File(ToString(lcf::Data::terms.load_game_message)) {
 	Scene::type = Scene::Load;
+
+	forceLoad = -1;
+}
+
+Scene_Load::Scene_Load(int index) :
+	Scene_File(ToString(lcf::Data::terms.load_game_message)) {
+	Scene::type = Scene::Load;
+	Output::Debug("{}", index);
+
+	forceLoad = index - 1;
+
 }
 
 void Scene_Load::Action(int index) {

@@ -78,6 +78,8 @@
 #include "Scene_skill.h"
 #include "scene_teleport.h"
 #include "attribute.h"
+#include <scene_load.h>
+#include "game_lists.h"
 
 
 enum BranchSubcommand {
@@ -826,7 +828,7 @@ bool Game_Interpreter::ExecuteCommand() {
 			return CommandManiacCallCommand(com);
 		case Cmd::Maniac_GetBattleInfo:
 			return CommandManiacGetBattleInfo(com);
-		case Cmd::Maniac_EditPicture:
+		//case Cmd::Maniac_EditPicture:
 
 		default:
 			//Output::Debug("Code commande : {}",com.code);
@@ -2316,10 +2318,1164 @@ bool Game_Interpreter::CommandComment(const lcf::rpg::EventCommand &com) {
 		else if (s.rfind("@btl_transformEnemy(", 0) == 0) {
 			btl_transformEnemy(s);
 		}
+		else if (s.rfind("@btl_hidePlayer(", 0) == 0) {
+			btl_hidePlayer(s);
+		}
+		else if (s.rfind("@disableCommand(", 0) == 0) {
+			disableCommand(s);
+		}
+		else if (s.rfind("@openMenuWithShift(", 0) == 0) {
+			openMenuWithShift(s);
+		}
+		else if (s.rfind("@setList(", 0) == 0) {
+			setList(s);
+		}
+		else if (s.rfind("@printList(", 0) == 0) {
+			printList(s);
+		}
+		else if (s.rfind("@getEltList(", 0) == 0) {
+			getEltList(s);
+		}
+		else if (s.rfind("@popList(", 0) == 0) {
+			popList(s);
+		}
+		else if (s.rfind("@randomPopList(", 0) == 0) {
+			randomPopList(s);
+		}
+		else if (s.rfind("@deleteAtList(", 0) == 0) {
+			deleteAtList(s);
+		}
+		else if (s.rfind("@clearList(", 0) == 0) {
+			clearList(s);
+		}
+		else if (s.rfind("@sizeList(", 0) == 0) {
+			sizeList(s);
+		}
+		else if (s.rfind("@btl_hideState(", 0) == 0) {
+			btl_hideState(s);
+		}
+		else if (s.rfind("@btl_skipWeakness(", 0) == 0) {
+			btl_skipWeakness(s);
+		}
+		else if (s.rfind("@btl_ActorHasState(", 0) == 0) {
+			btl_ActorHasState(s);
+		}
+		else if (s.rfind("@btl_EnemyHasState(", 0) == 0) {
+			btl_EnemyHasState(s);
+		}
+		else if (s.rfind("@btl_EnemySetState(", 0) == 0) {
+			btl_EnemySetState(s);
+		}
+		else if (s.rfind("@containsList(", 0) == 0) {
+			containsList(s);
+		}
+		else if (s.rfind("@deleteEltList(", 0) == 0) {
+			deleteEltList(s);
+		}
+		else if (s.rfind("@SelectableWindowEnabled?(", 0) == 0) {
+			SelectableWindowEnabled(s);
+		}
+		else if (s.rfind("@btl_updateEventWhileAnimation(", 0) == 0) {
+			btl_updateEventWhileAnimation(s);
+		}
+		else if (s.rfind("@btl_MoveActor(", 0) == 0) {
+			btl_MoveActor(s);
+		}
+		else if (s.rfind("@btl_ResetActorPos(", 0) == 0) {
+			btl_ResetActorPos(s);
+		}
+		else if (s.rfind("@btl_hideActor(", 0) == 0) {
+			btl_hideActor(s);
+		}
+		else if (s.rfind("@btl_GetSizeEnemy(", 0) == 0) {
+			btl_GetSizeEnemy(s);
+		}
+		
 
 	}
 	return true;
 }
+
+void Game_Interpreter::btl_GetSizeEnemy(std::string param) {
+	param.replace(0, 18, "");
+	param.replace(param.end() - 1, param.end(), "");
+
+	std::string s = param;
+	const char delim = ',';
+
+	std::vector<std::string> out;
+	tokenize(s, delim, out);
+
+	int enemyIndex = 0;
+	int varIDW = 0;
+	int varIDH = 0;
+
+	int i = 0;
+	for (auto& s : out) {
+		if (i == 0)
+			if (s.rfind("v[", 0) == 0) {
+				s.replace(0, 2, "");
+				s.replace(s.end() - 1, s.end(), "");
+				enemyIndex = Main_Data::game_variables->Get(std::stoi(s));
+			}
+			else {
+				enemyIndex = std::stoi(s);
+			}
+		else if (i == 1)
+			if (s.rfind("v[", 0) == 0) {
+				s.replace(0, 2, "");
+				s.replace(s.end() - 1, s.end(), "");
+				varIDW = Main_Data::game_variables->Get(std::stoi(s));
+			}
+			else {
+				varIDW = std::stoi(s);
+			}
+		else if (i == 2)
+			if (s.rfind("v[", 0) == 0) {
+				s.replace(0, 2, "");
+				s.replace(s.end() - 1, s.end(), "");
+				varIDH = Main_Data::game_variables->Get(std::stoi(s));
+			}
+			else {
+				varIDH = std::stoi(s);
+			}
+
+		i += 1;
+
+	}
+
+	int w = 0;
+	int h = 0;
+
+	Scene_Battle_Rpg2k3* scene = (Scene_Battle_Rpg2k3*)Scene::Find(Scene::Battle).get();
+	if (scene) {
+		auto enemy = Main_Data::game_enemyparty->GetEnemy(enemyIndex);
+
+		if (enemy) {
+
+			w = enemy->GetBattleSprite()->GetWidth();
+			h = enemy->GetBattleSprite()->GetHeight();
+
+		}
+		else {
+			Output::Warning("Enemy ID {} doesn't exist", enemyIndex);
+		}
+
+	}
+
+	Main_Data::game_variables->Set(varIDW, w);
+	Main_Data::game_variables->Set(varIDH, h);
+
+}
+
+void Game_Interpreter::btl_hideActor(std::string param) {
+	param.replace(0, 15, "");
+	param.replace(param.end() - 1, param.end(), "");
+
+	std::string s = param;
+	const char delim = ',';
+
+	std::vector<std::string> out;
+	tokenize(s, delim, out);
+
+	int actorID = 0;
+	int timer = 0;
+
+	int i = 0;
+	for (auto& s : out) {
+		if (i == 0)
+			if (s.rfind("v[", 0) == 0) {
+				s.replace(0, 2, "");
+				s.replace(s.end() - 1, s.end(), "");
+				actorID = Main_Data::game_variables->Get(std::stoi(s));
+			}
+			else {
+				actorID = std::stoi(s);
+			}
+		else if (i == 1)
+			if (s.rfind("v[", 0) == 0) {
+				s.replace(0, 2, "");
+				s.replace(s.end() - 1, s.end(), "");
+				timer = Main_Data::game_variables->Get(std::stoi(s));
+			}
+			else {
+				timer = std::stoi(s);
+			}
+
+		i += 1;
+
+	}
+
+	Scene_Battle_Rpg2k3* scene = (Scene_Battle_Rpg2k3*)Scene::Find(Scene::Battle).get();
+	if (scene) {
+		auto actor = Main_Data::game_actors->GetActor(actorID);
+
+		if (actor) {
+
+			actor->GetBattleSprite()->Hide(timer);
+
+		}
+		else {
+			Output::Warning("Actor ID {} doesn't exist", actorID);
+		}
+
+	}
+
+}
+
+void Game_Interpreter::btl_ResetActorPos(std::string param) {
+	param.replace(0, 19, "");
+	param.replace(param.end() - 1, param.end(), "");
+
+	std::string s = param;
+	const char delim = ',';
+
+	std::vector<std::string> out;
+	tokenize(s, delim, out);
+
+	int actorID = 0;
+
+	int i = 0;
+	for (auto& s : out) {
+		if (i == 0)
+			if (s.rfind("v[", 0) == 0) {
+				s.replace(0, 2, "");
+				s.replace(s.end() - 1, s.end(), "");
+				actorID = Main_Data::game_variables->Get(std::stoi(s));
+			}
+			else {
+				actorID = std::stoi(s);
+			}
+
+		i += 1;
+
+	}
+
+	Scene_Battle_Rpg2k3* scene = (Scene_Battle_Rpg2k3*)Scene::Find(Scene::Battle).get();
+	if (scene) {
+		auto actor = Main_Data::game_actors->GetActor(actorID);
+
+		if (actor) {
+
+			Point p = Game_Battle::Calculate2k3BattlePosition(*actor);
+			actor->SetBattlePosition(p);
+		}
+		else {
+			Output::Warning("Actor ID {} doesn't exist", actorID);
+		}
+
+	}
+
+}
+
+void Game_Interpreter::btl_MoveActor(std::string param) {
+	param.replace(0, 15, "");
+	param.replace(param.end() - 1, param.end(), "");
+
+	std::string s = param;
+	const char delim = ',';
+
+	std::vector<std::string> out;
+	tokenize(s, delim, out);
+
+	int actorID = 0;
+	int x = 0;
+	int y = 0;
+
+	int i = 0;
+	for (auto& s : out) {
+		if (i == 0)
+			if (s.rfind("v[", 0) == 0) {
+				s.replace(0, 2, "");
+				s.replace(s.end() - 1, s.end(), "");
+				actorID = Main_Data::game_variables->Get(std::stoi(s));
+			}
+			else {
+				actorID = std::stoi(s);
+			}
+		else if (i == 1)
+			if (s.rfind("v[", 0) == 0) {
+				s.replace(0, 2, "");
+				s.replace(s.end() - 1, s.end(), "");
+				x = Main_Data::game_variables->Get(std::stoi(s));
+			}
+			else {
+				x = std::stoi(s);
+			}
+		else if (i == 2)
+			if (s.rfind("v[", 0) == 0) {
+				s.replace(0, 2, "");
+				s.replace(s.end() - 1, s.end(), "");
+				y = Main_Data::game_variables->Get(std::stoi(s));
+			}
+			else {
+				y = std::stoi(s);
+			}
+
+		i += 1;
+
+	}
+
+	Scene_Battle_Rpg2k3* scene = (Scene_Battle_Rpg2k3*)Scene::Find(Scene::Battle).get();
+	if (scene) {
+		auto actor = Main_Data::game_actors->GetActor(actorID);
+
+		if (actor) {
+
+			Point p;
+			p.x = x;
+			p.y = y;
+			actor->SetBattlePosition(p);
+
+		}
+		else {
+			Output::Warning("Actor ID {} doesn't exist", actorID);
+		}
+		
+	}
+
+}
+
+
+void Game_Interpreter::btl_updateEventWhileAnimation(std::string param) {
+	param.replace(0, 31, "");
+	param.replace(param.end() - 1, param.end(), "");
+	bool b = false;
+
+	if (param == "true") {
+		b = true;
+	}
+
+	ManiacsBattle::SetUpdateEventWhileAnimation(b);
+}
+
+void Game_Interpreter::SelectableWindowEnabled(std::string param) {
+	param.replace(0, 26, "");
+	param.replace(param.end() - 1, param.end(), "");
+
+	std::string s = param;
+	const char delim = ',';
+
+	std::vector<std::string> out;
+	tokenize(s, delim, out);
+
+	int windowID = 0;
+	int commandID = 0;
+	int switchID = 0;
+
+	int i = 0;
+	for (auto& s : out) {
+		if (i == 0)
+			if (s.rfind("v[", 0) == 0) {
+				s.replace(0, 2, "");
+				s.replace(s.end() - 1, s.end(), "");
+				windowID = Main_Data::game_variables->Get(std::stoi(s));
+			}
+			else {
+				windowID = std::stoi(s);
+			}
+		else if (i == 1)
+			if (s.rfind("v[", 0) == 0) {
+				s.replace(0, 2, "");
+				s.replace(s.end() - 1, s.end(), "");
+				commandID = Main_Data::game_variables->Get(std::stoi(s));
+			}
+			else {
+				commandID = std::stoi(s);
+			}
+		else if (i == 2)
+			if (s.rfind("v[", 0) == 0) {
+				s.replace(0, 2, "");
+				s.replace(s.end() - 1, s.end(), "");
+				switchID = Main_Data::game_variables->Get(std::stoi(s));
+			}
+			else {
+				switchID = std::stoi(s);
+			}
+
+		i += 1;
+
+	}
+
+	bool b = false;
+	auto& pic = Main_Data::game_pictures->GetPicture(windowID);
+	if (&pic != NULL) {
+		auto window = pic.getWindow();
+
+		Window_Command* w = dynamic_cast<Window_Command*> (window);
+		if (w) {
+			b = w->Enabled(commandID);
+		}
+
+	}
+
+	Main_Data::game_switches->Set(switchID, b);
+
+}
+
+void Game_Interpreter::deleteEltList(std::string param) {
+	param.replace(0, 15, "");
+	param.replace(param.end() - 1, param.end(), "");
+
+	std::string s = param;
+	const char delim = ',';
+
+	std::vector<std::string> out;
+	tokenize(s, delim, out);
+
+	int listID = 0;
+
+	int elt = 0;
+
+	int i = 0;
+	for (auto& s : out) {
+		if (i == 0)
+			if (s.rfind("v[", 0) == 0) {
+				s.replace(0, 2, "");
+				s.replace(s.end() - 1, s.end(), "");
+				listID = Main_Data::game_variables->Get(std::stoi(s));
+			}
+			else {
+				listID = std::stoi(s);
+			}
+		else if (i == 1)
+		{
+			if (s.rfind("v[", 0) == 0) {
+				s.replace(0, 2, "");
+				s.replace(s.end() - 1, s.end(), "");
+				elt = Main_Data::game_variables->Get(std::stoi(s));
+			}
+			else {
+				elt = std::stoi(s);
+			}
+		}
+
+		i += 1;
+
+	}
+
+	if (listID < Main_Data::game_lists->GetSize()) {
+		Main_Data::game_lists->DeleteElt(listID, elt);
+
+	}
+
+}
+
+void Game_Interpreter::containsList(std::string param) {
+	param.replace(0, 14, "");
+	param.replace(param.end() - 1, param.end(), "");
+
+	std::string s = param;
+	const char delim = ',';
+
+	std::vector<std::string> out;
+	tokenize(s, delim, out);
+
+	int listID = 0;
+	int elt = 0;
+	int switchID = 0;
+
+	int i = 0;
+	for (auto& s : out) {
+		if (i == 0)
+			if (s.rfind("v[", 0) == 0) {
+				s.replace(0, 2, "");
+				s.replace(s.end() - 1, s.end(), "");
+				listID = Main_Data::game_variables->Get(std::stoi(s));
+			}
+			else {
+				listID = std::stoi(s);
+			}
+		else if (i == 1)
+		{
+			if (s.rfind("v[", 0) == 0) {
+				s.replace(0, 2, "");
+				s.replace(s.end() - 1, s.end(), "");
+				elt = Main_Data::game_variables->Get(std::stoi(s));
+			}
+			else {
+				elt = std::stoi(s);
+			}
+		}
+		else if (i == 2)
+		{
+			if (s.rfind("v[", 0) == 0) {
+				s.replace(0, 2, "");
+				s.replace(s.end() - 1, s.end(), "");
+				switchID = Main_Data::game_variables->Get(std::stoi(s));
+			}
+			else {
+				switchID = std::stoi(s);
+			}
+		}
+
+
+		i += 1;
+
+	}
+	bool b = false;
+	if (listID < Main_Data::game_lists->GetSize()) {
+
+		b = Main_Data::game_lists->Contains(listID, elt);
+
+	}
+
+	Main_Data::game_switches->Set(switchID, b);
+
+}
+
+void Game_Interpreter::btl_EnemySetState(std::string param) {
+	param.replace(0, 19, "");
+	param.replace(param.end() - 1, param.end(), "");
+
+	std::string s = param;
+	const char delim = ',';
+
+	std::vector<std::string> out;
+	tokenize(s, delim, out);
+
+	int enemyID = 0;
+	int stateID = 0;
+
+	int i = 0;
+	for (auto& s : out) {
+		if (i == 0)
+			if (s.rfind("v[", 0) == 0) {
+				s.replace(0, 2, "");
+				s.replace(s.end() - 1, s.end(), "");
+				enemyID = Main_Data::game_variables->Get(std::stoi(s));
+			}
+			else {
+				enemyID = std::stoi(s);
+			}
+		else if (i == 1)
+		{
+			if (s.rfind("v[", 0) == 0) {
+				s.replace(0, 2, "");
+				s.replace(s.end() - 1, s.end(), "");
+				stateID = Main_Data::game_variables->Get(std::stoi(s));
+			}
+			else {
+				stateID = std::stoi(s);
+			}
+		}
+
+
+		i += 1;
+
+	}
+
+	Scene_Battle_Rpg2k3* scene = (Scene_Battle_Rpg2k3*)Scene::Find(Scene::Battle).get();
+	if (scene) {
+		Output::Debug("State ID {} Added", stateID);
+		Main_Data::game_enemyparty->GetEnemies()[enemyID]->AddState(stateID, true);
+	}
+
+
+
+}
+
+void Game_Interpreter::btl_EnemyHasState(std::string param) {
+	param.replace(0, 19, "");
+	param.replace(param.end() - 1, param.end(), "");
+
+	std::string s = param;
+	const char delim = ',';
+
+	std::vector<std::string> out;
+	tokenize(s, delim, out);
+
+	int enemyID = 0;
+	int stateID = 0;
+	int switchID = 0;
+
+	int i = 0;
+	for (auto& s : out) {
+		if (i == 0)
+			if (s.rfind("v[", 0) == 0) {
+				s.replace(0, 2, "");
+				s.replace(s.end() - 1, s.end(), "");
+				enemyID = Main_Data::game_variables->Get(std::stoi(s));
+			}
+			else {
+				enemyID = std::stoi(s);
+			}
+		else if (i == 1)
+		{
+			if (s.rfind("v[", 0) == 0) {
+				s.replace(0, 2, "");
+				s.replace(s.end() - 1, s.end(), "");
+				stateID = Main_Data::game_variables->Get(std::stoi(s));
+			}
+			else {
+				stateID = std::stoi(s);
+			}
+		}
+		else if (i == 2)
+		{
+			if (s.rfind("v[", 0) == 0) {
+				s.replace(0, 2, "");
+				s.replace(s.end() - 1, s.end(), "");
+				switchID = Main_Data::game_variables->Get(std::stoi(s));
+			}
+			else {
+				switchID = std::stoi(s);
+			}
+		}
+
+
+		i += 1;
+
+	}
+	bool result = false;
+
+	Scene_Battle_Rpg2k3* scene = (Scene_Battle_Rpg2k3*)Scene::Find(Scene::Battle).get();
+	if (scene) {
+		auto enemy = Main_Data::game_enemyparty->GetEnemy(enemyID);
+
+		if (Main_Data::game_enemyparty->GetEnemy(enemyID)->HasState(stateID)) {
+			result = true;
+		}
+	}
+	
+
+	Main_Data::game_switches->Set(switchID, result);
+
+}
+
+void Game_Interpreter::btl_ActorHasState(std::string param) {
+	param.replace(0, 19, "");
+	param.replace(param.end() - 1, param.end(), "");
+
+	std::string s = param;
+	const char delim = ',';
+
+	std::vector<std::string> out;
+	tokenize(s, delim, out);
+
+	int actorID = 0;
+	int stateID = 0;
+	int switchID = 0;
+
+	int i = 0;
+	for (auto& s : out) {
+		if (i == 0)
+			if (s.rfind("v[", 0) == 0) {
+				s.replace(0, 2, "");
+				s.replace(s.end() - 1, s.end(), "");
+				actorID = Main_Data::game_variables->Get(std::stoi(s));
+			}
+			else {
+				actorID = std::stoi(s);
+			}
+		else if (i == 1)
+		{
+			if (s.rfind("v[", 0) == 0) {
+				s.replace(0, 2, "");
+				s.replace(s.end() - 1, s.end(), "");
+				stateID = Main_Data::game_variables->Get(std::stoi(s));
+			}
+			else {
+				stateID = std::stoi(s);
+			}
+		}
+		else if (i == 2)
+		{
+			if (s.rfind("v[", 0) == 0) {
+				s.replace(0, 2, "");
+				s.replace(s.end() - 1, s.end(), "");
+				switchID = Main_Data::game_variables->Get(std::stoi(s));
+			}
+			else {
+				switchID = std::stoi(s);
+			}
+		}
+
+
+		i += 1;
+
+	}
+	bool result = false;
+	if (Main_Data::game_actors->GetActor(actorID)->HasState(stateID)) {
+		result = true;
+	}
+
+	Main_Data::game_switches->Set(switchID, result);
+
+}
+
+void Game_Interpreter::btl_skipWeakness(std::string param) {
+	param.replace(0, 18, "");
+	param.replace(param.end() - 1, param.end(), "");
+	int id = 0;
+
+	if (param.rfind("v[", 0) == 0) {
+		param.replace(0, 2, "");
+		param.replace(param.end() - 1, param.end(), "");
+		id = Main_Data::game_variables->Get(std::stoi(param));
+	}
+	else {
+		id = std::stoi(param);
+	}
+
+	ManiacsBattle::Add_SkipWeakness(id);
+}
+
+void Game_Interpreter::btl_hideState(std::string param) {
+	param.replace(0, 15, "");
+	param.replace(param.end() - 1, param.end(), "");
+	int id = 0;
+
+	if (param.rfind("v[", 0) == 0) {
+		param.replace(0, 2, "");
+		param.replace(param.end() - 1, param.end(), "");
+		id = Main_Data::game_variables->Get(std::stoi(param));
+	}
+	else {
+		id = std::stoi(param);
+	}
+
+	ManiacsBattle::Add_HidedStates(id);
+}
+
+
+void Game_Interpreter::sizeList(std::string param) {
+	param.replace(0, 10, "");
+	param.replace(param.end() - 1, param.end(), "");
+
+	std::string s = param;
+	const char delim = ',';
+
+	std::vector<std::string> out;
+	tokenize(s, delim, out);
+
+	int listID = 0;
+	int varID = 0;
+
+	int i = 0;
+	for (auto& s : out) {
+		if (i == 0)
+			if (s.rfind("v[", 0) == 0) {
+				s.replace(0, 2, "");
+				s.replace(s.end() - 1, s.end(), "");
+				listID = Main_Data::game_variables->Get(std::stoi(s));
+			}
+			else {
+				listID = std::stoi(s);
+			}
+		else if (i == 1)
+		{
+			if (s.rfind("v[", 0) == 0) {
+				s.replace(0, 2, "");
+				s.replace(s.end() - 1, s.end(), "");
+				varID = Main_Data::game_variables->Get(std::stoi(s));
+			}
+			else {
+				varID = std::stoi(s);
+			}
+		}
+
+
+		i += 1;
+
+	}
+	int value = 0;
+	if (listID < Main_Data::game_lists->GetSize()) {
+
+		value = Main_Data::game_lists->GetSizeList(listID);
+
+	}
+
+	Main_Data::game_variables->Set(varID, value);
+
+}
+
+void Game_Interpreter::clearList(std::string param) {
+	param.replace(0, 11, "");
+	param.replace(param.end() - 1, param.end(), "");
+	int id = 0;
+
+	if (param.rfind("v[", 0) == 0) {
+		param.replace(0, 2, "");
+		param.replace(param.end() - 1, param.end(), "");
+		id = Main_Data::game_variables->Get(std::stoi(param));
+	}
+	else {
+		id = std::stoi(param);
+	}
+
+	if (id < Main_Data::game_lists->GetSize()) {
+		Main_Data::game_lists->Clear(id);
+	}
+}
+
+void Game_Interpreter::deleteAtList(std::string param) {
+	param.replace(0, 14, "");
+	param.replace(param.end() - 1, param.end(), "");
+
+	std::string s = param;
+	const char delim = ',';
+
+	std::vector<std::string> out;
+	tokenize(s, delim, out);
+
+	int listID = 0;
+
+	int elementID = 0;
+
+	int i = 0;
+	for (auto& s : out) {
+		if (i == 0)
+			if (s.rfind("v[", 0) == 0) {
+				s.replace(0, 2, "");
+				s.replace(s.end() - 1, s.end(), "");
+				listID = Main_Data::game_variables->Get(std::stoi(s));
+			}
+			else {
+				listID = std::stoi(s);
+			}
+		else if (i == 1)
+		{
+			if (s.rfind("v[", 0) == 0) {
+				s.replace(0, 2, "");
+				s.replace(s.end() - 1, s.end(), "");
+				elementID = Main_Data::game_variables->Get(std::stoi(s));
+			}
+			else {
+				elementID = std::stoi(s);
+			}
+		}
+
+		i += 1;
+
+	}
+
+	if (listID < Main_Data::game_lists->GetSize()) {
+
+		Main_Data::game_lists->Delete(listID, elementID);
+
+	}
+
+}
+
+void Game_Interpreter::randomPopList(std::string param) {
+	param.replace(0, 15, "");
+	param.replace(param.end() - 1, param.end(), "");
+
+	std::string s = param;
+	const char delim = ',';
+
+	std::vector<std::string> out;
+	tokenize(s, delim, out);
+
+	int listID = 0;
+
+	int varID = 0;
+
+	int i = 0;
+	for (auto& s : out) {
+		if (i == 0)
+			if (s.rfind("v[", 0) == 0) {
+				s.replace(0, 2, "");
+				s.replace(s.end() - 1, s.end(), "");
+				listID = Main_Data::game_variables->Get(std::stoi(s));
+			}
+			else {
+				listID = std::stoi(s);
+			}
+		else if (i == 1)
+		{
+			if (s.rfind("v[", 0) == 0) {
+				s.replace(0, 2, "");
+				s.replace(s.end() - 1, s.end(), "");
+				varID = Main_Data::game_variables->Get(std::stoi(s));
+			}
+			else {
+				varID = std::stoi(s);
+			}
+		}
+
+		i += 1;
+
+	}
+	int value = 0;
+	if (listID < Main_Data::game_lists->GetSize()) {
+
+		value = Main_Data::game_lists->randomPop(listID);
+
+	}
+
+	Main_Data::game_variables->Set(varID, value);
+
+}
+
+void Game_Interpreter::popList(std::string param) {
+	param.replace(0, 9, "");
+	param.replace(param.end() - 1, param.end(), "");
+
+	std::string s = param;
+	const char delim = ',';
+
+	std::vector<std::string> out;
+	tokenize(s, delim, out);
+
+	int listID = 0;
+
+	int varID = 0;
+
+	int i = 0;
+	for (auto& s : out) {
+		if (i == 0)
+			if (s.rfind("v[", 0) == 0) {
+				s.replace(0, 2, "");
+				s.replace(s.end() - 1, s.end(), "");
+				listID = Main_Data::game_variables->Get(std::stoi(s));
+			}
+			else {
+				listID = std::stoi(s);
+			}
+		else if (i == 1)
+		{
+			if (s.rfind("v[", 0) == 0) {
+				s.replace(0, 2, "");
+				s.replace(s.end() - 1, s.end(), "");
+				varID = Main_Data::game_variables->Get(std::stoi(s));
+			}
+			else {
+				varID = std::stoi(s);
+			}
+		}
+
+		i += 1;
+
+	}
+	int value = 0;
+	if (listID < Main_Data::game_lists->GetSize()) {
+
+		value = Main_Data::game_lists->Pop(listID);
+
+	}
+
+	Main_Data::game_variables->Set(varID, value);
+
+}
+
+void Game_Interpreter::getEltList(std::string param) {
+	param.replace(0, 12, "");
+	param.replace(param.end() - 1, param.end(), "");
+
+	std::string s = param;
+	const char delim = ',';
+
+	std::vector<std::string> out;
+	tokenize(s, delim, out);
+
+	int listID = 0;
+	int varID = 0;
+	int eltID = 0;
+
+	int i = 0;
+	for (auto& s : out) {
+		if (i == 0)
+			if (s.rfind("v[", 0) == 0) {
+				s.replace(0, 2, "");
+				s.replace(s.end() - 1, s.end(), "");
+				listID = Main_Data::game_variables->Get(std::stoi(s));
+			}
+			else {
+				listID = std::stoi(s);
+			}
+		else if (i == 1)
+		{
+			if (s.rfind("v[", 0) == 0) {
+				s.replace(0, 2, "");
+				s.replace(s.end() - 1, s.end(), "");
+				varID = Main_Data::game_variables->Get(std::stoi(s));
+			}
+			else {
+				varID = std::stoi(s);
+			}
+		}
+		else if (i == 2)
+		{
+			if (s.rfind("v[", 0) == 0) {
+				s.replace(0, 2, "");
+				s.replace(s.end() - 1, s.end(), "");
+				eltID = Main_Data::game_variables->Get(std::stoi(s));
+			}
+			else {
+				eltID = std::stoi(s);
+			}
+		}
+
+		i += 1;
+
+	}
+
+	//Output::Debug("L{} E{}", listID, eltID);
+
+	int value = 0;
+	if (listID < Main_Data::game_lists->GetSize()) {
+
+		value = Main_Data::game_lists->GetElt(listID, eltID);
+
+	}
+
+	Main_Data::game_variables->Set(varID, value);
+
+}
+
+void Game_Interpreter::printList(std::string param) {
+	param.replace(0, 11, "");
+	param.replace(param.end() - 1, param.end(), "");
+	int id = 0;
+
+	if (param.rfind("v[", 0) == 0) {
+		param.replace(0, 2, "");
+		param.replace(param.end() - 1, param.end(), "");
+		id = Main_Data::game_variables->Get(std::stoi(param));
+	}
+	else {
+		id = std::stoi(param);
+	}
+
+	if (id < Main_Data::game_lists->GetSize()) {
+		std::vector<int> v = Main_Data::game_lists->Get(id);
+
+		for (int i : v) {
+			Output::Debug("List {} : {}", id, i);
+		}
+	}
+}
+
+void Game_Interpreter::setList(std::string param) {
+	param.replace(0, 9, "");
+	param.replace(param.end() - 1, param.end(), "");
+
+	std::string s = param;
+	const char delim = ',';
+
+	std::vector<std::string> out;
+	tokenize(s, delim, out);
+
+	int varID = 0;
+
+	std::vector<int> v;
+
+	int i = 0;
+	for (auto& s : out) {
+		if (i == 0)
+			if (s.rfind("v[", 0) == 0) {
+				s.replace(0, 2, "");
+				s.replace(s.end() - 1, s.end(), "");
+				varID = Main_Data::game_variables->Get(std::stoi(s));
+			}
+			else {
+				varID = std::stoi(s);
+			}
+		else 
+		{
+			if (s != "") {
+				int i = std::stoi(s);
+				v.push_back(i);
+			}
+		}
+
+		i += 1;
+
+	}
+
+	if (varID < Main_Data::game_lists->GetSize()) {
+		Main_Data::game_lists->Set(varID, v);
+	}
+
+}
+
+void Game_Interpreter::openMenuWithShift(std::string param) {
+
+	Main_Data::game_player->shift4Menu = true;
+
+}
+
+void Game_Interpreter::disableCommand(std::string param) {
+	param.replace(0, 16, "");
+	param.replace(param.end() - 1, param.end(), "");
+
+	std::string s = param;
+	const char delim = ',';
+
+	std::vector<std::string> out;
+	tokenize(s, delim, out);
+
+	int windowID = 0;
+	int commandID = 0;
+
+	int i = 0;
+	for (auto& s : out) {
+		if (i == 0)
+			if (s.rfind("v[", 0) == 0) {
+				s.replace(0, 2, "");
+				s.replace(s.end() - 1, s.end(), "");
+				windowID = Main_Data::game_variables->Get(std::stoi(s));
+			}
+			else {
+				windowID = std::stoi(s);
+			}
+		else if (i == 1)
+			if (s.rfind("v[", 0) == 0) {
+				s.replace(0, 2, "");
+				s.replace(s.end() - 1, s.end(), "");
+				commandID = Main_Data::game_variables->Get(std::stoi(s));
+			}
+			else {
+				commandID = std::stoi(s);
+			}
+
+		i += 1;
+
+	}
+
+	auto& pic = Main_Data::game_pictures->GetPicture(windowID);
+	if (&pic != NULL) {
+		auto window = pic.getWindow();
+		window->Update();
+
+		Window_Command* w = dynamic_cast<Window_Command*> (window);
+		if (w)
+			w->DisableItem(commandID);
+		
+	}
+
+}
+
+void Game_Interpreter::btl_hidePlayer(std::string param) {
+	param.replace(0, 16, "");
+	param.replace(param.end() - 1, param.end(), "");
+	int id = 0;
+
+	if (param.rfind("v[", 0) == 0) {
+		param.replace(0, 2, "");
+		param.replace(param.end() - 1, param.end(), "");
+		id = Main_Data::game_variables->Get(std::stoi(param));
+	}
+	else {
+		id = std::stoi(param);
+	}
+
+	Scene_Battle_Rpg2k3* scene = (Scene_Battle_Rpg2k3*)Scene::Find(Scene::Battle).get();
+	if (scene) {
+		int actor_id = Main_Data::game_party->GetActorPositionInParty(0);
+
+		auto actor = Main_Data::game_actors->GetActor(1);
+		if (actor != NULL) {
+			
+			//actor->SetHp(500);
+		}
+	}
+
+
+}
+
 
 void Game_Interpreter::btl_transformEnemy(std::string param) {
 	param.replace(0, 20, "");
@@ -2532,7 +3688,17 @@ void Game_Interpreter::btl_allowCancelActor(std::string param) {
 void Game_Interpreter::printVar(std::string param) {
 	param.replace(0, 10, "");
 	param.replace(param.end() - 1, param.end(), "");
-	int id = std::stoi(param);
+	int id = 0;
+
+	if (param.rfind("v[", 0) == 0) {
+		param.replace(0, 2, "");
+		param.replace(param.end() - 1, param.end(), "");
+		id = Main_Data::game_variables->Get(std::stoi(param));
+	}
+	else {
+		id = std::stoi(param);
+	}
+
 	int r = Main_Data::game_variables->Get(id);
 
 	Output::Debug("Variable[{}] : {}", id, r);
@@ -2543,9 +3709,6 @@ void Game_Interpreter::printVar(std::string param) {
 void Game_Interpreter::print(std::string param) {
 	param.replace(0, 7, "");
 	param.replace(param.end() - 1, param.end(), "");
-
-	
-
 
 	std::stringstream ss(param);
 	std::string out;
@@ -2565,10 +3728,6 @@ void Game_Interpreter::btl_isZooming(std::string param) {
 	int switchID = std::stoi(param);
 
 	bool b = false;
-	Scene_Battle_Rpg2k3* scene = (Scene_Battle_Rpg2k3*)Scene::Find(Scene::Battle).get();
-	if (scene) {
-		
-	}
 
 	if (Game_Battle::GetSpriteset().zoomTimer != -1)
 		b = true;
@@ -2673,11 +3832,11 @@ void Game_Interpreter::OpenTeleport(std::string param) {
 
 	}
 
-	Output::Debug("I {}", itemID);
+	//Output::Debug("I {}", itemID);
 
 	const lcf::rpg::Item* item = lcf::ReaderUtil::GetElement(lcf::Data::items, itemID);
 	if (item->ID > 0) {
-		Output::Debug("IID {}", item->ID);
+		//Output::Debug("IID {}", item->ID);
 		const lcf::rpg::Skill* skill = lcf::ReaderUtil::GetElement(lcf::Data::skills, item->skill_id);
 		if (skill) {
 			//Main_Data::game_system->SePlay(Main_Data::game_system->GetSystemSE(Main_Data::game_system->SFX_Decision));
@@ -3049,7 +4208,7 @@ void Game_Interpreter::isItemUsable(std::string param) {
 
 	Main_Data::game_switches->Set(switchID, b);
 
-	Output::Debug("A {} S {} I {} R {}", actorID, itemID, switchID, b);
+	//Output::Debug("A {} S {} I {} R {}", actorID, itemID, switchID, b);
 
 }
 
@@ -3089,7 +4248,7 @@ void Game_Interpreter::ItemWindowItem(std::string param) {
 		i += 1;
 
 	}
-	Output::Debug("P {} V {}", picID, varID);
+	//Output::Debug("P {} V {}", picID, varID);
 
 	Main_Data::game_variables->Set(varID, 0);
 
@@ -3170,7 +4329,7 @@ void Game_Interpreter::setWindowItem(std::string param) {
 
 	}
 
-	Output::Debug("PID{} C{} HX{} HY{}", picID,c,hx,hy);
+	//Output::Debug("PID{} C{} HX{} HY{}", picID,c,hx,hy);
 
 	auto& pic = Main_Data::game_pictures->GetPicture(picID);
 	if (&pic != NULL) {
@@ -4653,7 +5812,7 @@ void Game_Interpreter::ReplaceNameActorByClass(std::string param) {
 	actor->SetName(actor->GetClassName().to_string());
 
 	int class_id = actor->GetClass()->ID;
-	int i = ((class_id / 16) + 1);
+	int i = (((class_id-1) / 16) + 1);
 	std::string face_name = "Monsters" + std::to_string(i);
 	int face_index = (class_id-1) % 16;
 	actor->SetFace(face_name, face_index);
@@ -5215,6 +6374,15 @@ void Game_Interpreter::btl_forceAction(std::string param) {
 
 				}
 			}
+
+			if (action_type == 0) {
+				if (action_id == 2) {
+					// Output::Debug("Defend");
+
+					a->SetBattleAlgorithm(std::make_shared<Game_BattleAlgorithm::Defend>(a));
+				}
+			}
+
 		}
 	}
 }
@@ -7415,8 +8583,8 @@ bool Game_Interpreter::CommandConditionalBranch(lcf::rpg::EventCommand const& co
 			switch (com.parameters[1]) {
 				case 0:
 					// FIXME: Game was loaded in this frame
-					Output::Warning("Maniac: Condition 'Loaded' not implemented");
-					result = false;
+					//Output::Warning("Maniac: Condition 'Loaded' not implemented");
+					result = Main_Data::game_system->justLoaded;
 					break;
 				case 1:
 					// Joypad is active (We always read from Controller so simply report 'true')
@@ -7894,7 +9062,7 @@ bool Game_Interpreter::CommandManiacSave(lcf::rpg::EventCommand const& com) {
 	// Maniac Patch saves directly and game data could be in an undefined state
 	// We yield first to the Update loop and then do a save.
 	_async_op = AsyncOp::MakeSave(slot, out_var);
-
+	//AZE
 	return true;
 }
 
@@ -7924,8 +9092,16 @@ bool Game_Interpreter::CommandManiacLoad(lcf::rpg::EventCommand const& com) {
 
 	// FIXME: In Maniac the load causes a blackscreen followed by a fade-in that can be cancelled by a transition event
 	// This is not implemented yet, the loading is instant without fading
-	_async_op = AsyncOp::MakeLoad(slot);
+	//_async_op = AsyncOp::MakeLoad(slot);
+	auto& frame = GetFrame();
+	auto& index = frame.current_command;
 
+	if (Game_Message::IsMessageActive()) {
+		return false;
+	}
+
+	Scene::instance->SetRequestedScene(std::make_shared<Scene_Load>(slot));
+	++index;
 	return true;
 }
 

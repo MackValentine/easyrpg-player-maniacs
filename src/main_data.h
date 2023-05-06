@@ -39,7 +39,10 @@ class Game_Variables;
 class Game_Targets;
 class Game_Quit;
 class Game_Ineluki;
+class Game_Lists;
+
 class FileFinder_RTP;
+
 
 namespace Main_Data {
 	// Dynamic Game lcf::Data
@@ -59,6 +62,7 @@ namespace Main_Data {
 	extern std::unique_ptr<Game_Switches> game_switches_global; // Used by Global Save command
 	extern std::unique_ptr<Game_Variables> game_variables_global;
 
+	extern std::unique_ptr<Game_Lists> game_lists;
 
 	extern std::unique_ptr<FileFinder_RTP> filefinder_rtp;
 

@@ -399,7 +399,12 @@ void Game_Player::Update() {
 			&& !Game_Message::IsMessageActive()
 			&& !Game_Map::GetInterpreter().IsRunning())
 	{
-		if (Input::IsTriggered(Input::CANCEL)) {
+		auto input = Input::CANCEL;
+
+		if (shift4Menu)
+			input = Input::SHIFT;
+
+		if (Input::IsTriggered(input)) {
 			SetMenuCalling(true);
 		}
 	}

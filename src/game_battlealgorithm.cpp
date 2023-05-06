@@ -1041,6 +1041,36 @@ bool Game_BattleAlgorithm::Skill::vExecute() {
 		// Silently does nothing.
 		return SetIsSuccess();
 	}
+	int CE_ID = ManiacsBattle::Get_DamageCE();
+	int Var_ID = ManiacsBattle::Get_DamageVar();
+	if (CE_ID > 0) {
+		int n = skill.attribute_effects.size();
+
+		int rate = 0;
+		int nr = 0;
+
+		for (int i = 0; i < n; ++i) {
+			const auto id = i + 1;
+
+			if (!ManiacsBattle::SkippedWeaknessContains(id)) {
+				auto attribute_sets = Utils::MakeArray(&skill.attribute_effects);
+				auto s = MakeSpan(attribute_sets);
+				if (Attribute::HasAttributeExt(s, id)) {
+
+					int r = Attribute::GetAttributeRateModifier(id, target->GetAttributeRate(id));
+
+					rate += r;
+					nr++;
+
+				}
+			}
+		}
+		if (nr != 0)
+			target->weaknessRate = rate / nr;
+		else
+			target->weaknessRate = 100;
+	}
+
 
 	SetIsPositive(Algo::SkillTargetsAllies(skill));
 

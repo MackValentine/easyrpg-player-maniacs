@@ -139,6 +139,56 @@ namespace ManiacsBattle
 		allowCancelActor = b;
 	}
 
+	std::vector<int> states_hided;
+
+	std::vector<int> Get_HidedStates() {
+		return states_hided;
+	}
+
+	void Add_HidedStates(int i) {
+		std::vector<int> v = ManiacsBattle::Get_HidedStates();
+
+		if (!(std::find(v.begin(), v.end(), i) != v.end())) {
+			states_hided.push_back(i);
+		}
+
+	}
+
+
+	std::vector<int> weakness_skipped;
+
+	std::vector<int> Get_SkippedWeakness() {
+		return weakness_skipped;
+	}
+
+	void Add_SkipWeakness(int i) {
+		std::vector<int> v = ManiacsBattle::Get_SkippedWeakness();
+
+		if (!(std::find(v.begin(), v.end(), i) != v.end())) {
+			weakness_skipped.push_back(i);
+		}
+
+	}
+
+	bool SkippedWeaknessContains(int i) {
+		bool b = false;
+		std::vector<int> v = ManiacsBattle::Get_SkippedWeakness();
+
+		if (std::find(v.begin(), v.end(), i) != v.end()) {
+			b = true;
+		}
+
+		return b;
+	}
+
+	bool UpdateEventWhileAnimation = false;
+	void SetUpdateEventWhileAnimation(bool b) {
+		UpdateEventWhileAnimation = b;
+	}
+	bool GetUpdateEventWhileAnimation() {
+		return UpdateEventWhileAnimation;
+	}
+
 }
 
 //TODO
@@ -451,7 +501,12 @@ bool Game_Interpreter_Battle::CommandChangeMonsterHP(lcf::rpg::EventCommand cons
 	if (enemy.IsDead()) {
 		Main_Data::game_system->SePlay(Main_Data::game_system->GetSystemSE(Main_Data::game_system->SFX_EnemyKill));
 		enemy.SetDeathTimer();
+
+		if (enemy.GetBattleAnimationId() > 0)
+			static_cast<Sprite_Actor*> (enemy.GetBattleSprite())->DetectStateChange();
 	}
+
+	
 
 	return true;
 }
@@ -492,6 +547,10 @@ bool Game_Interpreter_Battle::CommandChangeMonsterCondition(lcf::rpg::EventComma
 	} else {
 		enemy.AddState(state_id, true);
 	}
+
+	if (enemy.GetBattleAnimationId() > 0)
+		static_cast<Sprite_Actor*> (enemy.GetBattleSprite())->DetectStateChange();
+
 	return true;
 }
 

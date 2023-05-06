@@ -43,9 +43,12 @@
 #include "scene_save.h"
 #include "version.h"
 
+#include "game_lists.h"
+
 Scene_Save::Scene_Save() :
 	Scene_File(ToString(lcf::Data::terms.save_game_message)) {
 	Scene::type = Scene::Save;
+	forceLoad = -1;
 }
 
 void Scene_Save::Start() {
@@ -159,6 +162,9 @@ bool Scene_Save::Save(std::ostream& os, int slot_id, bool prepare_save) {
 	save.pictures = Main_Data::game_pictures->GetSaveData();
 	save.easyrpg_data.windows = Main_Data::game_windows->GetSaveData();
 
+	save.system.maniac_strings = Main_Data::game_lists->GetSaveData();
+
+
 	save.system.scene = Scene::instance ? Scene::rpgRtSceneFromSceneType(Scene::instance->type) : -1;
 
 	// 2k RPG_RT always stores SaveMapEvent with map_id == 0.
@@ -182,6 +188,7 @@ bool Scene_Save::Save(std::ostream& os, int slot_id, bool prepare_save) {
 
 	return res;
 }
+
 
 bool Scene_Save::IsSlotValid(int) {
 	return true;

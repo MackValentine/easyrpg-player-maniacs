@@ -110,16 +110,26 @@ void BattleAnimation::DrawAt(Bitmap& dst, int x, int y) {
 		int dx = Player::Screen_Width / 2;
 		int dy = Player::Screen_Height / 2;
 		int ddx = Game_Battle::GetSpriteset().zoomPosX;
-		int zx = x - (((dx - x) * Game_Battle::GetSpriteset().zoomX) - (dx - x)) + (dx - ddx);
+		//int zx = x - (((dx - x) * Game_Battle::GetSpriteset().zoomX) - (dx - x)) + (dx - ddx);
 
 		int ddy = Game_Battle::GetSpriteset().zoomPosY;
-		int zy = y - (((dy - y) * Game_Battle::GetSpriteset().zoomY) - (dy - y)) + (dy - ddy);
+		//int zy = y - (((dy - y) * Game_Battle::GetSpriteset().zoomY) - (dy - y)) + (dy - ddy);
 
-		x = zx;
-		y = zy;
+		//x = zx;
+		//y = zy;
 
-		SetX(invert ? x - cell.x * Game_Battle::GetSpriteset().zoomX : cell.x * Game_Battle::GetSpriteset().zoomX + x);
-		SetY(cell.y * Game_Battle::GetSpriteset().zoomX + y);
+		float z = Game_Battle::GetSpriteset().zoomX;
+		if (z != 1)
+			z -= 0.015;
+
+		int cx = (x + cell.x) - (((dx - (x + cell.x)) * z) - (dx - (x + cell.x))) + (dx - ddx);
+		if (invert) {
+			cx = (x - cell.x) - (((dx - (x + cell.x)) * z) - (dx - (x - cell.x))) + (dx - ddx);
+		}
+		int cy = (y + cell.y) - (((dy - (y + cell.y)) * z) - (dy - (y + cell.y))) + (dy - ddy);
+
+		SetX(cx);
+		SetY(cy);
 		int sx = cell.cell_id % 5;
 		if (invert) sx = 4 - sx;
 		int sy = cell.cell_id / 5;

@@ -171,6 +171,8 @@ add_library(${PROJECT_NAME} STATIC
 	src/game_interpreter.h
 	src/game_interpreter_map.cpp
 	src/game_interpreter_map.h
+	src/game_lists.cpp
+	src/game_lists.h
 	src/game_map.cpp
 	src/game_map.h
 	src/game_message.cpp

@@ -1025,6 +1025,7 @@ void Game_Map::Update(MapUpdateAsyncContext& actx, bool is_preupdate) {
 	Parallax::Update();
 
 	actx = {};
+	Main_Data::game_system->justLoaded = false;
 }
 
 void Game_Map::UpdateProcessedFlags(bool is_preupdate) {

@@ -59,6 +59,8 @@ public:
 	 */
 	void EnableItem(int index);
 
+	bool Enabled(int index);
+
 	/**
 	 * Replaces the text of an item.
 	 *
@@ -82,6 +84,7 @@ public:
 
 protected:
 	std::vector<std::string> commands;
+	std::vector<bool> enabled;
 
 	void DrawItem(int index, Font::SystemColor color);
 };

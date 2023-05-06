@@ -69,6 +69,16 @@ static bool HasAttribute(Span<const lcf::DBBitArray*> attribute_sets, int id) {
 	return false;
 }
 
+bool HasAttributeExt(Span<const lcf::DBBitArray*> attribute_sets, int id) {
+	for (auto* as : attribute_sets) {
+		const auto idx = id - 1;
+		if (idx < static_cast<int>(as->size()) && (*as)[idx]) {
+			return true;
+		}
+	}
+	return false;
+}
+
 int ApplyAttributeMultiplier(int effect, const Game_Battler& target, Span<const lcf::DBBitArray*> attribute_sets) {
 	int physical = INT_MIN;
 	int magical = INT_MIN;
