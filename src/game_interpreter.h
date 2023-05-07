@@ -395,6 +395,8 @@ protected:
 	void btl_ResetActorPos(std::string param);
 	void btl_hideActor(std::string param);
 	void btl_GetSizeEnemy(std::string param);
+	void setLanguage(std::string param);
+	void getLanguage(std::string param);
 
 	void tokenize(std::string const& str, const char delim, std::vector<std::string>& out);
 

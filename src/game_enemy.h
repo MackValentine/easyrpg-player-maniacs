@@ -326,7 +326,7 @@ inline bool Game_Enemy::IsTransparent() const {
 }
 
 inline int Game_Enemy::GetBattleAnimationId() const {
-	return 50;
+	return 0;
 }
 
 inline int Game_Enemy::GetHue() const {

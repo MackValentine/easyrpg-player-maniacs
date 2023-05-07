@@ -2390,10 +2390,47 @@ bool Game_Interpreter::CommandComment(const lcf::rpg::EventCommand &com) {
 		else if (s.rfind("@btl_GetSizeEnemy(", 0) == 0) {
 			btl_GetSizeEnemy(s);
 		}
+		else if (s.rfind("@setLanguage(", 0) == 0) {
+			setLanguage(s);
+		}
+		else if (s.rfind("@getLanguage(", 0) == 0) {
+			getLanguage(s);
+		}
 		
 
 	}
 	return true;
+}
+
+void Game_Interpreter::getLanguage(std::string param) {
+	param.replace(0, 13, "");
+	param.replace(param.end() - 1, param.end(), "");
+
+	int varID = std::stoi(param);
+
+	auto lang = Player::translation.GetCurrentLanguage();
+	int id = 0;
+
+	
+	std::string s = lang.lang_name;
+
+	if (!s.empty())
+		if (strspn(s.c_str(), "0123456789") == s.size())
+			id = std::stoi(s);
+
+	Output::Debug("Langue ID : {} {} {} {}", varID, id, lang.lang_name, lang.lang_code);
+
+	Main_Data::game_variables->Set(varID, id);
+}
+
+void Game_Interpreter::setLanguage(std::string param) {
+	param.replace(0, 13, "");
+	param.replace(param.end() - 1, param.end(), "");
+
+	if (param == "default")
+		param = "";
+
+	Player::translation.SelectLanguage(param);
 }
 
 void Game_Interpreter::btl_GetSizeEnemy(std::string param) {
