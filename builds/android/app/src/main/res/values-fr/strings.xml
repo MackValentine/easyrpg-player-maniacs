@@ -102,11 +102,11 @@
     <string name="settings_soundfont_found">Soundfonts trouvés :</string>
     <string name="settings_default_soundfont">Soundfont par défaut</string>
     <string name="select_the_games_folder">Choisir le dossier d\'EasyRPG</string>
-    <string name="id_select_games_folder_explanation">Pour utiliser EasyRPG Player vous devez sélectionner un dossier.
-\nCe dossier est exclusif à EasyRPG Player.
+    <string name="id_select_games_folder_explanation">EasyRPG Player a besoin d\'un dossier dédié. Après avoir appuyé sur le bouton vous serez demandé de sélectionner un dossier.
 \n
-\nVeuillez ne pas sélectionner un dossier contenant d\'autres choses, tel que le dossier téléchargement.
-\nLes jeux RPG Maker 2000/2003 doivent être mis dans le sous-répertoire jeux de ce dossier.</string>
+\nSi vous utilisez cette application pour la première fois, il n\'y a pas de dossier EasyRPG. Créez un nouveau dossier EasyRPG et sélectionnez-le.
+\n
+\nSi vous avez utilisé cette application auparavant, veuillez sélectionner le dossier EasyRPG existant.</string>
     <string name="Loading">Chargement…</string>
     <string name="enable_rtp_support">Activer le support du RTP</string>
     <string name="rtp_explanation">Le RTP donne accès à certains assets partagés utilisés par certains jeux.

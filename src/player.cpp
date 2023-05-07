@@ -125,6 +125,7 @@ namespace Player {
 	std::string command_line;
 	int speed_modifier = 3;
 	int speed_modifier_plus = 10;
+	int rng_seed = -1;
 	Game_ConfigPlayer player_config;
 
 	int Screen_Width;
@@ -187,7 +188,11 @@ void Player::Init(std::vector<std::string> arguments) {
 	Output::Debug("CLI: {}", command_line);
 
 	Game_Clock::logClockInfo();
-	Rand::SeedRandomNumberGenerator(time(NULL));
+	if (rng_seed < 0) {
+		Rand::SeedRandomNumberGenerator(time(NULL));
+	} else {
+		Rand::SeedRandomNumberGenerator(rng_seed);
+	}
 
 	Main_Data::Init();
 
@@ -611,8 +616,8 @@ Game_Config Player::ParseCommandLine(std::vector<std::string> arguments) {
 			// overwrite start map by filename
 		}*/
 		if (cp.ParseNext(arg, 1, "--seed")) {
-			if (arg.ParseValue(0, li_value)) {
-				Rand::SeedRandomNumberGenerator(li_value);
+			if (arg.ParseValue(0, li_value) && li_value > 0) {
+				rng_seed = li_value;
 			}
 			continue;
 		}
@@ -936,6 +941,7 @@ void Player::ResetGameObjects() {
 	Main_Data::Cleanup();
 
 	Main_Data::game_switches = std::make_unique<Game_Switches>();
+	Main_Data::game_switches->SetLowerLimit(lcf::Data::switches.size());
 
 	auto min_var = lcf::Data::system.easyrpg_variable_min_value;
 	if (min_var == 0) {
@@ -954,6 +960,7 @@ void Player::ResetGameObjects() {
 		}
 	}
 	Main_Data::game_variables = std::make_unique<Game_Variables>(min_var, max_var);
+	Main_Data::game_variables->SetLowerLimit(lcf::Data::variables.size());
 
 	Main_Data::game_lists = std::make_unique<Game_Lists>();
 
@@ -1217,6 +1224,7 @@ void Player::LoadSavegame(const std::string& save_name, int save_id) {
 	Main_Data::game_system->justLoaded = true;
 
 	Main_Data::game_switches->SetData(std::move(save->system.switches));
+	Main_Data::game_variables->SetLowerLimit(lcf::Data::variables.size());
 	Main_Data::game_variables->SetData(std::move(save->system.variables));
 
 	Main_Data::game_lists->SetSaveData(std::move(save->system.maniac_strings));
