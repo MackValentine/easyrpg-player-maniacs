@@ -103,11 +103,11 @@ Teile uns zusätzlich in Detail mit, was schiefgegangen ist.\n\n
     <string name="settings_soundfont_found">Gefundene Soundfonts:</string>
     <string name="settings_default_soundfont">Standard-Soundfont (Integriert)</string>
     <string name="select_the_games_folder">EasyRPG-Ordner auswählen</string>
-    <string name="id_select_games_folder_explanation">Um EasyRPG Player verwenden zu können, musst du einen Ordner festlegen.
-\nDieser Ordner wird exklusiv von EasyRPG Player verwendet werden.
+    <string name="id_select_games_folder_explanation">EasyRPG Player benötigt einen eigenen Ordner. Nachdem berühren der Schaltfläche wirst du aufgefordert, einen Ordner auszuwählen.
 \n
-\nWähle keinen Ordner aus, der bereits von anderen Dingen verwendet wird. Dies wäre beispielsweise der Download-Ordner.
-\nRPG Maker 2000/2003 müssen im \"games\"-Verzeichnis in diesem Ordner platziert werden.</string>
+\nWenn du diese App zum ersten Mal verwendest, gibt es noch keinen EasyRPG-Ordner. Erstelle stattdessen einen neuen EasyRPG-Ordner und wähle ihn dann aus.
+\n
+\nWenn diese App bereits vorher verwendet wurde, wähle den vorhandenen EasyRPG-Ordner aus.</string>
     <string name="Loading">Laden…</string>
     <string name="enable_rtp_support">RTP-Unterstützung aktivieren</string>
     <string name="rtp_explanation">Das RTP stellt gemeinsame Assets bereit, die von einigen Spielen verwendet werden.
