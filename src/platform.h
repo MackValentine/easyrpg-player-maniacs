@@ -23,6 +23,13 @@
 #include <string>
 #ifdef _WIN32
 #  include <windows.h>
+#  include <sys/types.h>
+#  include <sys/stat.h>
+#  ifdef __MINGW32__
+#    include <dirent.h>
+#  elif defined(_MSC_VER)
+#    include "dirent_win.h"
+#  endif
 #else
 #  ifdef __vita__
 #    include <psp2/io/dirent.h>
@@ -140,9 +147,8 @@ namespace Platform {
 
 	private:
 #if defined(_WIN32)
-		HANDLE dir_handle = nullptr;
-		WIN32_FIND_DATAW entry = {};
-		bool first_entry = true;
+		_WDIR* dir_handle = nullptr;
+		struct _wdirent* entry = nullptr;
 #elif defined(__vita__)
 		int dir_handle = -1;
 		struct SceIoDirent entry = {};

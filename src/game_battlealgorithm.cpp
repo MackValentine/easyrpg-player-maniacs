@@ -335,7 +335,22 @@ int Game_BattleAlgorithm::AlgorithmBase::GetCBAAfterimage() const {
 }
 
 const lcf::rpg::BattlerAnimationItemSkill* Game_BattleAlgorithm::AlgorithmBase::GetWeaponAnimationData() const {
+	const auto weapon = GetWeapon();
+	auto* source = GetSource();
+	if (source->GetType() == Game_Battler::Type_Ally) {
+		auto* ally = static_cast<Game_Actor*>(source);
+		auto weapons = ally->GetWeapons(weapon);
+		auto* item = weapons[0];
+		if (item) {
+			if (static_cast<int>(item->animation_data.size()) > source->GetId() - 1) {
+				return &item->animation_data[source->GetId() - 1];
+			}
+		}
+	}
 	return nullptr;
+}
+Game_Battler::Weapon Game_BattleAlgorithm::AlgorithmBase::GetWeapon() const {
+	return Game_Battler::WeaponPrimary;
 }
 
 const lcf::rpg::Item* Game_BattleAlgorithm::AlgorithmBase::GetWeaponData() const {

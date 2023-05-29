@@ -240,7 +240,7 @@ protected:
 	bool CommandKeyInputProc(lcf::rpg::EventCommand const& com);
 	bool CommandChangeMapTileset(lcf::rpg::EventCommand const& com);
 	bool CommandChangePBG(lcf::rpg::EventCommand const& com);
-	bool CommandChangeEncounterSteps(lcf::rpg::EventCommand const& com);
+	bool CommandChangeEncounterRate(lcf::rpg::EventCommand const& com);
 	bool CommandTileSubstitution(lcf::rpg::EventCommand const& com);
 	bool CommandTeleportTargets(lcf::rpg::EventCommand const& com);
 	bool CommandChangeTeleportAccess(lcf::rpg::EventCommand const& com);
@@ -382,6 +382,7 @@ protected:
 	void deleteAtList(std::string param);
 	void clearList(std::string param);
 	void sizeList(std::string param);
+	void sortListByList(std::string param);
 	void btl_hideState(std::string param);
 	void btl_skipWeakness(std::string param);
 	void btl_ActorHasState(std::string param);
@@ -389,6 +390,7 @@ protected:
 	void btl_EnemySetState(std::string param);
 	void containsList(std::string param);
 	void deleteEltList(std::string param);
+	void addEltList(std::string param);
 	void SelectableWindowEnabled(std::string param);
 	void btl_updateEventWhileAnimation(std::string param);
 	void btl_MoveActor(std::string param);
@@ -397,6 +399,9 @@ protected:
 	void btl_GetSizeEnemy(std::string param);
 	void setLanguage(std::string param);
 	void getLanguage(std::string param);
+	void getSkillTargetType(std::string param);
+	void btl_setEnemyVisible(std::string param);
+	void btl_playAnimationEnemies(std::string param);
 
 	void tokenize(std::string const& str, const char delim, std::vector<std::string>& out);
 

@@ -116,7 +116,7 @@ Input::ButtonMappingArray Input::GetDefaultButtonMappings() {
 		{RIGHT, Keys::JOY_DPAD_RIGHT},
 		{DECISION, Keys::JOY_A},
 		{CANCEL, Keys::JOY_B},
-		{CANCEL, Keys::JOY_X},
+		{N1, Keys::JOY_X},
 		{SHIFT, Keys::JOY_Y},
 		{N0, Keys::JOY_STICK_PRIMARY},
 		{N5, Keys::JOY_STICK_SECONDARY},

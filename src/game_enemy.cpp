@@ -45,6 +45,21 @@ Game_Enemy::Game_Enemy(const lcf::rpg::TroopMember* member)
 
 	SetHidden(troop_member->invisible);
 	SetBattlePosition(GetOriginalPosition());
+
+	int id = 0;
+	std::string s = GetSpriteName().data();
+	int size = s.find("_animated=");
+
+	if (size != std::string::npos) {
+		size += 10;
+		std::string s_id = s.substr(size, s.size() - size);
+		if (!s_id.empty())
+			if (strspn(s_id.c_str(), "0123456789") == s_id.size()) {
+				battleAnimationID = std::stoi(s_id);
+				SetBattleSprite(std::make_unique<Sprite_Enemy>(this));
+				offset_sprite_h = 48 - GetBattleSprite()->GetHeight();
+			}
+	}
 }
 
 int Game_Enemy::MaxHpValue() const {
@@ -229,4 +244,8 @@ void Game_Enemy::scaleLevel(int lvl) {
 	hp = GetMaxHp();
 	sp = GetMaxSp();
 
+}
+
+int Game_Enemy::GetOffsetSpriteAnimated() {
+	return offset_sprite_h;
 }

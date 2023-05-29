@@ -31,6 +31,7 @@
 #include "player.h"
 #include "options.h"
 #include "drawable_mgr.h"
+#include "game_enemy.h"
 
 BattleAnimation::BattleAnimation(const lcf::rpg::Animation& anim, bool only_sound, int cutoff) :
 	animation(anim), only_sound(only_sound)
@@ -304,6 +305,7 @@ BattleAnimationBattle::BattleAnimationBattle(const lcf::rpg::Animation& anim, st
 }
 
 void BattleAnimationBattle::Draw(Bitmap& dst) {
+
 	if (IsOnlySound())
 		return;
 	if (animation.scope == lcf::rpg::Animation::Scope_screen) {
@@ -319,6 +321,10 @@ void BattleAnimationBattle::Draw(Bitmap& dst) {
 				offset = CalculateOffset(animation.position, sprite->GetHeight());
 			} else {
 				offset = CalculateOffset(animation.position, GetAnimationCellHeight() / 2);
+			}
+
+			if (battler->GetType() == Game_Battler::Type_Enemy && battler->GetBattleAnimationId() > 0) {
+				offset -= static_cast<Game_Enemy*> (battler)->GetOffsetSpriteAnimated();
 			}
 		}
 		DrawAt(dst, battler->GetBattlePosition().x, battler->GetBattlePosition().y + offset);
@@ -343,6 +349,8 @@ BattleAnimationBattler::BattleAnimationBattler(const lcf::rpg::Animation& anim, 
 }
 
 void BattleAnimationBattler::Draw(Bitmap& dst) {
+
+
 	if (IsOnlySound())
 		return;
 	if (animation.scope == lcf::rpg::Animation::Scope_screen) {
@@ -352,7 +360,11 @@ void BattleAnimationBattler::Draw(Bitmap& dst) {
 
 	for (auto* battler: battlers) {
 		SetFlashEffect(battler->GetFlashColor());
-		DrawAt(dst, battler->GetDisplayX(), battler->GetDisplayY());
+		int y = battler->GetDisplayY();
+		if (battler->GetType() == Game_Battler::Type_Enemy) {
+			y -= static_cast<Game_Enemy*> (battler)->GetOffsetSpriteAnimated();
+		}
+		DrawAt(dst, battler->GetDisplayX(), y);
 	}
 }
 

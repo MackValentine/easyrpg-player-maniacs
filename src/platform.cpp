@@ -180,8 +180,7 @@ bool Platform::File::MakeDirectory(bool follow_symlinks) const {
 
 Platform::Directory::Directory(const std::string& name) {
 #if defined(_WIN32)
-	std::wstring wname = Utils::ToWideString((name.empty() ? "." : name) + "\\*");
-	dir_handle = FindFirstFileW(wname.c_str(), &entry);
+	dir_handle = ::_wopendir(Utils::ToWideString(name.empty() ? "." : name).c_str());
 #elif defined(__vita__)
 	dir_handle = ::sceIoDopen(name.empty() ? "." : name.c_str());
 #else
@@ -198,19 +197,14 @@ bool Platform::Directory::Read() {
 	assert(dir_handle >= 0);
 
 	valid_entry = ::sceIoDread(dir_handle, &entry) > 0;
-#elif defined(_WIN32)
-	assert(dir_handle != INVALID_HANDLE_VALUE);
-
-	if (!first_entry) {
-		valid_entry = FindNextFile(dir_handle, &entry) != 0;
-	} else {
-		valid_entry = true;
-		first_entry = false;
-	}
 #else
 	assert(dir_handle);
 
+#	ifdef _WIN32
+	entry = ::_wreaddir(dir_handle);
+#	else
 	entry = ::readdir(dir_handle);
+#	endif
 
 	valid_entry = entry != nullptr;
 #endif
@@ -224,13 +218,13 @@ std::string Platform::Directory::GetEntryName() const {
 #if defined(__vita__)
 	return entry.d_name;
 #elif defined(_WIN32)
-	return Utils::FromWideString(entry.cFileName);
+	return Utils::FromWideString(entry->d_name);
 #else
 	return entry->d_name;
 #endif
 }
 
-#if !defined(__vita__) && !defined(_WIN32)
+#ifndef __vita__
 static inline Platform::FileType GetEntryType(...) {
 	return Platform::FileType::Unknown;
 }
@@ -249,16 +243,6 @@ Platform::FileType Platform::Directory::GetEntryType() const {
 #if defined(__vita__)
 	return SCE_S_ISREG(entry.d_stat.st_mode) ? FileType::File :
 			SCE_S_ISDIR(entry.d_stat.st_mode) ? FileType::Directory : FileType::Other;
-#elif defined(_WIN32)
-	int attribs = entry.dwFileAttributes;
-	if (attribs == INVALID_FILE_ATTRIBUTES) {
-		return FileType::Unknown;
-	} else if ((attribs & FILE_ATTRIBUTE_DIRECTORY) == 0) {
-		return FileType::File;
-	} else if ((attribs & (FILE_ATTRIBUTE_DIRECTORY | FILE_ATTRIBUTE_REPARSE_POINT)) == FILE_ATTRIBUTE_DIRECTORY) {
-		return FileType::Directory;
-	}
-	return FileType::Other;
 #else
 	return ::GetEntryType(entry);
 #endif
@@ -267,7 +251,7 @@ Platform::FileType Platform::Directory::GetEntryType() const {
 void Platform::Directory::Close() {
 	if (*this) {
 #if defined(_WIN32)
-		FindClose(dir_handle);
+		::_wclosedir(dir_handle);
 		dir_handle = nullptr;
 #elif defined(__vita__)
 		::sceIoDclose(dir_handle);

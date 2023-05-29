@@ -41,7 +41,6 @@ public:
 	void Start() override;
 	void Update() override;
 	void DrawBackground(Bitmap& dst) override;
-	void DrawText(bool verbose);
 
 private:
 	std::unique_ptr<Sprite> logo;

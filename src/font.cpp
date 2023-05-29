@@ -747,10 +747,6 @@ void Font::SetFallbackFont(FontRef fallback_font) {
 	this->fallback_font = fallback_font;
 }
 
-bool Font::IsStyleApplied() const {
-	return style_applied;
-}
-
 Font::Style Font::GetCurrentStyle() const {
 	return current_style;
 }
@@ -758,16 +754,14 @@ Font::Style Font::GetCurrentStyle() const {
 Font::StyleScopeGuard Font::ApplyStyle(Style new_style) {
 	vApplyStyle(new_style);
 	current_style = new_style;
-	style_applied = true;
 
 	return lcf::ScopeGuard<std::function<void()>>([&]() {
 		vApplyStyle(original_style);
 		current_style = original_style;
-		style_applied = true;
 	});
 }
 
-ExFont::ExFont() : Font("exfont", HEIGHT, false, false) {
+ExFont::ExFont() : Font("exfont", 12, false, false) {
 }
 
 FontRef Font::exfont = std::make_shared<ExFont>();
@@ -777,7 +771,15 @@ Font::GlyphRet ExFont::vRender(char32_t glyph) const {
 	auto exfont = Cache::Exfont();
 
 	// Remove offset introduced by Utils::ExFontNext to bypass ControlCharacter detection
-	glyph -= 32;
+	bool is_lower = (glyph >= 'a' && glyph <= 'z');
+	bool is_upper = (glyph >= 'A' && glyph <= 'Z');
+
+	if (!is_lower && !is_upper) {
+		// Invalid ExFont
+		return { bm, {WIDTH, 0}, {0, 0}, false };
+	}
+
+	glyph = is_lower ? (glyph - 'a' + 26) : (glyph - 'A');
 
 	Rect const rect((glyph % 13) * WIDTH, (glyph / 13) * HEIGHT, WIDTH, HEIGHT);
 	bm->Clear();

@@ -167,13 +167,6 @@ class Font {
 	Style GetCurrentStyle() const;
 
 	/**
-	 * @return Whether a custom style is currently active
-	 */
-	bool IsStyleApplied() const;
-
-	bool style_applied = false;
-
-	/**
 	 * Applies a new text style for rendering.
 	 * The style is reverted to the original style afterwards through the returned scope guard.
 	 *

@@ -81,6 +81,9 @@ public:
 		_engine = Player::engine;
 		Player::engine = eng;
 
+		_ll = Output::GetLogLevel();
+		Output::SetLogLevel(LogLevel::Error);
+
 		InitEmptyDB();
 
 		Main_Data::Cleanup();
@@ -105,6 +108,7 @@ public:
 	}
 private:
 	int _engine = {};
+	LogLevel _ll = {};
 };
 
 struct MockBattle : public MockActor {

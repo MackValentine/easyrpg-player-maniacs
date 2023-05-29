@@ -476,6 +476,11 @@ Point Game_Battle::Calculate2k3BattlePosition(const Game_Enemy& enemy) {
 
 		// RPG_RT only clamps Y position for enemies
 		position.y = Utils::Clamp(position.y, half_height, 240 - half_height);
+
+		if (enemy.GetBattleAnimationId() > 0) {
+			//position.y -= 16;
+		}
+
 		return position;
 	}
 

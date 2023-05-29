@@ -105,6 +105,8 @@ public:
 
 	bool isAnimation();
 
+	void SetAnimationVisible(bool b);
+
 protected:
 	void CreateSprite();
 	void OnMonsterSpriteReady(FileRequestResult* result);

@@ -4,7 +4,7 @@
 #include <lcf/data.h>
 
 Game_Lists::Game_Lists() {
-	_stringvar.reserve(MaxSize);
+	_stringvar.reserve(200);
 }
 
 void Game_Lists::WarnGet(int variable_id) const {
@@ -23,6 +23,15 @@ int Game_Lists::GetSizeList(int list_id) {
 void Game_Lists::Clear(int list_id) {
 	if (list_id - 1 < _stringvar.size()) {
 		_stringvar[list_id - 1].clear();
+	}
+}
+
+void Game_Lists::AddElt(int list_id, int elt) {
+	if (list_id > _stringvar.size()) {
+		_stringvar.resize(list_id);
+	}
+	if (list_id - 1 < _stringvar.size()) {
+		_stringvar[list_id - 1].push_back(elt);
 	}
 }
 

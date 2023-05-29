@@ -66,12 +66,14 @@ void Sprite_Actor::Update() {
 	if (timer_hide > 0) {
 		timer_hide--;
 		SetVisible(false);
-		animation->SetVisible(false);
+		if (animation)
+			animation->SetVisible(false);
 	}
 	else if (timer_hide == 0) {
 		SetVisible(true);
 		timer_hide--;
-		animation->SetVisible(IsVisible());
+		if (animation)
+			animation->SetVisible(IsVisible());
 	}
 
 	if (anim_state > 0) {
@@ -309,6 +311,9 @@ void Sprite_Actor::Draw(Bitmap& dst) {
 
 		int x = it->x;
 		int y = it->y;
+		if (battler->GetType() == Game_Battler::Type_Enemy) {
+			y -= static_cast<Game_Enemy*>(battler)->GetOffsetSpriteAnimated();
+		}
 
 		int dx = Player::Screen_Width / 2;
 		int dy = Player::Screen_Height / 2;
@@ -375,3 +380,7 @@ bool Sprite_Actor::isAnimation() {
 	}
 	return false;
 }
+void Sprite_Actor::SetAnimationVisible(bool b) {
+	if (animation)
+		animation->SetVisible(b);
+ }

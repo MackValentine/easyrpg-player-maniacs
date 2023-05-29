@@ -2547,10 +2547,13 @@ Scene_Battle_Rpg2k3::BattleActionReturn Scene_Battle_Rpg2k3::ProcessBattleAction
 		}
 		if (sprite) {
 			const auto pose = AdjustPoseForDirection(action->GetSource(), action->GetSourcePose());
+
 			if (pose != lcf::rpg::BattlerAnimation::Pose_Idle) {
 				auto action_state = static_cast<Sprite_Actor::AnimationState>(pose + 1);
 
-				if (action->GetType() == Game_BattleAlgorithm::Type::Normal) {
+				if (action->GetType() == Game_BattleAlgorithm::Type::Normal ||
+					(action->GetType() == Game_BattleAlgorithm::Type::Skill && action_state == 2)) {
+
 					sprite->SetNormalAttacking(true);
 					auto* weapon = actor->GetWeaponSprite();
 					int weapon_animation_id = 0;
@@ -2966,7 +2969,8 @@ Scene_Battle_Rpg2k3::BattleActionReturn Scene_Battle_Rpg2k3::ProcessBattleAction
 	}
 
 	if (source->GetType() == Game_Battler::Type_Ally) {
-		if (action->GetType() == Game_BattleAlgorithm::Type::Normal) {
+		if (action->GetType() == Game_BattleAlgorithm::Type::Normal ||
+			(action->GetType() == Game_BattleAlgorithm::Type::Skill)) {
 			auto* actor = static_cast<Game_Actor*>(source);
 			auto* source_sprite = actor->GetActorBattleSprite();
 			if (source_sprite) {
@@ -3090,12 +3094,12 @@ void Scene_Battle_Rpg2k3::RowSelected() {
 	// if at least 2 party members are in front row
 	int current_row = active_actor->GetBattleRow();
 	int front_row_battlers = 0;
-	if (current_row == static_cast<int>(active_actor->IsDirectionFlipped())) {
+	if (current_row == active_actor->IsDirectionFlipped()) {
 		for (auto& actor: Main_Data::game_party->GetActors()) {
-			if (actor->GetBattleRow() == static_cast<int>(actor->IsDirectionFlipped())) front_row_battlers++;
+			if (actor->GetBattleRow() == actor->IsDirectionFlipped()) front_row_battlers++;
 		}
 	}
-	if (current_row != static_cast<int>(active_actor->IsDirectionFlipped()) || front_row_battlers >= 2) {
+	if (current_row != active_actor->IsDirectionFlipped() || front_row_battlers >= 2) {
 		if (active_actor->GetBattleRow() == Game_Actor::RowType::RowType_front) {
 			active_actor->SetBattleRow(Game_Actor::RowType::RowType_back);
 		} else {

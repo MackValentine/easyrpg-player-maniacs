@@ -100,20 +100,16 @@ void Game_Map::Init() {
 
 	interpreter.reset(new Game_Interpreter_Map(true));
 
-	InitCommonEvents();
-
-	vehicles.clear();
-	vehicles.emplace_back(Game_Vehicle::Boat);
-	vehicles.emplace_back(Game_Vehicle::Ship);
-	vehicles.emplace_back(Game_Vehicle::Airship);
-}
-
-void Game_Map::InitCommonEvents() {
 	common_events.clear();
 	common_events.reserve(lcf::Data::commonevents.size());
 	for (const lcf::rpg::CommonEvent& ev : lcf::Data::commonevents) {
 		common_events.emplace_back(ev.ID);
 	}
+
+	vehicles.clear();
+	vehicles.emplace_back(Game_Vehicle::Boat);
+	vehicles.emplace_back(Game_Vehicle::Ship);
+	vehicles.emplace_back(Game_Vehicle::Airship);
 }
 
 void Game_Map::Dispose() {
@@ -145,7 +141,7 @@ void Game_Map::Setup(std::unique_ptr<lcf::rpg::Map> map_in) {
 	panorama_on_map_init = true;
 	Parallax::ClearChangedBG();
 
-	SetEncounterSteps(GetMapInfo().encounter_steps);
+	SetEncounterRate(GetMapInfo().encounter_steps);
 	SetChipset(map->chipset_id);
 
 	for (size_t i = 0; i < map_info.lower_tiles.size(); i++) {
@@ -222,8 +218,6 @@ void Game_Map::SetupFromSave(
 	const bool is_db_save_compat = Main_Data::game_player->IsDatabaseCompatibleWithSave(lcf::Data::system.save_count);
 	const bool is_map_save_compat = Main_Data::game_player->IsMapCompatibleWithSave(GetMapSaveCount());
 
-	InitCommonEvents();
-
 	if (is_db_save_compat && is_map_save_compat) {
 		for (size_t i = 0; i < std::min(save_ce.size(), common_events.size()); ++i) {
 			common_events[i].SetSaveData(save_ce[i].parallel_event_execstate);
@@ -248,7 +242,7 @@ void Game_Map::SetupFromSave(
 		interpreter->SetState(std::move(save_fg_exec));
 	}
 
-	SetEncounterSteps(map_info.encounter_steps);
+	SetEncounterRate(map_info.encounter_steps);
 	SetChipset(map_info.chipset_id);
 
 	if (!is_map_save_compat) {
@@ -346,7 +340,11 @@ void Game_Map::SetupCommon() {
 	// Otherwise new strings are not applied
 	if (translation_changed) {
 		translation_changed = false;
-		InitCommonEvents();
+		common_events.clear();
+		common_events.reserve(lcf::Data::commonevents.size());
+		for (const lcf::rpg::CommonEvent& ev : lcf::Data::commonevents) {
+			common_events.emplace_back(ev.ID);
+		}
 	}
 
 	// Create the map events
@@ -369,7 +367,7 @@ void Game_Map::PrepareSave(lcf::rpg::Save& save) {
 		// This emulates RPG_RT behavior, where chipset id == 0 means use the default map chipset.
 		save.map_info.chipset_id = 0;
 	}
-	if (save.map_info.encounter_steps == GetOriginalEncounterSteps()) {
+	if (save.map_info.encounter_steps == GetOriginalEncounterRate()) {
 		save.map_info.encounter_steps = -1;
 	}
 	// Note: RPG_RT does not use a sentinel for parallax parameters. Once the parallax BG is changed, it stays that way forever.
@@ -1234,17 +1232,17 @@ std::vector<lcf::rpg::Encounter>& Game_Map::GetEncounterList() {
 	return lcf::Data::treemap.maps[GetMapIndex(GetMapId())].encounters;
 }
 
-int Game_Map::GetOriginalEncounterSteps() {
+int Game_Map::GetOriginalEncounterRate() {
 	return GetMapInfo().encounter_steps;
 }
 
-int Game_Map::GetEncounterSteps() {
+int Game_Map::GetEncounterRate() {
 	return map_info.encounter_steps;
 }
 
-void Game_Map::SetEncounterSteps(int step) {
+void Game_Map::SetEncounterRate(int step) {
 	if (step < 0) {
-		step = GetOriginalEncounterSteps();
+		step = GetOriginalEncounterRate();
 	}
 	map_info.encounter_steps = step;
 }

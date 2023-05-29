@@ -37,6 +37,8 @@ public:
 
 	void DeleteElt(int list_id, int elt);
 
+	void AddElt(int list_id, int elt);
+
 	void Clear(int list_id);
 
 	int GetSizeList(int list_id);

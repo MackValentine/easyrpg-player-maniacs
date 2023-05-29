@@ -383,6 +383,8 @@ public:
 	/** @return the weapon animation data for this action (if applicable) */
 	virtual const lcf::rpg::BattlerAnimationItemSkill* GetWeaponAnimationData() const;
 
+	Game_Battler::Weapon GetWeapon() const;
+
 	/** @return the weapon data for this action (if applicable) */
 	virtual const lcf::rpg::Item* GetWeaponData() const;
 

@@ -26,6 +26,8 @@
 #include "player.h"
 #include <lcf/reader_util.h>
 #include "output.h"
+#include "game_battle.h"
+#include "spriteset_battle.h"
 
 Sprite_Weapon::Sprite_Weapon(Game_Actor* actor) : Sprite() {
 	battler = actor;
@@ -137,9 +139,23 @@ void Sprite_Weapon::Draw(Bitmap& dst) {
 
 	SetTone(Main_Data::game_screen->GetTone());
 	if (!ranged) {
-		SetX(battler->GetDisplayX());
-		SetY(battler->GetDisplayY());
+		int dx = Player::Screen_Width / 2;
+		int dy = Player::Screen_Height / 2;
+		int x = battler->GetDisplayX();
+		int ddx = Game_Battle::GetSpriteset().zoomPosX;
+		int zx = x - (((dx - x) * Game_Battle::GetSpriteset().zoomX) - (dx - x)) + (dx - ddx);
+
+		int y = battler->GetDisplayY();
+		int ddy = Game_Battle::GetSpriteset().zoomPosY;
+		int zy = y - (((dy - y) * Game_Battle::GetSpriteset().zoomY) - (dy - y)) + (dy - ddy);
+
+		SetX(zx);
+		SetY(zy);
 	}
+
+	SetZoomX(Game_Battle::GetSpriteset().zoomX);
+	SetZoomY(Game_Battle::GetSpriteset().zoomY);
+
 	SetFlashEffect(battler->GetFlashColor());
 
 	Sprite::Draw(dst);

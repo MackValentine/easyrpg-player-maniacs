@@ -236,6 +236,11 @@ void Game_Windows::Window_User::Refresh() {
 						continue;
 					}
 
+					if (tret.is_exfont) {
+						// exfont processed later
+						line32 += '$';
+					}
+
 					if (tret.is_escape && ch != Player::escape_char) {
 						if (!line32.empty()) {
 							x += Text::GetSize(*font, Utils::EncodeUTF(line32)).width;
@@ -358,6 +363,11 @@ void Game_Windows::Window_User::Refresh() {
 				if (Utils::IsControlCharacter(ch)) {
 					// control characters not handled
 					continue;
+				}
+
+				if (tret.is_exfont) {
+					// exfont processed later
+					line32 += '$';
 				}
 
 				if (tret.is_escape && ch != Player::escape_char) {

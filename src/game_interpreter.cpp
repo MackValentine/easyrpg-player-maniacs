@@ -750,8 +750,8 @@ bool Game_Interpreter::ExecuteCommand() {
 			return CommandChangeMapTileset(com);
 		case Cmd::ChangePBG:
 			return CommandChangePBG(com);
-		case Cmd::ChangeEncounterSteps:
-			return CommandChangeEncounterSteps(com);
+		case Cmd::ChangeEncounterRate:
+			return CommandChangeEncounterRate(com);
 		case Cmd::TileSubstitution:
 			return CommandTileSubstitution(com);
 		case Cmd::TeleportTargets:
@@ -2351,6 +2351,9 @@ bool Game_Interpreter::CommandComment(const lcf::rpg::EventCommand &com) {
 		else if (s.rfind("@sizeList(", 0) == 0) {
 			sizeList(s);
 		}
+		else if (s.rfind("@sortListByList(", 0) == 0) {
+			sortListByList(s);
+		}
 		else if (s.rfind("@btl_hideState(", 0) == 0) {
 			btl_hideState(s);
 		}
@@ -2371,6 +2374,9 @@ bool Game_Interpreter::CommandComment(const lcf::rpg::EventCommand &com) {
 		}
 		else if (s.rfind("@deleteEltList(", 0) == 0) {
 			deleteEltList(s);
+		}
+		else if (s.rfind("@addEltList(", 0) == 0) {
+			addEltList(s);
 		}
 		else if (s.rfind("@SelectableWindowEnabled?(", 0) == 0) {
 			SelectableWindowEnabled(s);
@@ -2396,10 +2402,198 @@ bool Game_Interpreter::CommandComment(const lcf::rpg::EventCommand &com) {
 		else if (s.rfind("@getLanguage(", 0) == 0) {
 			getLanguage(s);
 		}
+		else if (s.rfind("@getSkillTargetType(", 0) == 0) {
+			getSkillTargetType(s);
+		}
+		else if (s.rfind("@btl_setEnemyVisible(", 0) == 0) {
+			btl_setEnemyVisible(s);
+		}
+		else if (s.rfind("@btl_playAnimationEnemies(", 0) == 0) {
+			btl_playAnimationEnemies(s);
+		}
 		
 
 	}
 	return true;
+}
+
+void Game_Interpreter::btl_playAnimationEnemies(std::string param) {
+	param.replace(0, 26, "");
+	param.replace(param.end() - 1, param.end(), "");
+
+	std::string s = param;
+	const char delim = ',';
+
+	std::vector<std::string> out;
+	tokenize(s, delim, out);
+
+	int animationID = 0;
+	bool waiting_battle_anim = false;
+	int listID = 0;
+
+	std::vector<Game_Battler*> enemies;
+
+
+	int i = 0;
+	for (auto& s : out) {
+		if (i == 0)
+			if (s.rfind("v[", 0) == 0) {
+				s.replace(0, 2, "");
+				s.replace(s.end() - 1, s.end(), "");
+				animationID = Main_Data::game_variables->Get(std::stoi(s));
+			}
+			else {
+				animationID = std::stoi(s);
+			}
+		else if (i == 1) {
+			if (s == "true")
+				waiting_battle_anim = true;
+		}
+		else if (i == 2) {
+				if (s.rfind("v[", 0) == 0) {
+					s.replace(0, 2, "");
+					s.replace(s.end() - 1, s.end(), "");
+					listID = Main_Data::game_variables->Get(std::stoi(s));
+				}
+				else {
+					listID = std::stoi(s);
+				}
+		}
+			
+
+		i += 1;
+
+	}
+
+	Scene_Battle_Rpg2k3* scene = (Scene_Battle_Rpg2k3*)Scene::Find(Scene::Battle).get();
+	if (scene) {
+
+		auto list = Main_Data::game_lists->Get(listID);
+		for (int elt : list) {
+
+			auto* enemy = Main_Data::game_enemyparty->GetEnemy(elt);
+			if (enemy)
+				enemies.push_back(enemy);
+			else
+				Output::Warning("Enemy {} doesn't exists", elt);
+		}
+
+		int frames = Game_Battle::ShowBattleAnimation(animationID, enemies, false);
+
+		if (waiting_battle_anim) {
+			//_state.wait_time = frames;
+		}
+
+	}
+	else {
+		Output::Warning("Must be in battle");
+	}
+
+}
+
+void Game_Interpreter::btl_setEnemyVisible(std::string param) {
+	param.replace(0, 21, "");
+	param.replace(param.end() - 1, param.end(), "");
+
+	std::string s = param;
+	const char delim = ',';
+
+	std::vector<std::string> out;
+	tokenize(s, delim, out);
+
+	int userID = 0;
+	int visible = true;
+
+	int i = 0;
+	for (auto& s : out) {
+		if (i == 0)
+			if (s.rfind("v[", 0) == 0) {
+				s.replace(0, 2, "");
+				s.replace(s.end() - 1, s.end(), "");
+				userID = Main_Data::game_variables->Get(std::stoi(s));
+			}
+			else {
+				userID = std::stoi(s);
+			}
+		else if (i == 1)
+			if (s == "false") {
+				visible = false;
+			}
+
+		i += 1;
+
+	}
+
+	Scene_Battle_Rpg2k3* scene = (Scene_Battle_Rpg2k3*)Scene::Find(Scene::Battle).get();
+	if (scene) {
+		auto * enemy = Main_Data::game_enemyparty->GetEnemy(userID);
+		
+		if (enemy) {
+
+			enemy->GetBattleSprite()->SetVisible(visible);
+			static_cast<Sprite_Actor*> (enemy->GetBattleSprite())->SetAnimationVisible(visible);
+
+		}
+		else {
+			Output::Warning("Eemy doesn't exists");
+		}
+	}
+	else {
+		Output::Warning("Must be in battle");
+	}
+
+}
+
+void Game_Interpreter::getSkillTargetType(std::string param) {
+	param.replace(0, 20, "");
+	param.replace(param.end() - 1, param.end(), "");
+
+	std::string s = param;
+	const char delim = ',';
+
+	std::vector<std::string> out;
+	tokenize(s, delim, out);
+
+	int skillID = 0;
+	int varID = 0;
+
+	int i = 0;
+	for (auto& s : out) {
+		if (i == 0)
+			if (s.rfind("v[", 0) == 0) {
+				s.replace(0, 2, "");
+				s.replace(s.end() - 1, s.end(), "");
+				skillID = Main_Data::game_variables->Get(std::stoi(s));
+			}
+			else {
+				skillID = std::stoi(s);
+			}
+		else if (i == 1)
+			if (s.rfind("v[", 0) == 0) {
+				s.replace(0, 2, "");
+				s.replace(s.end() - 1, s.end(), "");
+				varID = Main_Data::game_variables->Get(std::stoi(s));
+			}
+			else {
+				varID = std::stoi(s);
+			}
+
+		i += 1;
+
+	}
+
+	int targetType = 0;
+
+	if (skillID > 0) {
+		auto skill = lcf::ReaderUtil::GetElement(lcf::Data::skills, skillID);
+
+		targetType = skill->scope;
+	}
+
+	
+
+	Main_Data::game_variables->Set(varID, targetType);
+
 }
 
 void Game_Interpreter::getLanguage(std::string param) {
@@ -2411,14 +2605,12 @@ void Game_Interpreter::getLanguage(std::string param) {
 	auto lang = Player::translation.GetCurrentLanguage();
 	int id = 0;
 
-	
+
 	std::string s = lang.lang_name;
 
 	if (!s.empty())
 		if (strspn(s.c_str(), "0123456789") == s.size())
 			id = std::stoi(s);
-
-	Output::Debug("Langue ID : {} {} {} {}", varID, id, lang.lang_name, lang.lang_code);
 
 	Main_Data::game_variables->Set(varID, id);
 }
@@ -2747,6 +2939,55 @@ void Game_Interpreter::SelectableWindowEnabled(std::string param) {
 	}
 
 	Main_Data::game_switches->Set(switchID, b);
+
+}
+
+void Game_Interpreter::addEltList(std::string param) {
+	param.replace(0, 12, "");
+	param.replace(param.end() - 1, param.end(), "");
+
+	std::string s = param;
+	const char delim = ',';
+
+	std::vector<std::string> out;
+	tokenize(s, delim, out);
+
+	int listID = 0;
+
+	int elt = 0;
+
+	int i = 0;
+	for (auto& s : out) {
+		if (i == 0)
+			if (s.rfind("v[", 0) == 0) {
+				s.replace(0, 2, "");
+				s.replace(s.end() - 1, s.end(), "");
+				listID = Main_Data::game_variables->Get(std::stoi(s));
+			}
+			else {
+				listID = std::stoi(s);
+			}
+		else if (i == 1)
+		{
+			if (s.rfind("v[", 0) == 0) {
+				s.replace(0, 2, "");
+				s.replace(s.end() - 1, s.end(), "");
+				elt = Main_Data::game_variables->Get(std::stoi(s));
+			}
+			else {
+				elt = std::stoi(s);
+			}
+		}
+
+		i += 1;
+
+	}
+
+	if (listID < Main_Data::game_lists->GetSize()) {
+
+		Main_Data::game_lists->AddElt(listID, elt);
+
+	}
 
 }
 
@@ -3124,6 +3365,73 @@ void Game_Interpreter::sizeList(std::string param) {
 	}
 
 	Main_Data::game_variables->Set(varID, value);
+
+}
+
+void Game_Interpreter::sortListByList(std::string param) {
+	param.replace(0, 16, "");
+	param.replace(param.end() - 1, param.end(), "");
+
+	std::string s = param;
+	const char delim = ',';
+
+	std::vector<std::string> out;
+	tokenize(s, delim, out);
+
+	int list1ID = 0;
+	int list2ID = 0;
+
+	int i = 0;
+	for (auto& s : out) {
+		if (i == 0)
+			if (s.rfind("v[", 0) == 0) {
+				s.replace(0, 2, "");
+				s.replace(s.end() - 1, s.end(), "");
+				list1ID = Main_Data::game_variables->Get(std::stoi(s));
+			}
+			else {
+				list1ID = std::stoi(s);
+			}
+		else if (i == 1)
+		{
+			if (s.rfind("v[", 0) == 0) {
+				s.replace(0, 2, "");
+				s.replace(s.end() - 1, s.end(), "");
+				list2ID = Main_Data::game_variables->Get(std::stoi(s));
+			}
+			else {
+				list2ID = std::stoi(s);
+			}
+		}
+
+
+		i += 1;
+
+	}
+
+	auto l1 = Main_Data::game_lists->Get(list1ID);
+	auto l2 = Main_Data::game_lists->Get(list2ID);
+
+	std::vector<std::pair<int, int>> zipped;
+
+	for (size_t i = 0; i < l1.size(); ++i)
+	{
+		zipped.push_back(std::make_pair(l1[i], l2[i]));
+	}
+
+	std::sort(std::begin(zipped), std::end(zipped),
+		[&](const auto& a, const auto& b)
+		{
+			return a.second > b.second;
+		});
+
+	for (size_t i = 0; i < l1.size(); i++)
+	{
+		l1[i] = zipped[i].first;
+	}
+
+	Main_Data::game_lists->Set(list1ID, l1);
+
 
 }
 
@@ -5540,6 +5848,7 @@ void Game_Interpreter::setWindowSkill(std::string param) {
 	int hx = 0;
 	int hy = 0;
 	bool force_color = false;
+	bool show_help = true;
 
 	int i = 0;
 	for (auto& s : out) {
@@ -5594,6 +5903,12 @@ void Game_Interpreter::setWindowSkill(std::string param) {
 			}
 			else {
 			}
+		else if (i == 6)
+			if (s == "false") {
+				show_help = false;
+			}
+			else {
+			}
 		i += 1;
 
 	}
@@ -5609,25 +5924,38 @@ void Game_Interpreter::setWindowSkill(std::string param) {
 			pic.windowHelp = nullptr;
 		}
 
-		const auto& window = Main_Data::game_windows->GetWindow(picID);
-		int x = pic.GetShowParams().position_x;
-		int y = pic.GetShowParams().position_y;
-		int w = window.window->GetContents()->GetWidth() + 16;
-		int h = window.window->GetContents()->GetHeight() + 16;
+		auto actor = Main_Data::game_actors->GetActor(user_id);
 
-		//Output::Debug("X{} Y{} W{} H{}", x, y, w, h);
 
-		Window_Skill* skill_window = new Window_Skill(x, y, w, h);
-		skill_window->SetColumn(c);
-		skill_window->force_Color = force_color;
-		skill_window->SetActive(true);
-		skill_window->SetIndex(0);
-		skill_window->SetActor(user_id);
-		pic.AttachWindowSkill(skill_window);
-		skill_window->SetZ(pic.sprite->GetZ());
+		if (actor) {
 
-		Window_Help* help_window = new Window_Help(hx, hy, Player::Screen_Width, 32);
-		skill_window->SetHelpWindow(help_window);
+			const auto& window = Main_Data::game_windows->GetWindow(picID);
+			int x = pic.GetShowParams().position_x;
+			int y = pic.GetShowParams().position_y;
+			int w = window.window->GetContents()->GetWidth() + 16;
+			int h = window.window->GetContents()->GetHeight() + 16;
+
+			//Output::Debug("X{} Y{} W{} H{}", x, y, w, h);
+
+			Window_Skill* skill_window = new Window_Skill(x, y, w, h);
+			skill_window->SetColumn(c);
+			skill_window->force_Color = force_color;
+			skill_window->SetActive(true);
+			skill_window->SetIndex(0);
+			skill_window->SetActor(user_id);
+			pic.AttachWindowSkill(skill_window);
+			skill_window->SetZ(pic.sprite->GetZ());
+
+			Window_Help* help_window = new Window_Help(hx, hy, Player::Screen_Width, 32);
+			skill_window->SetHelpWindow(help_window);
+			if (!show_help) {
+				help_window->SetVisible(false);
+			}
+
+		}
+		else {
+			Output::Warning("Actor : {} doesn't exist", user_id);
+		}
 	}
 }
 
@@ -6263,6 +6591,7 @@ void Game_Interpreter::btl_forceAction(std::string param) {
 	int target_type = 0;
 	int target_id = 0;
 	bool show_help = true;
+	bool useMP = false;
 
 	int i = 0;
 	for (auto& s : out) {
@@ -6326,6 +6655,10 @@ void Game_Interpreter::btl_forceAction(std::string param) {
 			}
 			else {
 				show_help = true;
+			}
+		else if (i == 6)
+			if (s == "true") {
+				useMP = true;
 			}
 
 		i += 1;
@@ -6400,13 +6733,21 @@ void Game_Interpreter::btl_forceAction(std::string param) {
 
 					b = true;
 				}
+				else if (target_type == 4) {
+					if (user_type == 0)
+						a->SetBattleAlgorithm(std::make_shared<Game_BattleAlgorithm::Skill>(a, targetA, *skill, item));
+					else
+						a->SetBattleAlgorithm(std::make_shared<Game_BattleAlgorithm::Skill>(a, targetE, *skill, item));
+
+					b = true;
+				}
 
 				if (b) {
 
 					//Output::Debug("Help : {}", show_help);
 					scene->skillShowHelp = show_help;
 					a->SetLastBattleAction(0);
-					a->GetBattleAlgorithm().get()->forceAction = true;
+					a->GetBattleAlgorithm().get()->forceAction = useMP;
 					scene->ActionSelectedCallback(a);
 
 				}
@@ -7940,8 +8281,7 @@ bool Game_Interpreter::CommandMovePicture(lcf::rpg::EventCommand const& com) { /
 	if (Player::IsRPG2k() || Player::IsRPG2k3E()) {
 		if (param_size > 17) {
 			// Handling of RPG2k3 1.12 chunks
-			// Maniac Patch uses the upper bits for "wait is variable", mask it away
-			pic_id = ValueOrVariable(com.parameters[17] & 0xFF, pic_id);
+			pic_id = ValueOrVariable(com.parameters[17], pic_id);
 			// Currently unused by RPG Maker
 			//int chars_to_replace = com.parameters[18];
 			//int replace_with = com.parameters[19];
@@ -7962,7 +8302,6 @@ bool Game_Interpreter::CommandMovePicture(lcf::rpg::EventCommand const& com) { /
 			} else if (blend_mode == 3) {
 				params.blend_mode = (int)Bitmap::BlendMode::Overlay;
 			}
-			params.duration = ValueOrVariableBitfield(com.parameters[17], 2, params.duration);
 			params.flip_x = (flags & 16) == 16;
 			params.flip_y = (flags & 32) == 32;
 			params.origin = com.parameters[1] >> 8;
@@ -8379,10 +8718,10 @@ bool Game_Interpreter::CommandChangePBG(lcf::rpg::EventCommand const& com) { // 
 	return true;
 }
 
-bool Game_Interpreter::CommandChangeEncounterSteps(lcf::rpg::EventCommand const& com) { // code 11740
+bool Game_Interpreter::CommandChangeEncounterRate(lcf::rpg::EventCommand const& com) { // code 11740
 	int steps = com.parameters[0];
 
-	Game_Map::SetEncounterSteps(steps);
+	Game_Map::SetEncounterRate(steps);
 
 	return true;
 }
@@ -9019,11 +9358,8 @@ bool Game_Interpreter::CommandManiacGetSaveInfo(lcf::rpg::EventCommand const& co
 
 	int save_number = ValueOrVariable(com.parameters[0], com.parameters[1]);
 
-	// Error case, set later on success
+	// Error case, set to YYMMDD later on success
 	Main_Data::game_variables->Set(com.parameters[2], 0);
-	Main_Data::game_variables->Set(com.parameters[3], 0);
-	Main_Data::game_variables->Set(com.parameters[4], 0);
-	Main_Data::game_variables->Set(com.parameters[5], 0);
 
 	if (save_number <= 0) {
 		Output::Debug("ManiacGetSaveInfo: Invalid save number {}", save_number);
@@ -9033,17 +9369,10 @@ bool Game_Interpreter::CommandManiacGetSaveInfo(lcf::rpg::EventCommand const& co
 	auto savefs = FileFinder::Save();
 	std::string save_name = Scene_Save::GetSaveFilename(savefs, save_number);
 	auto save_stream = FileFinder::Save().OpenInputStream(save_name);
-
-	if (!save_stream) {
-		Output::Debug("ManiacGetSaveInfo: Save not found {}", save_number);
-		return true;
-	}
-
 	auto save = lcf::LSD_Reader::Load(save_stream, Player::encoding);
+
 	if (!save) {
-		Output::Debug("ManiacGetSaveInfo: Save corrupted {}", save_number);
-		// Maniac Patch writes this for whatever reason
-		Main_Data::game_variables->Set(com.parameters[2], 8991230);
+		Output::Debug("ManiacGetSaveInfo: Save not found {}", save_number);
 		return true;
 	}
 
@@ -9081,7 +9410,6 @@ bool Game_Interpreter::CommandManiacGetSaveInfo(lcf::rpg::EventCommand const& co
 		if (pic.Exists()) {
 			params = pic.GetShowParams();
 		} else {
-			params.top_trans = 100;
 			params.map_layer = 7;
 			params.battle_layer = 7;
 		}
@@ -9682,8 +10010,8 @@ bool Game_Interpreter::CommandManiacControlGlobalSave(lcf::rpg::EventCommand con
 	}
 
 
-	if (operation == 0 || operation == 1) {
-		// Open / Close (no-op)
+	if (operation == 1) {
+		// Close (no-op)
 	} else if (operation == 2 || operation == 3) {
 		// 2: Save (write to file)
 		// 3: Save and Close
@@ -9706,11 +10034,11 @@ bool Game_Interpreter::CommandManiacControlGlobalSave(lcf::rpg::EventCommand con
 		writer.WriteInt(13);
 		const std::string header = "LcfGlobalSave";
 		writer.Write(header);
-		writer.WriteInt(1);
-		writer.WriteInt(Main_Data::game_switches_global->GetSize());
+		writer.Write<uint32_t>(1);
+		writer.Write<uint32_t>(Main_Data::game_switches_global->GetSize());
 		writer.Write(Main_Data::game_switches_global->GetData());
-		writer.WriteInt(2);
-		writer.WriteInt(Main_Data::game_variables_global->GetSize() * sizeof(int32_t));
+		writer.Write<uint32_t>(2);
+		writer.Write<uint32_t>(Main_Data::game_variables_global->GetSize());
 		writer.Write(Main_Data::game_variables_global->GetData());
 	} else if (operation == 4 || operation == 5) {
 		int type = com.parameters[2];

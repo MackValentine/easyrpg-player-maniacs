@@ -18,7 +18,6 @@ EasyRPG Player is an open source interpreter for RPG Maker 2000 and 2003 games.
 It aims to support all features of unmodified games and also has some support
 for some additional binary patches.
 
-== Options
 
 == Options
 
@@ -73,7 +72,7 @@ for some additional binary patches.
 *--hide-title*::
   Hide the title background image and center the command menu.
 
-*--load-game-id* _ID_::
+*--load-game-id* 'ID'::
   Skip the title scene and load Save__ID__.lsd ('ID' is padded to two digits).
 
 *--new-game*::
@@ -82,7 +81,7 @@ for some additional binary patches.
 *--project-path* 'PATH'::
   Instead of using the working directory the game in 'PATH' is used.
 
-*--rtp-path* _PATH_::
+*--rtp-path* 'PATH'::
   Adds 'PATH' to the RTP directory list and use this one with highest
   precedence.
 
@@ -102,7 +101,7 @@ for some additional binary patches.
 NOTE: When using the game browser all games will share the same save
 directory!
 
-*--seed* _SEED_::
+*--seed* 'SEED'::
   Seeds the random number generator.
 
 *--autobattle-algo* 'ALGO'::
@@ -123,18 +122,18 @@ directory!
    - 'dynrpg'     - DynRPG patch by Cherry
    - 'maniac'     - Maniac Patch by BingShan
 
-*--start-map-id* _ID_::
+*--start-map-id* 'ID'::
   Overwrite the map used for new games and use Map__ID__.lmu instead ('ID' is
   padded to four digits).
 
 NOTE: Incompatible with *--load-game-id*.
 
-*--start-position* _X' 'Y_::
+*--start-position* 'X' 'Y'::
   Overwrite the party start position and move the party to position ('X', 'Y').
 
 NOTE: Incompatible with *--load-game-id*.
 
-*--start-party* _A_ [_B_ _..._]::
+*--start-party* 'A' ['B' '...']::
   Overwrite the starting party members with the actors with IDs 'A', 'B', '...'
 
 NOTE: Incompatible with *--load-game-id*.
@@ -182,7 +181,7 @@ arguments are supported:
 
 'RPG2K_RTP_PATH'::
   Full path to a directory containing an extracted RPG Maker 2000
-  Runtime Package (RTP).
+  Run-Time-Package(RTP).
 
 'RPG2K3_RTP_PATH'::
   Full path to a directory containing an extracted RPG Maker 2003 RTP.
