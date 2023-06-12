@@ -170,8 +170,8 @@ private:
 	struct CommandIndices {
 		int new_game =  0;
 		int continue_game =  1;
-		int import = -1;
-		int translate = -1;
+		int import = -2;
+		int translate = -2;
 		int exit =  2;
 	};
 	CommandIndices indices;

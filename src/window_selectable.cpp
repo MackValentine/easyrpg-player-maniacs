@@ -21,6 +21,7 @@
 #include "input.h"
 #include "util_macro.h"
 #include "bitmap.h"
+#include <output.h>
 
 constexpr int arrow_animation_frames = 20;
 
@@ -164,9 +165,49 @@ void Window_Selectable::UpdateArrows() {
 	SetDownArrow(show_down_arrow && arrow_visible);
 }
 
+
 // Update
 void Window_Selectable::Update() {
 	Window_Base::Update();
+
+	if (Input::GetUseMouseButton() && IsVisible() && active) {
+		if (Input::IsRawKeyPressed(Input::Keys::MOUSE_LEFT)) {
+			
+			mouseTimeArrow++;
+
+			Point mouseP = Input::GetMousePosition();
+
+			if (mouseP.x >= GetX() + GetBorderX() && mouseP.x <= GetX() + GetWidth() - GetBorderX() &&
+				mouseP.y >= GetY() + GetBorderY() && mouseP.y < GetY() + GetHeight() - GetBorderY()) {
+
+				index = GetTopRow();
+				UpdateCursorRect();
+				UpdateCursorRect2();
+			}
+			else {
+				//Input::clearKey(Input::DECISION);
+				index = -1;
+				if (GetTopRow() < (GetRowMax() - GetPageRowMax()))
+					if (mouseP.x >= GetX() + GetBorderX() && mouseP.x < GetX() + GetWidth() - GetBorderX() &&
+						mouseP.y >= GetY() + GetHeight() - GetBorderY() && mouseP.y < GetY() + GetHeight()) {
+						if (mouseTimeArrow == 1 || (mouseTimeArrow >= 15 && mouseTimeArrow % 5 == 1)) {
+							SetTopRow(GetTopRow() + 1);
+						}
+					}
+				if (GetTopRow() > 0)
+					if (mouseP.x >= GetX() + GetBorderX() && mouseP.x < GetX() + GetWidth() - GetBorderX() &&
+						mouseP.y >= GetY() && mouseP.y < GetY() + GetBorderY()) {
+						if (mouseTimeArrow == 1 || (mouseTimeArrow >= 15 && mouseTimeArrow % 5 == 1)) {
+							SetTopRow(GetTopRow() - 1);
+						}
+					}
+			}
+		}
+		else
+			mouseTimeArrow = 0;
+	} else
+		mouseTimeArrow = 0;
+
 	if (active && item_max > 0 && index >= 0) {
 		if (scroll_dir != 0) {
 			scroll_progress++;
@@ -193,6 +234,25 @@ void Window_Selectable::Update() {
 				index = (index + column_max) % item_max;
 			}
 		};
+
+		if (Input::GetUseMouseButton() && Input::IsRawKeyPressed(Input::Keys::MOUSE_LEFT) && IsVisible()) {
+			Point mouseP = Input::GetMousePosition();
+			//Output::Debug("Mouse : {} {} {} {} {} {}", mouseP.x, mouseP.y, GetX() +  GetBorderX(), GetY() + GetBorderY(), GetX() +  GetBorderX() + GetWidth(), GetY() + GetBorderY() + GetHeight());
+
+			if (mouseP.x >= GetX() + GetBorderX() && mouseP.x <= GetX() + GetWidth() - GetBorderX() &&
+				mouseP.y >= GetY() + GetBorderY() && mouseP.y < GetY() + GetHeight() - GetBorderY()) {
+				
+				int new_index = (mouseP.y - GetBorderY() - GetY() + GetTopRow() * GetCursorRect().height) / GetCursorRect().height * column_max;
+				new_index += (mouseP.x - GetBorderX() - GetX()) / GetCursorRect().width;
+
+				//Output::Debug("Index : {} {} {}", GetTopRow(), new_index, GetPageRowMax());
+
+				if (new_index < GetItemMax() && new_index >= GetTopRow() && new_index < GetTopRow() + GetPageRowMax() * column_max)
+					index = new_index;
+
+			}
+		}
+
 		if (Input::IsTriggered(Input::DOWN) || Input::IsTriggered(Input::SCROLL_DOWN)) {
 			move_down();
 		} else if (Input::IsRepeated(Input::DOWN)) {

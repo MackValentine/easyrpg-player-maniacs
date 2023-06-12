@@ -2411,10 +2411,198 @@ bool Game_Interpreter::CommandComment(const lcf::rpg::EventCommand &com) {
 		else if (s.rfind("@btl_playAnimationEnemies(", 0) == 0) {
 			btl_playAnimationEnemies(s);
 		}
-		
+		else if (s.rfind("@activateEventAt(", 0) == 0) {
+			activateEventAt(s);
+		}
+		else if (s.rfind("@SearchPath(", 0) == 0) {
+			SearchPath(s);
+		}
+		else if (s.rfind("@btl_SetTargetIndex(", 0) == 0) {
+			btl_SetTargetIndex(s);
+		}
+		else if (s.rfind("@changeEquipmentType(", 0) == 0) {
+			changeEquipmentType(s);
+		}
 
 	}
 	return true;
+}
+
+void Game_Interpreter::changeEquipmentType(std::string param) {
+	param.replace(0, 21, "");
+	param.replace(param.end() - 1, param.end(), "");
+
+	std::string s = param;
+	const char delim = ',';
+
+	std::vector<std::string> out;
+	tokenize(s, delim, out);
+
+	int actorID;
+	int type[] = {0,0,0,0,0};
+
+
+	int i = 0;
+	for (auto& s : out) {
+		if (i == 0)
+			if (s.rfind("v[", 0) == 0) {
+				s.replace(0, 2, "");
+				s.replace(s.end() - 1, s.end(), "");
+				actorID = Main_Data::game_variables->Get(std::stoi(s));
+			}
+			else {
+				actorID = std::stoi(s);
+			}
+		else if (i >= 1) 
+			if (s.rfind("v[", 0) == 0) {
+				s.replace(0, 2, "");
+				s.replace(s.end() - 1, s.end(), "");
+				type[i] = Main_Data::game_variables->Get(std::stoi(s));
+			}
+			else {
+				type[i - 1] = std::stoi(s);
+			}
+		
+
+		i += 1;
+
+	}
+
+	Game_Actor* actor = Main_Data::game_actors->GetActor(actorID);
+	for (int i = 0;i<5;i++) {
+		actor->equipmentTypes[i] = type[i];
+	}
+}
+
+void Game_Interpreter::btl_SetTargetIndex(std::string param) {
+	param.replace(0, 20, "");
+	param.replace(param.end() - 1, param.end(), "");
+	int index = 0;
+
+	if (param.rfind("v[", 0) == 0) {
+		param.replace(0, 2, "");
+		param.replace(param.end() - 1, param.end(), "");
+		index = Main_Data::game_variables->Get(std::stoi(param));
+	}
+	else {
+		index = std::stoi(param);
+	}
+
+
+	Scene_Battle* scene = (Scene_Battle*)Scene::Find(Scene::Battle).get();
+	if (scene) {
+		if (scene->target_window) {
+			if (scene->target_window->GetActive())
+				scene->target_window->SetIndex(index);
+		}
+		if (scene->status_window) {
+			if (scene->status_window->GetActive())
+				scene->status_window->SetIndex(index);
+		}
+	}
+	
+}
+
+void Game_Interpreter::SearchPath(std::string param) {
+	param.replace(0, 12, "");
+	param.replace(param.end() - 1, param.end(), "");
+
+	std::string s = param;
+	const char delim = ',';
+
+	std::vector<std::string> out;
+	tokenize(s, delim, out);
+
+	int eventID;
+	int x = 0;
+	int y = 0;
+
+	int i = 0;
+	for (auto& s : out) {
+		if (i == 0)
+			if (s.rfind("v[", 0) == 0) {
+				s.replace(0, 2, "");
+				s.replace(s.end() - 1, s.end(), "");
+				eventID = Main_Data::game_variables->Get(std::stoi(s));
+			}
+			else {
+				eventID = std::stoi(s);
+			}
+		else if (i == 1)
+			if (s.rfind("v[", 0) == 0) {
+				s.replace(0, 2, "");
+				s.replace(s.end() - 1, s.end(), "");
+				x = Main_Data::game_variables->Get(std::stoi(s));
+			}
+			else {
+				x = std::stoi(s);
+			}
+		else if (i == 2) {
+			if (s.rfind("v[", 0) == 0) {
+				s.replace(0, 2, "");
+				s.replace(s.end() - 1, s.end(), "");
+				y = Main_Data::game_variables->Get(std::stoi(s));
+			}
+			else {
+				y = std::stoi(s);
+			}
+		}
+
+
+		i += 1;
+
+	}
+
+	CommandSearchPath(eventID, x, y, true);
+
+
+}
+
+void Game_Interpreter::activateEventAt(std::string param) {
+	param.replace(0, 17, "");
+	param.replace(param.end() - 1, param.end(), "");
+
+	std::string s = param;
+	const char delim = ',';
+
+	std::vector<std::string> out;
+	tokenize(s, delim, out);
+
+	int x = 0;
+	int y = 0;
+
+	std::vector<Game_Battler*> enemies;
+
+
+	int i = 0;
+	for (auto& s : out) {
+		if (i == 0)
+			if (s.rfind("v[", 0) == 0) {
+				s.replace(0, 2, "");
+				s.replace(s.end() - 1, s.end(), "");
+				x = Main_Data::game_variables->Get(std::stoi(s));
+			}
+			else {
+				x = std::stoi(s);
+			}
+		else if (i == 1) {
+			if (s.rfind("v[", 0) == 0) {
+				s.replace(0, 2, "");
+				s.replace(s.end() - 1, s.end(), "");
+				y = Main_Data::game_variables->Get(std::stoi(s));
+			}
+			else {
+				y = std::stoi(s);
+			}
+		}
+
+
+		i += 1;
+
+	}
+
+	bool b = Main_Data::game_player->CheckEventTriggerThere({ lcf::rpg::EventPage::Trigger_action },x,y,true);
+
 }
 
 void Game_Interpreter::btl_playAnimationEnemies(std::string param) {
@@ -6059,9 +6247,11 @@ void Game_Interpreter::SkillWindowUpdate(std::string param) {
 	 auto& pic = Main_Data::game_pictures->GetPicture(picID);
 	 if (&pic != NULL) {
 			auto window = pic.getWindow();
-			window->Update();
-			if (varID > 0)
-				Main_Data::game_variables->Set(varID, window->GetIndex());
+			if (window) {
+				window->Update();
+				if (varID > 0)
+					Main_Data::game_variables->Set(varID, window->GetIndex());
+			}
 	 }
 }
 
@@ -8531,10 +8721,10 @@ int Game_Interpreter::KeyInputState::CheckInput() const {
 	if (keys[Keys::eShift] && check(Input::SHIFT)) {
 		return 7;
 	}
-	if (keys[Keys::eCancel] && check(Input::CANCEL)) {
+	if (keys[Keys::eCancel] && check(Input::CANCEL) || (Input::GetUseMouseButton() && Input::IsRawKeyReleased(Input::Keys::MOUSE_RIGHT))) {
 		return 6;
 	}
-	if (keys[Keys::eDecision] && check(Input::DECISION)) {
+	if (keys[Keys::eDecision] && check(Input::DECISION) || (Input::GetUseMouseButton() && Input::IsRawKeyReleased(Input::Keys::MOUSE_LEFT))) {
 		return 5;
 	}
 	if (keys[Keys::eUp] && check(Input::UP)) {
@@ -10338,3 +10528,150 @@ bool Game_Interpreter::CommandManiacGetBattleInfo(lcf::rpg::EventCommand const& 
 }
 
 
+
+bool Game_Interpreter::CommandSearchPath(int eventID, int destX, int destY, bool passableDestination) {
+	Game_Character* event;
+	if (eventID == 0)
+		event = Main_Data::game_player.get();
+	else
+		event = GetCharacter(eventID);
+	NoeudA start = NoeudA(event->GetX(), event->GetY(), 0, -1);
+	std::vector<NoeudA> list;
+	std::vector<NoeudA> closedList;
+	std::vector<NoeudA> listMove;
+
+	list.push_back(start);
+	int id = 0;
+	int idd = 0;
+
+	while (!list.empty()) {
+		if (id >= list.size())
+			return false;
+
+		NoeudA n = list[id];
+
+		if (n.x == destX && n.y == destY) {
+
+			//Output::Debug("Chemin :");
+			NoeudA* node = &n;
+			while (node != nullptr) {
+				//Output::Debug("N {} {} {}", node->x, node->y, node->parentID);
+
+				NoeudA nodeF = NoeudA(node->x, node->y, 0, node->direction);
+				nodeF.parentX = n.x;
+				nodeF.parentY = n.y;
+
+				listMove.push_back(nodeF);
+				int nid = node->parentID;
+				node = nullptr;
+				for (NoeudA na : list) {
+					if (na.id == nid) {
+						node = &na;
+						break;
+					}
+				}
+			}
+
+			std::reverse(listMove.rbegin(), listMove.rend());
+
+			lcf::rpg::MoveRoute route;
+			//route.skippable = true;
+			route.repeat = false;
+
+			if (!event->MakeWay(n.parentX, n.parentY, n.x, n.y)) {
+				listMove.pop_back();
+			}
+
+			if (listMove.size() <= 1 && n.direction <= 3) {
+				listMove.clear();
+				n.direction += 12;
+				listMove.push_back(n);
+			}
+
+
+			
+			for (NoeudA node : listMove) {
+				if (node.direction >= 0) {
+					lcf::rpg::MoveCommand cmd;
+					cmd.command_id = node.direction;
+					route.move_commands.push_back(cmd);
+
+					//Output::Debug("N {} {} {}", node.x, node.y, cmd.command_id);
+				}
+				
+			}
+			event->ForceMoveRoute(route, 8);
+
+			return true;
+
+		} else {
+
+			std::vector<NoeudA> neighbour;
+			NoeudA nn = NoeudA(n.x + 1, n.y, n.cout + 1, 1); // Right
+			neighbour.push_back(nn);
+			nn = NoeudA(n.x, n.y - 1, n.cout + 1, 0); // Up
+			neighbour.push_back(nn);
+			nn = NoeudA(n.x - 1, n.y, n.cout + 1, 3); // left
+			neighbour.push_back(nn);
+			nn = NoeudA(n.x, n.y + 1, n.cout + 1, 2); // Down
+			neighbour.push_back(nn);
+			
+			nn = NoeudA(n.x - 1, n.y + 1, n.cout + 1, 6); // Down Left
+			neighbour.push_back(nn); 
+			nn = NoeudA(n.x + 1, n.y - 1, n.cout + 1, 4); // Up Right
+			neighbour.push_back(nn);
+			nn = NoeudA(n.x - 1, n.y - 1, n.cout + 1, 7); // Up Left
+			neighbour.push_back(nn);
+			nn = NoeudA(n.x + 1, n.y + 1, n.cout + 1, 5); // Down Right
+			neighbour.push_back(nn);
+			
+			
+			for (NoeudA a : neighbour) {
+				idd++;
+				a.parentX = n.x;
+				a.parentY = n.y;
+				a.id = idd;
+				a.parentID = n.id;
+				int i = vectorContains(list, a);
+				if (!((vectorContains(closedList, a) != -1) || (i != -1 && i < list.size() && list[i].cout < a.cout))) {
+					if (event->MakeWay(n.x, n.y, a.x, a.y) || (passableDestination && a.x == destX && a.y == destY)) {
+						//Output::Debug(" {} {} {} {}", a.x, a.y, a.id, a.direction);
+						if (a.direction == 4) {
+							if (event->MakeWay(n.x, n.y, n.x + 1, n.y) || event->MakeWay(n.x, n.y, n.x, n.y - 1))
+								list.push_back(a);
+						}
+						else if (a.direction == 5) {
+							if (event->MakeWay(n.x, n.y, n.x + 1, n.y) || event->MakeWay(n.x, n.y, n.x, n.y + 1))
+								list.push_back(a);
+						}
+						else if (a.direction == 6) {
+							if (event->MakeWay(n.x, n.y, n.x - 1, n.y) || event->MakeWay(n.x, n.y, n.x, n.y + 1))
+								list.push_back(a);
+						}
+						else if (a.direction == 7) {
+								if (event->MakeWay(n.x, n.y, n.x - 1, n.y) || event->MakeWay(n.x, n.y, n.x, n.y - 1))
+									list.push_back(a);
+						} else 
+							list.push_back(a);
+					}
+				}
+				closedList.push_back(a);
+			}
+
+		}
+		id++;
+	}
+
+	return false;
+}
+
+int Game_Interpreter::vectorContains(std::vector<NoeudA> v, NoeudA n) {
+	int id = -1;
+	for (NoeudA na : v) {
+		if (na.x == n.x && na.y == n.y) {
+			id = na.id;
+			break;
+		}
+	}
+	return id;
+}

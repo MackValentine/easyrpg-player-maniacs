@@ -803,6 +803,10 @@ void Player::CreateGameObjects() {
 
 				ScreenW = ini.Get("RPG_RT", "WinW", "320");
 				ScreenH = ini.Get("RPG_RT", "WinH", "240");
+
+				std::string s = ini.Get("RPG_RT", "MouseButton", "false");
+				bool b = s == "true";
+				Input::SetUseMouse(b);
 			}
 		}
 	}

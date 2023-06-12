@@ -307,6 +307,10 @@ namespace Input {
 	/** All cardinal directions state. */
 	extern int dir8;
 
+	void SetUseMouse(bool b);
+	bool GetUseMouseButton();
+	//void clearKey(InputButton button);
+
 	bool IsWaitingInput();
 	void WaitInput(bool val);
 }

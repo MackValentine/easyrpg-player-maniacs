@@ -402,6 +402,13 @@ protected:
 	void getSkillTargetType(std::string param);
 	void btl_setEnemyVisible(std::string param);
 	void btl_playAnimationEnemies(std::string param);
+	void activateEventAt(std::string param);
+	void SearchPath(std::string param);
+	void btl_SetTargetIndex(std::string param);
+	void changeEquipmentType(std::string param);
+
+
+	bool CommandSearchPath(int eventID, int destX, int destY, bool passableDestination);
 
 	void tokenize(std::string const& str, const char delim, std::vector<std::string>& out);
 
@@ -438,6 +445,36 @@ protected:
 		void fromSave(const lcf::rpg::SaveEventExecState& save);
 		void toSave(lcf::rpg::SaveEventExecState& save) const;
 	};
+
+	struct NoeudA {
+		NoeudA(int a, int b, int c, int d) {
+			x = a;
+			y = b;
+			cout = c;
+			direction = d;
+		}
+		int x;
+		int y;
+		int cout;
+		int id = 0;
+
+		int parentID = -1;
+		int parentX = -1;
+		int parentY = -1;
+		int direction;
+
+		friend bool operator==(const NoeudA& n1, const NoeudA& n2)
+		{
+			return n1.x == n2.x && n1.y == n2.y;
+		}
+
+		bool operator()(NoeudA const& a, NoeudA const& b)
+		{
+			return a.id > b.id;
+		}
+
+	};
+	int vectorContains(std::vector<NoeudA> v, NoeudA x);
 
 	bool CheckOperator(int val, int val2, int op) const;
 	bool ManiacCheckContinueLoop(int val, int val2, int type, int op) const;

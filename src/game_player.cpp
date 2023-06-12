@@ -264,6 +264,7 @@ bool Game_Player::UpdateAirship() {
 	return false;
 }
 
+bool wait_MouseButton = false;
 void Game_Player::UpdateNextMovementAction() {
 	if (UpdateAirship()) {
 		return;
@@ -338,10 +339,15 @@ void Game_Player::UpdateNextMovementAction() {
 	}
 
 	if (IsStopping()) {
-		if (Input::IsTriggered(Input::DECISION)) {
+		if (Input::IsTriggered(Input::DECISION) || (Input::IsRawKeyPressed(Input::Keys::MOUSE_LEFT) && Input::GetUseMouseButton() && wait_MouseButton == false)) {
+			wait_MouseButton = true;
 			if (!GetOnOffVehicle()) {
 				CheckActionEvent();
 			}
+		}
+		else {
+			if (!Input::IsRawKeyPressed(Input::Keys::MOUSE_LEFT))
+				wait_MouseButton = false;
 		}
 		return;
 	}
@@ -352,6 +358,7 @@ void Game_Player::UpdateNextMovementAction() {
 	}
 	UpdateEncounterSteps();
 }
+
 
 void Game_Player::UpdateMovement(int amount) {
 	const bool was_jumping = IsJumping();

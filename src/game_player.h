@@ -151,15 +151,17 @@ public:
 
 	int event_as_menu_event_id = -1;
 	int event_as_menu_switch_id = -1;
-private:
+
 	using TriggerSet = lcf::FlagSet<lcf::rpg::EventPage::Trigger>;
+	bool CheckEventTriggerThere(TriggerSet triggers, int x, int y, bool triggered_by_decision_key);
+	bool CheckEventTriggerHere(TriggerSet triggers, bool triggered_by_decision_key);
+private:
+	
 
 	void UpdateScroll(int amount, bool was_jumping);
 	void UpdatePan();
 	void UpdateEncounterSteps();
 	bool CheckActionEvent();
-	bool CheckEventTriggerHere(TriggerSet triggers, bool triggered_by_decision_key);
-	bool CheckEventTriggerThere(TriggerSet triggers, int x, int y, bool triggered_by_decision_key);
 	bool GetOnVehicle();
 	bool GetOffVehicle();
 	bool UpdateAirship();

@@ -51,7 +51,7 @@ void Window_Equip::Refresh() {
 
 	// Draw equipment text
 	for (int i = 0; i < 5; ++i) {
-		DrawEquipmentType(*actor, 0, (12 + 4) * i + 2, i);
+		DrawEquipmentType(*actor, 0, (12 + 4) * i + 2, actor->GetEquipmentTypes(i));
 		if (data[i] > 0) {
 			// Equipment and items are guaranteed to be valid
 			DrawItemName(*lcf::ReaderUtil::GetElement(lcf::Data::items, data[i]), 60, (12 + 4) * i + 2);

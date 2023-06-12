@@ -1347,40 +1347,41 @@ Scene_Battle_Rpg2k3::SceneActionReturn Scene_Battle_Rpg2k3::ProcessSceneActionFi
 			if (message_window->IsVisible()) {
 				return SceneActionReturn::eWaitTillNextFrame;
 			}
-			switch (battle_options[options_window->GetIndex()]) {
-				case Battle: // Battle
-					Main_Data::game_system->SePlay(Main_Data::game_system->GetSystemSE(Main_Data::game_system->SFX_Decision));
-					MoveCommandWindows(-options_window->GetWidth(), 8);
-					SetState(State_SelectActor);
-					break;
-				case AutoBattle: // Auto Battle
-					MoveCommandWindows(-options_window->GetWidth(), 8);
-					SetState(State_AutoBattle);
-					Main_Data::game_system->SePlay(Main_Data::game_system->GetSystemSE(Main_Data::game_system->SFX_Decision));
-					break;
-				case Escape: // Escape
-					if (IsEscapeAllowedFromOptionWindow()) {
+			if (options_window->GetIndex() < battle_options.size())
+				switch (battle_options[options_window->GetIndex()]) {
+					case Battle: // Battle
 						Main_Data::game_system->SePlay(Main_Data::game_system->GetSystemSE(Main_Data::game_system->SFX_Decision));
-						SetState(State_Escape);
-					} else {
-						Main_Data::game_system->SePlay(Main_Data::game_system->GetSystemSE(Main_Data::game_system->SFX_Buzzer));
-					}
-					break;
-				case Win: // Auto Battle
-					MoveCommandWindows(-options_window->GetWidth(), 8);
-					SetState(State_Victory);
-					Main_Data::game_system->SePlay(Main_Data::game_system->GetSystemSE(Main_Data::game_system->SFX_Decision));
+						MoveCommandWindows(-options_window->GetWidth(), 8);
+						SetState(State_SelectActor);
+						break;
+					case AutoBattle: // Auto Battle
+						MoveCommandWindows(-options_window->GetWidth(), 8);
+						SetState(State_AutoBattle);
+						Main_Data::game_system->SePlay(Main_Data::game_system->GetSystemSE(Main_Data::game_system->SFX_Decision));
+						break;
+					case Escape: // Escape
+						if (IsEscapeAllowedFromOptionWindow()) {
+							Main_Data::game_system->SePlay(Main_Data::game_system->GetSystemSE(Main_Data::game_system->SFX_Decision));
+							SetState(State_Escape);
+						} else {
+							Main_Data::game_system->SePlay(Main_Data::game_system->GetSystemSE(Main_Data::game_system->SFX_Buzzer));
+						}
+						break;
+					case Win: // Auto Battle
+						MoveCommandWindows(-options_window->GetWidth(), 8);
+						SetState(State_Victory);
+						Main_Data::game_system->SePlay(Main_Data::game_system->GetSystemSE(Main_Data::game_system->SFX_Decision));
 
-					for (int i = 0;i< Main_Data::game_enemyparty->GetEnemies().size(); i++) {
-						Main_Data::game_enemyparty->GetEnemy(i)->Kill();
-					}
+						for (int i = 0;i< Main_Data::game_enemyparty->GetEnemies().size(); i++) {
+							Main_Data::game_enemyparty->GetEnemy(i)->Kill();
+						}
 
-					break;
-				case Lose: // Auto Battle
-					MoveCommandWindows(-options_window->GetWidth(), 8);
-					SetState(State_Defeat);
-					Main_Data::game_system->SePlay(Main_Data::game_system->GetSystemSE(Main_Data::game_system->SFX_Decision));
-					break;
+						break;
+					case Lose: // Auto Battle
+						MoveCommandWindows(-options_window->GetWidth(), 8);
+						SetState(State_Defeat);
+						Main_Data::game_system->SePlay(Main_Data::game_system->GetSystemSE(Main_Data::game_system->SFX_Decision));
+						break;
 			}
 		}
 		return SceneActionReturn::eWaitTillNextFrame;
@@ -1653,7 +1654,7 @@ Scene_Battle_Rpg2k3::SceneActionReturn Scene_Battle_Rpg2k3::ProcessSceneActionIt
 	}
 
 	if (scene_action_substate == eWaitInput) {
-		if (Input::IsTriggered(Input::DECISION)) {
+		if (Input::IsTriggered(Input::DECISION) && item_window->GetIndex() >= 0) {
 			ItemSelected();
 			return SceneActionReturn::eWaitTillNextFrame;
 		}
@@ -1700,7 +1701,7 @@ Scene_Battle_Rpg2k3::SceneActionReturn Scene_Battle_Rpg2k3::ProcessSceneActionSk
 	skill_window->SaveActorIndex(actor_index);
 
 	if (scene_action_substate == eWaitInput) {
-		if (Input::IsTriggered(Input::DECISION)) {
+		if (Input::IsTriggered(Input::DECISION) && skill_window->GetIndex() >= 0) {
 			SkillSelected();
 			skill_window->SaveActorIndex(actor_index);
 			return SceneActionReturn::eWaitTillNextFrame;
@@ -1750,14 +1751,20 @@ Scene_Battle_Rpg2k3::SceneActionReturn Scene_Battle_Rpg2k3::ProcessSceneActionEn
 
 	if (scene_action_substate == eWaitInput) {
 		if (Input::IsTriggered(Input::DECISION)) {
-			auto* actor = active_actor;
-			// active_actor gets reset after the next call, so save it.
-			auto* enemy = EnemySelected();
-			if (enemy) {
-				FaceTarget(*actor, *enemy);
+
+			std::vector<Game_Battler*> enemies;
+			Main_Data::game_enemyparty->GetActiveBattlers(enemies);
+
+			if (target_window->GetIndex() < enemies.size()) {
+				auto* actor = active_actor;
+				// active_actor gets reset after the next call, so save it.
+				auto* enemy = EnemySelected();
+				if (enemy) {
+					FaceTarget(*actor, *enemy);
+				}
+				target_window->SetIndex(-1);
+				return SceneActionReturn::eWaitTillNextFrame;
 			}
-			target_window->SetIndex(-1);
-			return SceneActionReturn::eWaitTillNextFrame;
 		}
 		if (Input::IsTriggered(Input::CANCEL)) {
 			Main_Data::game_system->SePlay(Main_Data::game_system->GetSystemSE(Main_Data::game_system->SFX_Cancel));
@@ -1801,8 +1808,13 @@ Scene_Battle_Rpg2k3::SceneActionReturn Scene_Battle_Rpg2k3::ProcessSceneActionAl
 
 	if (scene_action_substate == eWaitInput) {
 		if (Input::IsTriggered(Input::DECISION)) {
-			AllySelected();
-			return SceneActionReturn::eWaitTillNextFrame;
+
+			std::vector<Game_Battler*> allies;
+			Main_Data::game_party->GetActiveBattlers(allies);
+			if (status_window->GetIndex() < allies.size()) {
+				AllySelected();
+				return SceneActionReturn::eWaitTillNextFrame;
+			}
 		}
 		if (Input::IsTriggered(Input::CANCEL)) {
 			Main_Data::game_system->SePlay(Main_Data::game_system->GetSystemSE(Main_Data::game_system->SFX_Cancel));

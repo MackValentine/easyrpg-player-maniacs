@@ -127,6 +127,13 @@ public:
 #endif
 
 	/**
+	 * Gets client zoom size.
+	 *
+	 * @return client zoom size.
+	 */
+	long GetZoom() const;
+
+	/**
 	 * Gets client width size.
 	 *
 	 * @return client width size.
@@ -291,6 +298,10 @@ inline long BaseUi::GetWidth() const {
 
 inline long BaseUi::GetHeight() const {
 	return current_display_mode.height;
+}
+
+inline long BaseUi::GetZoom() const {
+	return current_display_mode.zoom;
 }
 
 inline bool BaseUi::GetMouseFocus() const {

@@ -258,25 +258,25 @@ void Scene_Shop::UpdateBuySelection() {
 		}
 	} else if (Input::IsTriggered(Input::DECISION)) {
 		int item_id = buy_window->GetItemId();
+		if (item_id > 0)
+			// checks the money and number of items possessed before buy
+			if (buy_window->CheckEnable(item_id)) {
+				Main_Data::game_system->SePlay(Main_Data::game_system->GetSystemSE(Main_Data::game_system->SFX_Decision));
 
-		// checks the money and number of items possessed before buy
-		if (buy_window->CheckEnable(item_id)) {
-			Main_Data::game_system->SePlay(Main_Data::game_system->GetSystemSE(Main_Data::game_system->SFX_Decision));
+				// Items are guaranteed to be valid
+				const lcf::rpg::Item* item = lcf::ReaderUtil::GetElement(lcf::Data::items, item_id);
 
-			// Items are guaranteed to be valid
-			const lcf::rpg::Item* item = lcf::ReaderUtil::GetElement(lcf::Data::items, item_id);
+				int max = Main_Data::game_party->GetMaxItemCount(item_id) - Main_Data::game_party->GetItemCount(item_id);
+				if (item->price > 0) {
+					max = std::min<int>(max, Main_Data::game_party->GetGold() / item->price);
+				}
+				number_window->SetData(item_id, max, item->price);
 
-			int max = Main_Data::game_party->GetMaxItemCount(item_id) - Main_Data::game_party->GetItemCount(item_id);
-			if (item->price > 0) {
-				max = std::min<int>(max, Main_Data::game_party->GetGold() / item->price);
+				SetMode(BuyHowMany);
 			}
-			number_window->SetData(item_id, max, item->price);
-
-			SetMode(BuyHowMany);
-		}
-		else {
-			Main_Data::game_system->SePlay(Main_Data::game_system->GetSystemSE(Main_Data::game_system->SFX_Buzzer));
-		}
+			else {
+				Main_Data::game_system->SePlay(Main_Data::game_system->GetSystemSE(Main_Data::game_system->SFX_Buzzer));
+			}
 	}
 }
 

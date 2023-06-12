@@ -110,6 +110,10 @@ Game_Actor::Game_Actor(int actor_id) {
 	SetHp(GetMaxHp());
 	SetSp(GetMaxSp());
 
+	for (int i = 0; i < 5; i++) {
+		equipmentTypes[i] = i;
+	}
+
 	// Remove items that do not exist in the database anymore
 	std::array<int, 5> ids = {{
 		dbActor->initial_equipment.weapon_id,
@@ -1563,4 +1567,10 @@ void Game_Actor::UpdateBattle() {
 	if (weapon) {
 		weapon->Update();
 	}
+}
+
+int Game_Actor::GetEquipmentTypes(int i) {
+	if (i < 5)
+		return equipmentTypes[i];
+	return 0;
 }

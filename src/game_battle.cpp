@@ -95,7 +95,7 @@ Game_CommonEvent* Game_Battle::StartCommonEventID(int id) {
 void Game_Battle::StartCommonEvent(int type) {
 	//bool b = GetInterpreterBattle().StartCommonEvent(i);
 
-	for (int i = 1; i < lcf::Data::commonevents.size(); i++) {
+	for (int i = 1; i <= lcf::Data::commonevents.size(); i++) {
 
 		Game_CommonEvent* common_event = lcf::ReaderUtil::GetElement(Game_Map::GetCommonEvents(), i);
 

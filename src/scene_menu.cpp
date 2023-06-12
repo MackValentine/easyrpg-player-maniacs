@@ -34,6 +34,7 @@
 #include "scene_status.h"
 #include "bitmap.h"
 #include "feature.h"
+#include <output.h>
 
 Scene_Menu::Scene_Menu(int menu_index) :
 	menu_index(menu_index) {
@@ -181,7 +182,7 @@ void Scene_Menu::UpdateCommand() {
 		Scene::Pop();
 	} else if (Input::IsTriggered(Input::DECISION)) {
 		menu_index = command_window->GetIndex();
-
+		if (menu_index >= 0 && menu_index < command_options.size())
 		switch (command_options[menu_index]) {
 		case Item:
 			if (Main_Data::game_party->GetActors().empty()) {
@@ -244,7 +245,7 @@ void Scene_Menu::UpdateActorSelection() {
 		command_window->SetActive(true);
 		menustatus_window->SetActive(false);
 		menustatus_window->SetIndex(-1);
-	} else if (Input::IsTriggered(Input::DECISION)) {
+	} else if (Input::IsTriggered(Input::DECISION) && command_window->GetIndex() < command_options.size() && command_window->GetIndex() >= 0 && menustatus_window->GetIndex() >= 0) {
 		switch (command_options[command_window->GetIndex()]) {
 		case Skill:
 			if (!menustatus_window->GetActor()->CanAct()) {

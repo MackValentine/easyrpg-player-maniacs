@@ -42,7 +42,7 @@ void Scene_Equip::Start() {
 	equip_window->SetIndex(equip_index);
 
 	for (int i = 0; i < 5; ++i) {
-		item_windows.push_back(std::make_shared<Window_EquipItem>(actor.GetId(), i));
+		item_windows.push_back(std::make_shared<Window_EquipItem>(actor.GetId(), actor.GetEquipmentTypes(i)));
 	}
 
 	// Assign the help windows
@@ -74,8 +74,8 @@ void Scene_Equip::UpdateItemWindows() {
 		item_windows[i]->SetVisible((unsigned)equip_window->GetIndex() == i);
 		item_windows[i]->Update();
 	}
-
-	item_window = item_windows[equip_window->GetIndex()];
+	if (equip_window->GetIndex() < item_windows.size())
+		item_window = item_windows[equip_window->GetIndex()];
 }
 
 void Scene_Equip::UpdateEquipWindow() {
@@ -162,15 +162,17 @@ void Scene_Equip::UpdateEquipSelection() {
 		Main_Data::game_system->SePlay(Main_Data::game_system->GetSystemSE(Main_Data::game_system->SFX_Cancel));
 		Scene::Pop();
 	} else if (Input::IsTriggered(Input::DECISION)) {
-		if (!CanRemoveEquipment(actor, equip_window->GetIndex())) {
-			Main_Data::game_system->SePlay(Main_Data::game_system->GetSystemSE(Main_Data::game_system->SFX_Buzzer));
-			return;
-		}
+		if (equip_window->GetIndex() < item_windows.size()) {
+			if (!CanRemoveEquipment(actor, equip_window->GetIndex())) {
+				Main_Data::game_system->SePlay(Main_Data::game_system->GetSystemSE(Main_Data::game_system->SFX_Buzzer));
+				return;
+			}
 
-		Main_Data::game_system->SePlay(Main_Data::game_system->GetSystemSE(Main_Data::game_system->SFX_Decision));
-		equip_window->SetActive(false);
-		item_window->SetActive(true);
-		item_window->SetIndex(0);
+			Main_Data::game_system->SePlay(Main_Data::game_system->GetSystemSE(Main_Data::game_system->SFX_Decision));
+			equip_window->SetActive(false);
+			item_window->SetActive(true);
+			item_window->SetIndex(0);
+		}
 	} else if (Main_Data::game_party->GetActors().size() > 1 && Input::IsTriggered(Input::RIGHT)) {
 		Main_Data::game_system->SePlay(Main_Data::game_system->GetSystemSE(Main_Data::game_system->SFX_Cursor));
 		int actor_index = Main_Data::game_party->GetActorPositionInParty(actor.GetId());

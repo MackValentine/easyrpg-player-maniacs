@@ -101,6 +101,8 @@ protected:
 	int column_max = 1;
 	int index = -1;
 
+	int mouseTimeArrow;
+
 	int second_index = -1;
 
 	int arrow_frame = 0;
